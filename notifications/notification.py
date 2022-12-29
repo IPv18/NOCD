@@ -21,11 +21,20 @@ class Notification(ABC):
         '''
         Overload '+=' as a subscription method
         '''
-
-        if (not callable(subscriber_method)):
+        
+        # Check if the argument is callable
+        if not callable(subscriber_method):
             raise Exception('Argument provided is not a function')
 
-        if (list(self.notification_args.keys()) != inspect.getfullargspec(subscriber_method).args):
+        # Get the method arguments
+        args = inspect.getfullargspec(subscriber_method).args
+
+        # Skip self if found
+        if '.' in subscriber_method.__qualname__ and args[0] == 'self':
+            args = args[1:]
+
+        # Check if the arguments match with the notification arguments
+        if list(self.notification_args.keys()) != args:
             raise Exception(
                 'Method provided does not contain matching arguments')
 
