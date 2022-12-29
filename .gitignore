@@ -1,3 +1,7 @@
 # Ignore all hidden files/directories except gitignore
 .*
 !/.gitignore
+
+# Ignore cache folder
+__pycache__/
+__pycache__/*
