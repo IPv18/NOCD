@@ -67,3 +67,4 @@ def RemoveRule(request, pk):
         
         # Execute the command using sudo and subprocess
         # iptables_command(command)
+        
