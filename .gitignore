@@ -2,6 +2,9 @@
 .*
 !/.gitignore
 
+# Ignore cache folder
+__pycache__/
+__pycache__/*
 
 
 # Django #
