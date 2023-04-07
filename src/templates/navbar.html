@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+	{% load static %}
+	<!-- Bootstrap JS and jQuery -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<i class="bi bi-graph-up logo"></i>
+		<a class="navbar-brand" href="#"> NOCD </a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+		  	<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="#">Home</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#"> About </a>
+				</li>
+		  	</ul>
+		  	<ul class="navbar-nav">
+				<!-- pill icon -->
+				<li class="pill">
+					<a href="#" class="nav-link">
+						<span class="position-relative">
+							<i class="bi bi-bell" style="fill: red; font-size: 1.3em;"></i>
+							<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="right: -4px; top: -8px; font-size: xx-small;">
+							  1
+							</span>
+						  </span>
+						  
+					</a>
+				</li>
+			
+				<!-- personal icon -->
+				<li class="dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<i class="bi bi-person-circle" style="font-size: 1.3em;"></i>
+					</a>
+					<div class="dropdown-menu dropdown-menu-right bg-dark" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item text-light" href="#"> Register </a>
+						<a class="dropdown-item text-light" href="#"> Login </a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item text-light" href="#"> Logout </a>
+					</div>
+				</li>
+		  	</ul>
+		</div>
+	  </nav>
+	  
+	  
+</html>

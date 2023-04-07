@@ -1,0 +1,22 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+
+:root {
+	--background: #444;
+	--text: #fff;
+	--text-size-hover: 15px;
+}
+
+body {
+	background-color: var(--background);
+}
+
+.pieContainer {
+	height: 50%;
+	width: 50%;
+	display: flex;
+	align-items:center;
+}

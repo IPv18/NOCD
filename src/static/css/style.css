@@ -1,0 +1,75 @@
+:root {
+	--nav-background: #333;
+	--nav-background-hover: #777;
+	--nav-text: #fff;
+	--nav-text-size-hover: 15px;
+}
+
+/* BEGIN NAVBAR */
+.navbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: var(--nav-background);
+	color: var(--nav-text);
+	height: 60px;
+	padding: 0 20px;
+}
+
+.logo {
+	margin-right: 10px;
+}
+
+.navbar-collapse {
+	height: 100%;
+}
+
+.navbar-links {
+	display: flex;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	margin-left: 20px;
+	height: 100%;
+	align-items: center;
+}
+
+.navbar-nav {
+	display: flex;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	margin-left: 20px;
+	height: 100%;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.navbar-nav .pill {
+	margin-right: 10px;
+}
+
+.nav-item {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+.nav-item a {
+	color: var(--nav-text);
+	text-decoration: none;
+	position: relative;
+}
+
+.nav-item:hover{
+	background-color: var(--nav-background-hover);
+	color: var(--nav-text);
+	font-size: var(--nav-text-size-hover);
+	opacity: 0.8;
+	transition: opacity 0.5s ease-in-out;
+}
+
+/* END NAVBAR */
+
