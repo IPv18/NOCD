@@ -1,6 +1,7 @@
 # Ignore all hidden files/directories except gitignore
 .*
 !/.gitignore
+!/**/.gitkeep
 !/.github
 
 # Ignore cache folder
