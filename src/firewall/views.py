@@ -9,13 +9,20 @@ import subprocess
 #    full_command = f'sudo /sbin/iptables {command}'
 #    subprocess.run(full_command.split(), check=True)
 
-def HomePage(request):
-    i4 = FirewallRule.objects.filter(IP_family='IPv4', traffic_direction='Inbound').order_by('rule_num')
-    o4 = FirewallRule.objects.filter(IP_family='IPv4', traffic_direction='Outbound').order_by('rule_num')
-    i6 = FirewallRule.objects.filter(IP_family='IPv6', traffic_direction='Inbound').order_by('rule_num')
-    o6 = FirewallRule.objects.filter(IP_family='IPv6', traffic_direction='Outbound').order_by('rule_num')
-    context = {'tables':[i4, o4, i6, o6] }
-    return render(request, 'firewall/firewall.html', context)
+def index(request):
+    if request.method == 'GET':
+        context = {
+            "tables": [
+                FirewallRule.objects.filter(IP_family='IPv4', traffic_direction='Inbound').order_by('rule_num'),
+                FirewallRule.objects.filter(IP_family='IPv4', traffic_direction='Outbound').order_by('rule_num'),
+                FirewallRule.objects.filter(IP_family='IPv6', traffic_direction='Inbound').order_by('rule_num'),
+                FirewallRule.objects.filter(IP_family='IPv6', traffic_direction='Outbound').order_by('rule_num'),
+            ]
+        }
+        return render(request, 'firewall/firewall.html', context)
+    elif request.method == 'POST':
+        pass 
+        # TODO add iptables control here
 
 def AddRule(request):
     form = FirewallRuleForm()
