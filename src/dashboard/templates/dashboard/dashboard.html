@@ -1,17 +1,41 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>NOCD</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
-    {% load static %}
+{% extends 'main.html' %}
+{% load static %}
 
-  </head>
-  <body>
+{% block header %}
 
-    {% include 'navbar.html'%}
+<title> NOCD </title>
 
-  </body>
-</html>
+<!-- Charts.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+<script src="{% static 'dashboard/js/pie-chart.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="pieContainer">
+  <canvas id="pieChart"></canvas>
+</div>
+
+<script>
+
+  const ctx = document.getElementById('pieChart');
+  const pieChart = createPieChart(ctx);
+
+  ctx.addEventListener('click', function (event) {
+    handleLabelClickPie(event, pieChart);
+  });
+
+  setInterval(() => {
+    let Rand = Math.random() * 100 + 1;
+    updateDataPie(pieChart, 'TCP', Rand);
+  }, 2000);
+
+</script>
+
+
+{% endblock %}
