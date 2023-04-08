@@ -1,0 +1,41 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block header %}
+
+<title> NOCD </title>
+
+<!-- Charts.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+<script src="{% static 'dashboard/js/pie-chart.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="pieContainer">
+  <canvas id="pieChart"></canvas>
+</div>
+
+<script>
+
+  const ctx = document.getElementById('pieChart');
+  const pieChart = createPieChart(ctx);
+
+  ctx.addEventListener('click', function (event) {
+    handleLabelClickPie(event, pieChart);
+  });
+
+  setInterval(() => {
+    let Rand = Math.random() * 100 + 1;
+    updateDataPie(pieChart, 'TCP', Rand);
+  }, 2000);
+
+</script>
+
+
+{% endblock %}

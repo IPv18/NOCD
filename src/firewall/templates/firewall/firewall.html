@@ -1,75 +1,80 @@
 {% extends 'main.html' %}
-
-{% block content %}
-
 {% load static %}
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <!--script src="{% static 'js/addrule.js' %}"></!--script-->
-        <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
-    </head>
-    <body>
-        <h1>Firewall Home Page</h1>
-        {% for table in tables %}
-            <hr>
-            <h2 style="display: inline">{{table.0.IP_family}} {{table.0.traffic_direction}} Rules</h2>
-            <h3 style="display: inline"><a href="{% url 'addrule' %}?ip_family={{table.0.IP_family}}&traffic_direction={{table.0.traffic_direction}}">add rule</a></h3>
-            <br>
-            <br>
-            <table>
-                <tr>
-                    <th>Rule #</th>
-                    <th>Description</th>
-                    <th>Protocol</th>
-                    <th>Source IP</th>
-                    <th>Source port</th>
-                    <th>Dest. IP</th>
-                    <th>Dest. port</th>
-                    <th>Action</th>
-                    <th>Edit</th>
-                    <th>Remove</th>
-                </tr>
-                {% for rule in table %}
-                <tr>
-                    <td>{{rule.rule_num}}</td>
-                    <td>{{rule.description}}</td>
-                    {% if rule.protocol is not none %}
-                        <td>{{rule.protocol}}</td>
-                    {% else %}
-                        <td>any</td>
-                    {% endif %}
-                    {% if rule.source_address is not none %}
-                        <td>{{rule.source_address}}</td>
-                    {% else %}
-                        <td>any</td>
-                    {% endif %}
-                    {% if rule.source_port is not none %}
-                        <td>{{rule.source_port}}</td>
-                    {% else %}
-                        <td>any</td>
-                    {% endif %}
-                    {% if rule.destination_address is not none %}
-                        <td>{{rule.destination_address}}</td>
-                    {% else %}
-                        <td>any</td>
-                    {% endif %}
-                    {% if rule.destination_port is not none %}
-                        <td>{{rule.destination_port}}</td>
-                    {% else %}
-                        <td>any</td>
-                    {% endif %}
-                    <td>{{rule.action}}</td>
-                    {% if rule.rule_num != 1000 %}
-                        <td><button type="button" onclick="location.href='{% url 'updaterule' rule.ID %}'">Edit</button></td>
-                        <td><button type="button" onclick="location.href='{% url 'removerule' rule.ID %}'">Remove</button></td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            </table>
+{% block header %}
+
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Firewall</title>
+    <meta='viewport' conent='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
+    <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% endblock %}
+
+    {% block content %}
+
+    <h1>Firewall Home Page</h1>
+    {% for table in tables %}
+    <hr>
+    <h2 style="display: inline">{{table.0.IP_family}} {{table.0.traffic_direction}} Rules</h2>
+    <h3 style="display: inline"><a
+            href="{% url 'addrule' %}?ip_family={{table.0.IP_family}}&traffic_direction={{table.0.traffic_direction}}">add
+            rule</a></h3>
+    <br>
+    <br>
+    <table>
+        <tr>
+            <th>Rule #</th>
+            <th>Description</th>
+            <th>Protocol</th>
+            <th>Source IP</th>
+            <th>Source port</th>
+            <th>Dest. IP</th>
+            <th>Dest. port</th>
+            <th>Action</th>
+            <th>Edit</th>
+            <th>Remove</th>
+        </tr>
+        {% for rule in table %}
+        <tr>
+            <td>{{rule.rule_num}}</td>
+            <td>{{rule.description}}</td>
+            {% if rule.protocol is not none %}
+            <td>{{rule.protocol}}</td>
+            {% else %}
+            <td>any</td>
+            {% endif %}
+            {% if rule.source_address is not none %}
+            <td>{{rule.source_address}}</td>
+            {% else %}
+            <td>any</td>
+            {% endif %}
+            {% if rule.source_port is not none %}
+            <td>{{rule.source_port}}</td>
+            {% else %}
+            <td>any</td>
+            {% endif %}
+            {% if rule.destination_address is not none %}
+            <td>{{rule.destination_address}}</td>
+            {% else %}
+            <td>any</td>
+            {% endif %}
+            {% if rule.destination_port is not none %}
+            <td>{{rule.destination_port}}</td>
+            {% else %}
+            <td>any</td>
+            {% endif %}
+            <td>{{rule.action}}</td>
+            {% if rule.rule_num != 1000 %}
+            <td><button type="button" onclick="location.href='{% url 'updaterule' rule.ID %}'">Edit</button></td>
+            <td><button type="button" onclick="location.href='{% url 'removerule' rule.ID %}'">Remove</button></td>
+            {% endif %}
+        </tr>
         {% endfor %}
-        <hr>
-    </body>
-</html>
-{% endblock %}
+    </table>
+    {% endfor %}
+    <hr>
+
+    {% endblock %}

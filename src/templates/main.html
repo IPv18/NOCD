@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-    <head>
-        <meta charset='utf-8'>
-        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-        <title>NOCD</title>
-        <meta = 'viewport' conent='width=device-width, initial-scale=1'>
-        <link rel='stylesheet' href='{% static "styles/main.css" %}'>
-        <!--script src='main.js'></script-->
-    </head>
-    <body>
-        {% include 'navbar.html' %}
 
-        
+<head>
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    {% block header %}
+    {% endblock header %}
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+    <div class="container vh-100">
+
         {% block content %}
         {% endblock content %}
 
+    </div>
+    {% include 'footer.html' %}
+</body>
 
-        {% include 'footer.html' %}
-    </body>
 </html>

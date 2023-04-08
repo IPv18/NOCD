@@ -1,18 +1,50 @@
-{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<i class="bi bi-graph-up logo"></i>
+	<a class="navbar-brand" href="#"> NOCD </a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+		aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarNav">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="nav-link" href="/"> Home </a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#"> About </a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/firewall"> Firewall </a>
+			</li>
+		</ul>
+		<ul class="navbar-nav">
+			<!-- pill icon -->
+			<li class="pill">
+				<a href="#" class="nav-link">
+					<span class="position-relative">
+						<i class="bi bi-bell" style="fill: red; font-size: 1.3em;"></i>
+						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+							style="right: -4px; top: -8px; font-size: xx-small;">
+							1
+						</span>
+					</span>
 
-<html>
-  <head>
-      <link rel='stylesheet' href='{% static "styles/navbar.css" %}'>
-  </head>
-  <body>
+				</a>
+			</li>
 
-    <nav>
-        <ul>
-            <li><a href="#">Traffic Control</a></li>
-            <li><a href="{% url 'home' %}">Firewall</a></li>
-            <li><a href="#">Notifications</a></li>
-        </ul>
-    </nav>
-
-  </body>
-</html>
+			<!-- personal icon -->
+			<li class="dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false">
+					<i class="bi bi-person-circle" style="font-size: 1.3em;"></i>
+				</a>
+				<div class="dropdown-menu dropdown-menu-right bg-dark" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item text-light" href="#"> Register </a>
+					<a class="dropdown-item text-light" href="#"> Login </a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item text-light" href="#"> Logout </a>
+				</div>
+			</li>
+		</ul>
+	</div>
+</nav>
