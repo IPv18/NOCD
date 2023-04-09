@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from firewall.models import FirewallRule
 from .forms import FirewallRuleForm
+from django.http import JsonResponse
 import subprocess
 
 # django ALL=(ALL) NOPASSWD:/sbin/iptables need to be added to the /etc/sudoers file 
@@ -16,6 +17,18 @@ def HomePage(request):
     o6 = FirewallRule.objects.filter(IP_family='IPv6', traffic_direction='Outbound').order_by('rule_num')
     context = {'tables':[i4, o4, i6, o6] }
     return render(request, 'firewall/firewall.html', context)
+
+def check_rule_uniqueness(request):
+    rule_num = request.GET.get('rule_num')
+    traffic_direction = request.GET.get('traffic_direction')
+    IP_family = request.GET.get('IP_family')
+    
+    try:
+        FirewallRule.objects.get(rule_num=rule_num, traffic_direction=traffic_direction, IP_family=IP_family)
+        exists = True
+    except FirewallRule.DoesNotExist:
+        exists = False
+    return JsonResponse({'exists': exists})
 
 def AddRule(request):
     form = FirewallRuleForm()

@@ -15,25 +15,32 @@
             {% for field in form %}
                 <p>
                     {% if field.name == "rule_num" %} 
-                        {{ field.label_tag }} 
+                        <label>Rule num <span style="color: red">*</span>:</label>
                         {% if UpdateOrSubmit == 'UPDATE' and instance.rule_num is not none %}
-                            <input type="number" name="{{ field.name }}" min="1" max="999" value="{{ instance.rule_num }}" required/>
+                            <input id="id_{{ field.name }}" type="number" name="{{ field.name }}" min="1" max="999" value="{{ instance.rule_num }}" required>
                         {% else %}
-                            <input type="number" name="{{ field.name }}" min="1" max="999" required />
+                            <input id="id_{{ field.name }}" type="number" name="{{ field.name }}" min="1" max="999" required>
                         {% endif %} 
+                    {% elif field.name == "description" %}
+                        <label for="id_{{ field.name }}">Description <span style="color: red">*</span>:</label>
+                        {% if UpdateOrSubmit == 'UPDATE' and instance.rule_num is not none %}
+                            <input type="text" name="description" maxlength="255" id="id_{{ field.name }}" value="{{ instance.description }}" required>
+                        {% else %}
+                            <input type="text" name="description" maxlength="255" id="id_{{ field.name }}" required>
+                        {% endif %}
                     {% elif field.name == "source_port" %} 
                         {{ field.label_tag }}
                         {% if UpdateOrSubmit == 'UPDATE' and instance.source_port is not none %}
-                            <input type="number" name="{{ field.name }}" min="1" max="65536" id="id_{{ field.name }}" value="{{ instance.source_port }}" />
+                            <input type="number" name="{{ field.name }}" min="1" max="65536" id="id_{{ field.name }}" value="{{ instance.source_port }}" >
                         {% else %}
-                            <input type="number" name="{{ field.name }}" min="1" max="65536" id="id_{{ field.name }}" />
+                            <input type="number" name="{{ field.name }}" min="1" max="65536" id="id_{{ field.name }}" >
                         {% endif %} 
                     {% elif field.name == "destination_port" %} 
                         {{field.label_tag }} 
                         {% if UpdateOrSubmit == 'UPDATE' and instance.destination_port is not none %}
-                            <input type="number" name="{{ field.name }}" min="1" max="65536" id="id_{{ field.name }}" value="{{ instance.destination_port }}" />
+                            <input type="number" name="{{ field.name }}" min="1" max="65536" id="id_{{ field.name }}" value="{{ instance.destination_port }}" >
                         {% else %}
-                            <input type="number" name="{{ field.name }}" min="1" max="65536" id="id_{{ field.name }}"/>
+                            <input type="number" name="{{ field.name }}" min="1" max="65536" id="id_{{ field.name }}">
                         {% endif %} 
                     {% elif field.name == "source_address" %}
                         {% if ip_family == 'IPv4' %}
@@ -80,9 +87,9 @@
             {% endfor %}
             <br/>
             {% if UpdateOrSubmit == 'SUBMIT' %}
-                <input type="submit" value="Submit" />
+                <input type="submit" UpdateOrSubmit="SUBMIT" value="Submit" />
             {% else %}
-                <input type="submit" value="Update" />
+                <input type="submit" UpdateOrSubmit="UPDATE" value="Update" />
             {% endif %}
             <button type="button" onclick="location.href='{% url 'home' %}'">Cancel</button>
         </form>

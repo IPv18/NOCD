@@ -4,7 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.HomePage, name="home"),
-    path('addrule/',             views.AddRule,    name="addrule"),
-    path('updaterule/<str:pk>/', views.UpdateRule, name="updaterule"),
-    path('removerule/<str:pk>/',  views.RemoveRule,  name="removerule")
+    path('addrule/',                views.AddRule,    name="addrule"),
+    path('updaterule/<str:pk>/',    views.UpdateRule, name="updaterule"),
+    path('removerule/<str:pk>/',    views.RemoveRule,  name="removerule"),
+    path('check_rule_uniqueness/', views.check_rule_uniqueness)
 ]
