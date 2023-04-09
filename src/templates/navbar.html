@@ -1,0 +1,18 @@
+{% load static %}
+
+<html>
+  <head>
+      <link rel='stylesheet' href='{% static "styles/navbar.css" %}'>
+  </head>
+  <body>
+
+    <nav>
+        <ul>
+            <li><a href="#">Traffic Control</a></li>
+            <li><a href="{% url 'home' %}">Firewall</a></li>
+            <li><a href="#">Notifications</a></li>
+        </ul>
+    </nav>
+
+  </body>
+</html>
