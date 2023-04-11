@@ -1,43 +1,76 @@
-from abc import ABC, abstractmethod
 import inspect
 
 
-class Notification(ABC):
-    notification_args = {}
+notifications = {}
 
-    def __init__(self) -> None:
-        self.subscriber_methods = []
-        super().__init__()
 
-    def send(self):
-        '''
-        Call all the methods from the subscribers
-        '''
+def add_notification(notification, **kwargs):
+    '''
+    Add a notification with arguments
+    '''
 
-        for subscriber_method in self.subscriber_methods:
-            subscriber_method(**self.notification_args)
+    if notification in notifications:
+        raise Exception('Notification already exists')
 
-    def __iadd__(self, subscriber_method):
-        '''
-        Overload '+=' as a subscription method
-        '''
-        
-        # Check if the argument is callable
-        if not callable(subscriber_method):
-            raise Exception('Argument provided is not a function')
+    notifications[notification] = {
+        'notification_args': kwargs,
+        'subscriber_methods': []
+    }
 
-        # Get the method arguments
-        args = inspect.getfullargspec(subscriber_method).args
 
-        # Skip self if found
-        if '.' in subscriber_method.__qualname__ and args[0] == 'self':
-            args = args[1:]
+def change_notification_args(notification, **kwargs):
+    '''
+    Change the notification arguments
+    '''
 
-        # Check if the arguments match with the notification arguments
-        if list(self.notification_args.keys()) != args:
-            raise Exception(
-                'Method provided does not contain matching arguments')
+    if notification not in notifications:
+        raise Exception('Notification does not exist')
 
-        self.subscriber_methods.append(subscriber_method)
+    notifications[notification]['notification_args'] = kwargs
 
-        return self
+
+def subscribe(notification, subscriber_method):
+    '''
+    Adds function to notification
+    '''
+
+    # Check if the argument is callable
+    if not callable(subscriber_method):
+        raise Exception('Argument provided is not a function')
+
+    # Get the method arguments
+
+    args = inspect.getfullargspec(subscriber_method).args
+    # Skip self if found
+    if '.' in subscriber_method.__qualname__ and args[0] == 'self':
+        args = args[1:]
+
+    # Check if the notification exists
+    if notification not in notifications:
+        notifications[notification] = {
+            'notification_args': {},
+            'subscriber_methods': []
+        }
+
+    # Check if the arguments match with the notification arguments
+    notification_args = notifications[notification]['notification_args']
+    if list(notification_args.keys()) != args:
+        raise Exception(
+            'Method provided does not contain matching arguments')
+
+    notifications[notification]['subscriber_methods'].append(subscriber_method)
+
+
+def send(notification):
+    '''
+    Call all the methods from the subscribers
+    '''
+
+    if notification not in notifications:
+        raise Exception('Notification does not exist')
+
+    notification_args = notifications[notification]['notification_args']
+    subscriber_methods = notifications[notification]['subscriber_methods']
+
+    for subscriber_method in subscriber_methods:
+        subscriber_method(**notification_args)
