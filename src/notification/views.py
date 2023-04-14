@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils import timezone
@@ -8,6 +8,7 @@ from django.http import Http404
 from notification.models import NotificationInfo
 
 
+@require_GET
 def notifications(request):
     notifications = NotificationInfo.objects.order_by('-date')
 
@@ -23,22 +24,24 @@ def notifications(request):
     return render(request, 'notification/notifications.html', context)
 
 
+@require_POST
 def add_notification(request):
-    if request.method == 'POST':
-        message = request.POST['message']
-        type = request.POST['type']
-        date = timezone.now()
-        notification = NotificationInfo(message=message, type=type, date=date)
-        notification.save()
-        messages.success(request, 'Notification added.')
-        return redirect('notifications')
+    message = request.POST['message']
+    type = request.POST['type']
+    date = timezone.now()
+    notification = NotificationInfo(message=message, type=type, date=date)
+    notification.save()
+    messages.success(request, 'Notification added.')
+    return redirect('notifications')
 
 
+@require_POST
 def delete_notification(request, id):
     notification = NotificationInfo.objects.get(id=id)
     notification.delete()
     messages.success(request, 'Notification deleted.')
     return redirect('notifications')
+
 
 @require_POST
 def clear_notifications(request):
@@ -46,6 +49,8 @@ def clear_notifications(request):
     messages.success(request, 'All notifications cleared.')
     return redirect('notifications')
 
+
+@require_POST
 def toggle_read_notification(request, id):
     notification = NotificationInfo.objects.get(id=id)
     notification.read = not notification.read
