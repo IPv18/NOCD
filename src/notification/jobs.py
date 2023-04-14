@@ -3,7 +3,7 @@ import time
 
 from schedule import Scheduler
 
-from notification.notification import send
+from notification.topic import send
 
 
 def start_scheduler():

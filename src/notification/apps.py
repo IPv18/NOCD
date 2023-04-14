@@ -1,6 +1,6 @@
 from os import environ
 from django.apps import AppConfig
-from notification import notification as notif
+from notification import topic
 
 
 class NotificationConfig(AppConfig):
@@ -15,8 +15,8 @@ class NotificationConfig(AppConfig):
                 jobs.start_scheduler()
 
     def add_notifications(self):
-        notif.add_notification('info', type='info', message='info message')
-        notif.add_notification('warning', type='warning',
+        topic.add_signals('info', type='info', message='info message')
+        topic.add_signals('warning', type='warning',
                                message='warning message')
 
         def send_notification(type, message):
@@ -24,5 +24,5 @@ class NotificationConfig(AppConfig):
             notification_info = NotificationInfo(type=type, message=message)
             notification_info.save()
 
-        notif.subscribe('info', send_notification)
-        notif.subscribe('warning', send_notification)
+        topic.subscribe('info', send_notification)
+        topic.subscribe('warning', send_notification)
