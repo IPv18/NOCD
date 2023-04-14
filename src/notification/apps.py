@@ -16,8 +16,7 @@ class NotificationConfig(AppConfig):
 
     def add_topics(self):
         topic.add_topic('info', type='info', message='info message')
-        topic.add_topic('warning', type='warning',
-                               message='warning message')
+        topic.add_topic('warning', type='warning', message='warning message')
 
         def send_notification(type, message):
             from notification.models import NotificationInfo
