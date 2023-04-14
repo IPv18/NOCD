@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dashboard.apps.DashboardConfig',
     'firewall.apps.FirewallConfig',
+    'notification.apps.NotificationConfig',
 ]
 
 MIDDLEWARE = [

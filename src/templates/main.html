@@ -12,19 +12,25 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
 
+    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
+
     {% block header %}
     {% endblock header %}
 </head>
 
 <body>
-    {% include 'navbar.html' %}
-    <div class="container vh-100">
-
-        {% block content %}
-        {% endblock content %}
-
+    <div class="wrapper">
+        {% include "navbar.html" %}
+        <div class="content">
+            <div class="container">
+                {% block content %}
+                {% endblock content %}
+            </div>
+        </div>
+        <div class="footer">
+            {% include "footer.html" %}
+        </div>
     </div>
-    {% include 'footer.html' %}
 </body>
 
 </html>
