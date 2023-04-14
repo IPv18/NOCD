@@ -10,13 +10,13 @@ class NotificationConfig(AppConfig):
     def ready(self):
         from notification import jobs
         if environ.get('RUN_MAIN', None) != 'true':
-            self.add_notifications()
+            self.add_topics()
             if environ.get('DEBUG') == True:
                 jobs.start_scheduler()
 
-    def add_notifications(self):
-        topic.add_signals('info', type='info', message='info message')
-        topic.add_signals('warning', type='warning',
+    def add_topics(self):
+        topic.add_topic('info', type='info', message='info message')
+        topic.add_topic('warning', type='warning',
                                message='warning message')
 
         def send_notification(type, message):
