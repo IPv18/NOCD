@@ -4,7 +4,7 @@ import inspect
 topics = {}
 
 
-def add_topics(topic, **kwargs):
+def add_topic(topic, **kwargs):
     '''
     Add a topic with arguments
     '''
@@ -31,7 +31,7 @@ def change_topic_args(topic, **kwargs):
 
 def subscribe(topic, subscriber_method):
     '''
-    Adds function to topic
+    Add a function to topic
     '''
 
     # Check if the topic exists
