@@ -2,8 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
   const ip_family_param = urlParams.get("ip_family");
   const traffic_direction_param = urlParams.get("traffic_direction");
-  
+
   const form = document.getElementById("ruleform");
+  const ruleNum = document.getElementById("id_rule_num");
+  const description = document.getElementById("id_description");
   const typeSelect = document.getElementById("id_type");
   const protocolSelect = document.getElementById("id_protocol");
   const traffic_direction = document.getElementById("id_traffic_direction");
@@ -12,11 +14,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const destination_port = document.getElementById("id_destination_port");
   const source_address = document.getElementById("id_source_address");
   const destination_address = document.getElementById("id_destination_address");
-  
+
+  const UpdateOrSubmit = submitBtn.getAttribute('UpdateOrSubmit');
   const pattern = source_address.getAttribute('pattern');
   const submitBtn = form.querySelector('input[type="submit"]');
+
   const udpTypes = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
   const tcpTypes = ["CUSTOM TCP", "ALL TCP"];
+
+  if (UpdateOrSubmit == "UPDATE")
+    OriginalRuleNum = ruleNum.value;
 
   const portMapping = {
     "SSH 22": 22,
@@ -132,15 +139,53 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     typeSelect.value = TypeValue;
   });
+
   submitBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    source_port.disabled = false;
-    destination_port.disabled = false;
-    source_address.disabled = false;
-    destination_address.disabled = false;
-    traffic_direction.disabled = false;
-    IP_family.disabled = false;
-    form.submit();
+    if (!ruleNum.value || !description.value) {
+      errorModalBody.innerHTML = 'Both rule number and description are required.';
+      $('#errorModal').modal("show");
+      event.preventDefault();
+      return;
+    }
+    else {
+      if (UpdateOrSubmit == "UPDATE") {
+        if (OriginalRuleNum == ruleNum.value) {
+          source_port.disabled = false;
+          destination_port.disabled = false;
+          source_address.disabled = false;
+          destination_address.disabled = false;
+          traffic_direction.disabled = false;
+          IP_family.disabled = false;
+          form.submit();
+        }
+      }
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `/firewall/check_rule_uniqueness/?rule_num=${ruleNum.value}&traffic_direction=${traffic_direction.value}&IP_family=${IP_family.value}`);
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          if (response.exists) {
+            errorModalBody.innerHTML = 'This rule number alread exists, please choose a unique rule number.';
+            $('#errorModal').modal("show");
+          }
+          else {
+            // Enable disabled fields and submit the form
+            source_port.disabled = false;
+            destination_port.disabled = false;
+            source_address.disabled = false;
+            destination_address.disabled = false;
+            traffic_direction.disabled = false;
+            IP_family.disabled = false;
+            form.submit();
+          }
+        } else {
+          errorModalBody.innerHTML = 'An error occurred while checking the rule uniqueness.';
+          $('#errorModal').modal("show");
+        }
+      };
+      xhr.send();
+      event.preventDefault(); // Prevent the form from being submitted before the AJAX request completes
+    }
   });
 
   // input constraints
@@ -166,9 +211,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!regex.test(input.value)) {
       input.value = null;
       if (pattern == "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$")
-        alert("Please enter a valid IPv4 address.");
+        errorModalBody.innerHTML = 'Please enter a valid IPv4 address.';
       else
-        alert("Please enter a valid IPv6 address.");
+        errorModalBody.innerHTML = 'Please enter a valid IPv6 address.';
+      $('#errorModal').modal("show");
     }
   }
 
@@ -178,7 +224,8 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     if (!regex.test(input.value)) {
       input.value = "";
-      alert("Please enter a valid port number");
+      errorModalBody.innerHTML = 'Please enter a valid port number';
+      $('#errorModal').modal("show");
     }
   }
 
