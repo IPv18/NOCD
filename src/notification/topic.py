@@ -46,7 +46,7 @@ def subscribe(topic, subscriber_method):
     args = inspect.getfullargspec(subscriber_method).args
 
     # Skip self if found
-    if hasattr(callable, '__self__'):
+    if hasattr(callable, '__self__') and args[0] == "self":
         args = args[1:]
 
     # Check if the arguments match with the topic arguments
@@ -87,7 +87,7 @@ def send(topic, **kwargs):
         args = inspect.getfullargspec(subscriber_method).args
 
         # Skip self if found
-        if hasattr(callable, '__self__'):
+        if hasattr(callable, '__self__') and args[0] == "self":
             args = args[1:]
 
         # Check if the arguments match with the topic arguments
