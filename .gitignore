@@ -4,6 +4,11 @@
 !/**/.gitkeep
 !/.github
 
+
+# Ignore migrations folder in Django apps - we don't have an actual production database
+**/migrations/
+
+
 # Ignore cache folder
 __pycache__/
 __pycache__/*
