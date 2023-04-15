@@ -9,20 +9,20 @@ document.addEventListener("DOMContentLoaded", function () {
   const typeSelect = document.getElementById("id_type");
   const protocolSelect = document.getElementById("id_protocol");
   const traffic_direction = document.getElementById("id_traffic_direction");
-  const IP_family = document.getElementById("id_IP_family");
+  const ip_family = document.getElementById("id_ip_family");
   const source_port = document.getElementById("id_source_port");
   const destination_port = document.getElementById("id_destination_port");
   const source_address = document.getElementById("id_source_address");
   const destination_address = document.getElementById("id_destination_address");
 
-  const UpdateOrSubmit = submitBtn.getAttribute('UpdateOrSubmit');
+  const updateOrSubmit = submitBtn.getAttribute('update_or_submit');
   const pattern = source_address.getAttribute('pattern');
   const submitBtn = form.querySelector('input[type="submit"]');
 
   const udpTypes = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
   const tcpTypes = ["CUSTOM TCP", "ALL TCP"];
 
-  if (UpdateOrSubmit == "UPDATE")
+  if (updateOrSubmit == "UPDATE")
     OriginalRuleNum = ruleNum.value;
 
   const portMapping = {
@@ -46,12 +46,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (ip_family_param !== null && traffic_direction_param !== null) {
     traffic_direction.value = traffic_direction_param;
-    IP_family.value = ip_family_param;
+    ip_family.value = ip_family_param;
     traffic_direction.disabled = true;
-    IP_family.disabled = true;
+    ip_family.disabled = true;
   } else {
     traffic_direction.disabled = true;
-    IP_family.disabled = true;
+    ip_family.disabled = true;
     if (typeSelect.value == "ALL UDP") {
       source_port.disabled = destination_port.disabled = true;
     } else if (typeSelect.value == "ALL TCP") {
@@ -148,19 +148,19 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     else {
-      if (UpdateOrSubmit == "UPDATE") {
+      if (updateOrSubmit == "UPDATE") {
         if (OriginalRuleNum == ruleNum.value) {
           source_port.disabled = false;
           destination_port.disabled = false;
           source_address.disabled = false;
           destination_address.disabled = false;
           traffic_direction.disabled = false;
-          IP_family.disabled = false;
+          ip_family.disabled = false;
           form.submit();
         }
       }
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', `/firewall/check_rule_uniqueness/?rule_num=${ruleNum.value}&traffic_direction=${traffic_direction.value}&IP_family=${IP_family.value}`);
+      xhr.open('GET', `/firewall/check_rule_uniqueness/?rule_num=${ruleNum.value}&traffic_direction=${traffic_direction.value}&ip_family=${ip_family.value}`);
       xhr.onload = () => {
         if (xhr.status === 200) {
           const response = JSON.parse(xhr.responseText);
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
             source_address.disabled = false;
             destination_address.disabled = false;
             traffic_direction.disabled = false;
-            IP_family.disabled = false;
+            ip_family.disabled = false;
             form.submit();
           }
         } else {
