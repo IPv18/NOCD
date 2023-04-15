@@ -31,18 +31,18 @@ class FirewallRule(models.Model):
         ('UDP', 'UDP'),
         ('ICMP', 'ICMP')
     ]
-    rule_id = models.IntegerField()                                                                    
-    description = models.CharField(max_length=255)                                                      
-    traffic_direction = models.CharField(max_length=30, choices=direction_choices, default='Inbound')   
-    ip_family = models.CharField(max_length=30, choices=ip_family_choices, default='IPv4')      
-    type = models.CharField(max_length=50, choices=type_choices, default="CUSTOM TCP", null=True, blank=True)   
+    rule_id = models.IntegerField()
+    description = models.CharField(max_length=255)
+    traffic_direction = models.CharField(max_length=30, choices=direction_choices, default='Inbound')
+    ip_family = models.CharField(max_length=30, choices=ip_family_choices, default='IPv4')
+    type = models.CharField(max_length=50, choices=type_choices, default="CUSTOM TCP", null=True, blank=True)
     protocol = models.CharField(max_length=10, choices=protocol_choices, default="TCP", null=True, blank=True) 
     source_address = models.CharField(max_length=45, null=True, blank=True)
-    source_port = models.IntegerField(null=True, blank=True)                                              
+    source_port = models.IntegerField(null=True, blank=True)
     destination_address = models.CharField(max_length=45, null=True, blank=True)
     destination_port = models.IntegerField(null=True, blank=True)
-    action = models.CharField(max_length=15, choices=action_choices, default='DROP')                            
-    created = models.DateTimeField(auto_now_add=True)                                 
+    action = models.CharField(max_length=15, choices=action_choices, default='DROP')
+    created = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
 
     class Meta:
