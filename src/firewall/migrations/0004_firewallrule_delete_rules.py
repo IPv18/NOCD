@@ -14,10 +14,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FirewallRule',
             fields=[
-                ('rule_num', models.IntegerField(unique=True)),
+                ('rule_id', models.IntegerField(unique=True)),
                 ('description', models.CharField(max_length=255)),
                 ('traffic_direction', models.CharField(choices=[('INBOUND', 'INBOUND'), ('OUTBOUND', 'OUTBOUND')], default='INBOUND', max_length=30)),
-                ('IP_family', models.CharField(choices=[('IPv4', 'IPv4'), ('IPv6', 'IPv6')], default='IPv4', max_length=30)),
+                ('ip_family', models.CharField(choices=[('IPv4', 'IPv4'), ('IPv6', 'IPv6')], default='IPv4', max_length=30)),
                 ('type', models.CharField(choices=[('CUSTOM  TCP', 'CUSTOM TCP'), ('CUSTOM UDP', 'CUSTOM UDP'), ('CUSTOM  ICMP', 'CUSTOM ICMP'), ('ALL TCP', 'ALL TCP'), ('ALL UDP', 'ALL  UDP'), ('ALL  ICMP', 'ALL ICMP'), ('ALL TRAFFIC', 'ALL TRAFFIC'), ('SSH 22', 'SSH 22'), ('TELNET 23', 'TELNET 23'), ('SMTP 25', 'SMTP 25'), ('NAMESERVER 42', 'NAMESERVER 42'), ('DNS UDP 53', 'DNS UDP 53'), ('DNS TCP 53', 'DNS TCP 53'), ('HTTP 80', 'HTTP 80'), ('POP3 110', 'POP3 110'), ('IMAP 143', 'IMAP 143'), ('LDAP 389', 'LDAP 389'), ('HTTPS 443', 'HTTTPS 443'), ('SMB 445', 'SMB 445'), ('SMTPS 465', 'SMTPS 465'), ('IMAPS 993', 'IMAPS 993'), ('POP3S 995', 'PPOP3S 995'), ('MS SQL 1433', 'MS SQL 1433'), ('ORACLE 1521', 'ORACLE 1521'), ('MYSQL/aurora 3306', 'MYSQL/aurora 3306'), ('NFS 2049', 'NFS 2049'), ('RDP 3389', 'RDP 3389'), ('POSTGRESQL 5432', 'POSTGRESQL 5432'), ('REDSHIFT 5439', 'REDSHIFT 5439')], max_length=50)),
                 ('protocol', models.CharField(max_length=10)),
                 ('source_port', models.IntegerField(blank=True, null=True)),

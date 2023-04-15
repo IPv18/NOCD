@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.RenameField(
             model_name='rules',
             old_name='rule',
-            new_name='rule_num',
+            new_name='rule_id',
         ),
         migrations.AddField(
             model_name='rules',

@@ -19,19 +19,19 @@ def index(request):
             ip_family = request.GET['ip_family']
             traffic_direction = request.GET['traffic_direction']
             new_action_index = request.GET['new_action_index']
-            FirewallRule.objects.filter(IP_family=ip_family, traffic_direction=traffic_direction, rule_num=1000).update(
+            FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_id=1000).update(
                 action=new_action[int(new_action_index)])
 
         context = {
             "tables": [
                 FirewallRule.objects.filter(
-                    IP_family='IPv4', traffic_direction='Inbound').order_by('rule_num'),
+                    ip_family='IPv4', traffic_direction='Inbound').order_by('rule_id'),
                 FirewallRule.objects.filter(
-                    IP_family='IPv4', traffic_direction='Outbound').order_by('rule_num'),
+                    ip_family='IPv4', traffic_direction='Outbound').order_by('rule_id'),
                 FirewallRule.objects.filter(
-                    IP_family='IPv6', traffic_direction='Inbound').order_by('rule_num'),
+                    ip_family='IPv6', traffic_direction='Inbound').order_by('rule_id'),
                 FirewallRule.objects.filter(
-                    IP_family='IPv6', traffic_direction='Outbound').order_by('rule_num'),
+                    ip_family='IPv6', traffic_direction='Outbound').order_by('rule_id'),
             ]
         }
 
@@ -43,18 +43,18 @@ def index(request):
         pass # TODO add iptables control here
 
 def check_rule_uniqueness(request):
-    rule_num = request.GET.get('rule_num')
+    rule_id = request.GET.get('rule_id')
     traffic_direction = request.GET.get('traffic_direction')
-    IP_family = request.GET.get('IP_family')
+    ip_family = request.GET.get('ip_family')
     try:
         FirewallRule.objects.get(
-            rule_num=rule_num, traffic_direction=traffic_direction, IP_family=IP_family)
+            rule_id=rule_id, traffic_direction=traffic_direction, ip_family=ip_family)
         exists = True
     except FirewallRule.DoesNotExist:
         exists = False
     return JsonResponse({'exists': exists})
 
-def AddRule(request):
+def add_rule(request):
     form = FirewallRuleForm()
     UpdateOrSubmit = 'SUBMIT'
     ip_family = request.GET.get('ip_family')
@@ -71,9 +71,9 @@ def AddRule(request):
     return render(request, 'firewall/addrule.html', context)
 
 
-def UpdateRule(request, pk):
-    rule = FirewallRule.objects.get(ID=pk)
-    ip_family = rule.IP_family
+def update_rule(request, pk):
+    rule = FirewallRule.objects.get(id=pk)
+    ip_family = rule.ip_family
     traffic_direction = rule.traffic_direction
     form = FirewallRuleForm(instance=rule)
     UpdateOrSubmit = 'UPDATE'
@@ -88,8 +88,8 @@ def UpdateRule(request, pk):
                 'ip_family':ip_family , 'traffic_direction':traffic_direction}
     return render(request, 'firewall/addrule.html', context)
 
-def RemoveRule(request, pk):
-    rule = FirewallRule.objects.get(ID=pk)
+def remove_rule(request, pk):
+    rule = FirewallRule.objects.get(id=pk)
     rule.delete()
     success_message = "Rule removed successfully!"
     return redirect(reverse('home') + "?success_message=" + success_message)

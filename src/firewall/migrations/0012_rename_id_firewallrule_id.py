@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('firewall', '0011_alter_firewallrule_rule_num_and_more'),
+        ('firewall', '0011_alter_firewallrule_rule_id_and_more'),
     ]
 
     operations = [

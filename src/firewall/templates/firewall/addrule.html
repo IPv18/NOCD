@@ -22,21 +22,21 @@
 {% block content %} 
 
     <h1>Rule Form</h1>
-        <form id="ruleform" action="" method="POST">
+        <form id="rule_form" action="" method="POST">
             {% csrf_token %} 
             {% for field in form %}
                 <p>
-                    {% if field.name == "rule_num" %} 
+                    {% if field.name == "rule_id" %} 
                         <label>
                             Rule num <span style="color: red">*</span>:
                         </label>
-                        {% if UpdateOrSubmit == 'UPDATE' and instance.rule_num is not none %}
+                        {% if UpdateOrSubmit == 'UPDATE' and instance.rule_id is not none %}
                             <input id="id_{{ field.name }}" 
                                    type="number" 
                                    name="{{ field.name }}" 
                                    min="1" 
                                    max="999" 
-                                   value="{{ instance.rule_num }}" 
+                                   value="{{ instance.rule_id }}" 
                                    required>
                         {% else %}
                             <input id="id_{{ field.name }}" 
@@ -50,7 +50,7 @@
                         <label for="id_{{ field.name }}">
                             Description <span style="color: red">*</span>:
                         </label>
-                        {% if UpdateOrSubmit == 'UPDATE' and instance.rule_num is not none %}
+                        {% if UpdateOrSubmit == 'UPDATE' and instance.rule_id is not none %}
                             <input id="id_{{ field.name }}" 
                                    type="text" 
                                    name="description" 

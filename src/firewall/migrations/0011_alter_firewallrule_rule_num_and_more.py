@@ -12,11 +12,11 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterField(
             model_name='firewallrule',
-            name='rule_num',
+            name='rule_id',
             field=models.IntegerField(),
         ),
         migrations.AlterUniqueTogether(
             name='firewallrule',
-            unique_together={('rule_num', 'traffic_direction', 'IP_family')},
+            unique_together={('rule_id', 'traffic_direction', 'ip_family')},
         ),
     ]
