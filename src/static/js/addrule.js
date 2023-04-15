@@ -15,10 +15,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const source_address = document.getElementById("id_source_address");
   const destination_address = document.getElementById("id_destination_address");
 
+  const submitBtn = form.querySelector('input[type="submit"]');
   const UpdateOrSubmit = submitBtn.getAttribute('UpdateOrSubmit');
   const pattern = source_address.getAttribute('pattern');
-  const submitBtn = form.querySelector('input[type="submit"]');
-
+  
   const udpTypes = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
   const tcpTypes = ["CUSTOM TCP", "ALL TCP"];
 

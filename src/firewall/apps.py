@@ -23,16 +23,16 @@ class FirewallConfig(AppConfig):
 
         if not rules[0]:
             FirewallRule.objects.create(
-                IP_family='IPv4', traffic_direction='Inbound', rule_num=1000, action='ACCEPT')
+                IP_family='IPv4', traffic_direction='Inbound', rule_num=1000, description="ALL TRAFFIC", action='ACCEPT')
 
         if not rules[1]:
             FirewallRule.objects.create(
-                IP_family='IPv4', traffic_direction='Outbound', rule_num=1000, action='ACCEPT')
+                IP_family='IPv4', traffic_direction='Outbound', rule_num=1000, description="ALL TRAFFIC", action='ACCEPT')
 
         if not rules[2]:
             FirewallRule.objects.create(
-                IP_family='IPv6', traffic_direction='Inbound', rule_num=1000, action='ACCEPT')
+                IP_family='IPv6', traffic_direction='Inbound', rule_num=1000, description="ALL TRAFFIC", action='ACCEPT')
 
         if not rules[3]:
             FirewallRule.objects.create(
-                IP_family='IPv6', traffic_direction='Outbound', rule_num=1000, action='ACCEPT')
+                IP_family='IPv6', traffic_direction='Outbound', rule_num=1000, description="ALL TRAFFIC", action='ACCEPT')

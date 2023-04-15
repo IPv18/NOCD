@@ -25,13 +25,13 @@ def index(request):
         context = {
             "tables": [
                 FirewallRule.objects.filter(
-                    ip_family='IPv4', traffic_direction='Inbound').order_by('rule_num'),
+                    IP_family='IPv4', traffic_direction='Inbound').order_by('rule_num'),
                 FirewallRule.objects.filter(
-                    ip_family='IPv4', traffic_direction='Outbound').order_by('rule_num'),
+                    IP_family='IPv4', traffic_direction='Outbound').order_by('rule_num'),
                 FirewallRule.objects.filter(
-                    ip_family='IPv6', traffic_direction='Inbound').order_by('rule_num'),
+                    IP_family='IPv6', traffic_direction='Inbound').order_by('rule_num'),
                 FirewallRule.objects.filter(
-                    ip_family='IPv6', traffic_direction='Outbound').order_by('rule_num'),
+                    IP_family='IPv6', traffic_direction='Outbound').order_by('rule_num'),
             ]
         }
 
