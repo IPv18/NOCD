@@ -74,22 +74,22 @@
     <div class="tab-content" id="pills-tabContent">
         {% for table in tables %}
             <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-            id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}"
+            id="pills-{{ table.0.IP_family }}-{{ table.0.traffic_direction }}"
             role="tabpanel"
-            aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
+            aria-labelledby="pills-{{ table.0.IP_family }}-{{ table.0.traffic_direction }}-tab">
             <!-- ------------------------------break------------------------------ -->
                 <button type="button"
-                        onclick="location.href='{% url "addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
+                        onclick="location.href='{% url "addrule" %}?ip_family={{ table.0.IP_family }}&traffic_direction={{ table.0.traffic_direction }}'">
                     Add Rule
                 </button>
                 {% if table.last.action == 'ACCEPT' %}
                     <button type="button"
-                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=0'">
+                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.IP_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=0'">
                         Switch to Least Privilege
                     </button>
                 {% else %}
                     <button type="button"
-                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=1'">
+                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.IP_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=1'">
                         Switch to Zero Trust
                     </button>
                 {% endif %}
