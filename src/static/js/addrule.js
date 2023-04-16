@@ -195,8 +195,9 @@ document.addEventListener("DOMContentLoaded", function () {
       rule_priority_field.validity.rangeOverflow ||
       rule_priority_field.validity.rangeUnderflow
     ) {
-      alert("The value must be between 1 and 999");
       rule_priority_field.value = "";
+      errorModalBody.innerHTML = 'The value must be between 1 and 999';
+      $('#errorModal').modal("show");
     }
   });
 
