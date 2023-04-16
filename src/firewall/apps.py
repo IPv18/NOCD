@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-
+from firewall.models import FirewallRule
 
 class FirewallConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
@@ -9,7 +9,7 @@ class FirewallConfig(AppConfig):
         self.check_last_rules()
 
     def check_last_rules(self):
-        from firewall.models import FirewallRule
+        
         rules = [
             FirewallRule.objects.filter(
                 ip_family='IPv4', traffic_direction='Inbound', rule_priority=1000),
