@@ -8,50 +8,92 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Firewall</title>
     <meta='viewport' conent='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
-    <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
     <link rel="stylesheet" href='{% static "css/style.css" %}'>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
 
-{% endblock %}
-
+{% endblock header %}
+<!-- ------------------------------break------------------------------ -->
 {% block content %}
 
     {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
             <strong>{{ message }}</strong>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true">×</span>
             </button>
         </div>
     {% endfor %}
+    <!-- ------------------------------break------------------------------ -->
     <h1>Firewall Home Page</h1>
     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="pills-IPv4-Inbound-tab" data-toggle="pill" href="#pills-IPv4-Inbound" role="tab" aria-controls="pills-IPv4-Inbound" aria-selected="true">IPv4 Inbound</a>
+        <li class="nav-tab">
+            <a class="nav-link active"
+               id="pills-IPv4-Inbound-tab"
+               data-toggle="pill"
+               href="#pills-IPv4-Inbound"
+               role="tab"
+               aria-controls="pills-IPv4-Inbound"
+               aria-selected="true">IPv4 Inbound</a>
+        </li>
+        <li class="nav-tab">
+            <a class="nav-link"
+               id="pills-IPv4-Outbound-tab"
+               data-toggle="pill"
+               href="#pills-IPv4-Outbound"
+               role="tab"
+               aria-controls="pills-IPv4-Outbound"
+               aria-selected="false">IPv4 Outbound</a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" id="pills-IPv4-Outbound-tab" data-toggle="pill" href="#pills-IPv4-Outbound" role="tab" aria-controls="pills-IPv4-Outbound" aria-selected="false">IPv4 Outbound</a>
+        <li class="nav-tab">
+            <a class="nav-link"
+               id="pills-IPv6-Inbound-tab"
+               data-toggle="pill"
+               href="#pills-IPv6-Inbound"
+               role="tab"
+               aria-controls="pills-IPv6-Inbound"
+               aria-selected="false">IPv6 Inbound</a>
         </li>
-        
-        <li class="nav-item">
-            <a class="nav-link" id="pills-IPv6-Inbound-tab" data-toggle="pill" href="#pills-IPv6-Inbound" role="tab" aria-controls="pills-IPv6-Inbound" aria-selected="false">IPv6 Inbound</a>
-        </li>
-        
-        <li class="nav-item">
-            <a class="nav-link" id="pills-IPv6-Outbound-tab" data-toggle="pill" href="#pills-IPv6-Outbound" role="tab" aria-controls="pills-IPv6-Outbound" aria-selected="false">IPv6 Outbound</a>
+
+        <li class="nav-tab">
+            <a class="nav-link"
+               id="pills-IPv6-Outbound-tab"
+               data-toggle="pill"
+               href="#pills-IPv6-Outbound"
+               role="tab"
+               aria-controls="pills-IPv6-Outbound"
+               aria-selected="false">IPv6 Outbound</a>
         </li>
     </ul>
+    <!-- ------------------------------break------------------------------ -->
     <div class="tab-content" id="pills-tabContent">
         {% for table in tables %}
-            <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="pills-{{table.0.IP_family}}-{{table.0.traffic_direction}}" role="tabpanel" aria-labelledby="pills-{{table.0.IP_family}}-{{table.0.traffic_direction}}-tab">
-                <button type="button" onclick="location.href='{% url "addrule" %}?ip_family={{table.0.IP_family}}&traffic_direction={{table.0.traffic_direction}}'">add rule</button>
+            <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+            id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}"
+            role="tabpanel"
+            aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
+            <!-- ------------------------------break------------------------------ -->
+                <button type="button"
+                        onclick="location.href='{% url "addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
+                    Add Rule
+                </button>
                 {% if table.last.action == 'ACCEPT' %}
-                    <button type="button" onclick="location.href='{% url "home" %}?ip_family={{table.0.IP_family}}&traffic_direction={{table.0.traffic_direction}}&new_action_index=0'">Switch to least privilege</button>
-                {% else %}  
-                    <button type="button" onclick="location.href='{% url "home" %}?ip_family={{table.0.IP_family}}&traffic_direction={{table.0.traffic_direction}}&new_action_index=1'">Switch to zero trust</button>
+                    <button type="button"
+                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=0'">
+                        Switch to Least Privilege
+                    </button>
+                {% else %}
+                    <button type="button"
+                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=1'">
+                        Switch to Zero Trust
+                    </button>
                 {% endif %}
+                 <!-- ------------------------------break------------------------------ -->
                 <table>
                     <tr>
                         <th>Rule #</th>
@@ -66,75 +108,21 @@
                         <th>Remove</th>
                     </tr>
                     {% for rule in table %}
-                        <tr>
-                            <td>{{rule.rule_num}}</td>
-                            <td>{{rule.description}}</td>
-                            {% if rule.protocol is not none %}
-                                <td>{{rule.protocol}}</td>
-                            {% else %}
-                                <td>any</td>
-                            {% endif %}
-                            {% if rule.source_address is not none %}
-                                <td>{{rule.source_address}}</td>
-                            {% else %}
-                                <td>any</td>
-                            {% endif %}
-                            {% if rule.source_port is not none %}
-                                <td>{{rule.source_port}}</td>
-                            {% else %}
-                                <td>any</td>
-                            {% endif %}
-                            {% if rule.destination_address is not none %}
-                                <td>{{rule.destination_address}}</td>
-                            {% else %}
-                                <td>any</td>
-                            {% endif %}
-                            {% if rule.destination_port is not none %}
-                                <td>{{rule.destination_port}}</td>
-                            {% else %}
-                                <td>any</td>
-                            {% endif %}
-                            <td>{{rule.action}}</td>
-                            {% if rule.rule_num != 1000 %}
-                                <td><button type="button" class="btn btn-primary" onclick="location.href='{% url 'updaterule' rule.ID %}'">Edit</button></td>
-                                <td>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                        Remove
-                                    </button>
-                                    
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">
-                                                        Confirmation required!
-                                                    </h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Are you sure you want to delete this rule?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Canel</button>
-                                                    <button type="button" class="btn btn-primary" onclick="location.href='{% url 'removerule' rule.ID %}'">Yes</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            {% endif %}
-                        </tr>
+                        {% include "firewall/rule.html" %}
                     {% endfor %}
                 </table>
             </div>
         {% endfor %}
     </div>
     <hr>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-{% endblock %}
+    <!-- ------------------------------break------------------------------ -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+{% endblock content%}

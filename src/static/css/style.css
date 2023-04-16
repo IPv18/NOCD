@@ -66,7 +66,6 @@
 .nav-item:hover{
 	background-color: var(--nav-background-hover);
 	color: var(--nav-text);
-	font-size: var(--nav-text-size-hover);
 	opacity: 0.8;
 	transition: opacity 0.5s ease-in-out;
 }

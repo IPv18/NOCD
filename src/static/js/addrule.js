@@ -1,31 +1,31 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const ip_family_param = urlParams.get("ip_family");
-  const traffic_direction_param = urlParams.get("traffic_direction");
+  const URL_PARAMS = new URLSearchParams(window.location.search);
+  const IP_FAMILY_PARAM = URL_PARAMS.get("ip_family");
+  const TRAFFIC_DIRECTION_PARAM = URL_PARAMS.get("traffic_direction");
 
-  const form = document.getElementById("ruleform");
-  const ruleNum = document.getElementById("id_rule_num");
-  const description = document.getElementById("id_description");
-  const typeSelect = document.getElementById("id_type");
-  const protocolSelect = document.getElementById("id_protocol");
-  const traffic_direction = document.getElementById("id_traffic_direction");
-  const IP_family = document.getElementById("id_IP_family");
-  const source_port = document.getElementById("id_source_port");
-  const destination_port = document.getElementById("id_destination_port");
-  const source_address = document.getElementById("id_source_address");
-  const destination_address = document.getElementById("id_destination_address");
+  const FORM = document.getElementById("rule_form");
+  const RULE_NUM = document.getElementById("id_rule_id");
+  const DESCRIPTION = document.getElementById("id_description");
+  const TYPE_SELECT = document.getElementById("id_type");
+  const PROTOCOL_SELECT = document.getElementById("id_protocol");
+  const TRAFFIC_DIRECTION = document.getElementById("id_traffic_direction");
+  const IP_FAMILY = document.getElementById("id_ip_family");
+  const SOURCE_PORT = document.getElementById("id_source_port");
+  const DESTINATION_PORT = document.getElementById("id_destination_port");
+  const SOURCE_ADDRESS = document.getElementById("id_source_address");
+  const DESTINATION_ADDRESS = document.getElementById("id_destination_address");
 
-  const UpdateOrSubmit = submitBtn.getAttribute('UpdateOrSubmit');
-  const pattern = source_address.getAttribute('pattern');
-  const submitBtn = form.querySelector('input[type="submit"]');
+  const SUBMIT_BUTTON = FORM.querySelector('input[type="submit"]');
+  const UPDATE_OR_SUBMIT = SUBMIT_BUTTON.getAttribute('UpdateOrSubmit');
+  const PATTERN = SOURCE_ADDRESS.getAttribute('pattern');
 
-  const udpTypes = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
-  const tcpTypes = ["CUSTOM TCP", "ALL TCP"];
+  const UDP_TYPE = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
+  const TCP_TYPE = ["CUSTOM TCP", "ALL TCP"];
 
-  if (UpdateOrSubmit == "UPDATE")
-    OriginalRuleNum = ruleNum.value;
+  if (UPDATE_OR_SUBMIT == "UPDATE")
+    original_rule_id = RULE_NUM.value;
 
-  const portMapping = {
+  const PORT_MAPPING = {
     "SSH 22": 22,
     "TELNET 23": 23,
     "SMTP 25": 25,
@@ -44,173 +44,172 @@ document.addEventListener("DOMContentLoaded", function () {
     "NFS 2049": 2049,
   };
 
-  if (ip_family_param !== null && traffic_direction_param !== null) {
-    traffic_direction.value = traffic_direction_param;
-    IP_family.value = ip_family_param;
-    traffic_direction.disabled = true;
-    IP_family.disabled = true;
+  if (IP_FAMILY_PARAM !== null && TRAFFIC_DIRECTION_PARAM !== null) {
+    TRAFFIC_DIRECTION.value = TRAFFIC_DIRECTION_PARAM;
+    IP_FAMILY.value = IP_FAMILY_PARAM;
+    TRAFFIC_DIRECTION.disabled = true;
+    IP_FAMILY.disabled = true;
   } else {
-    traffic_direction.disabled = true;
-    IP_family.disabled = true;
-    if (typeSelect.value == "ALL UDP") {
-      source_port.disabled = destination_port.disabled = true;
-    } else if (typeSelect.value == "ALL TCP") {
-      source_port.disabled = destination_port.disabled = true;
+    TRAFFIC_DIRECTION.disabled = true;
+    IP_FAMILY.disabled = true;
+    if (TYPE_SELECT.value == "ALL UDP") {
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true;
+    } else if (TYPE_SELECT.value == "ALL TCP") {
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true;
     } else if (
-      typeSelect.value == "CUSTOM ICMP" ||
-      typeSelect.value === "ALL ICMP"
+      TYPE_SELECT.value == "CUSTOM ICMP" ||
+      TYPE_SELECT.value === "ALL ICMP"
     ) {
-      source_port.disabled = destination_port.disabled = true;
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true;
     } else {
-      if (traffic_direction.value === "Inbound") {
-        source_port.disabled = true;
+      if (TRAFFIC_DIRECTION.value === "Inbound") {
+        SOURCE_PORT.disabled = true;
       } else {
-        destination_port.disabled = true;
+        DESTINATION_PORT.disabled = true;
       }
     }
   }
 
-  typeSelect.addEventListener("change", (event) => {
-    const selectedType = event.target.value;
+  TYPE_SELECT.addEventListener("change", (event) => {
+    const SELECTED_TYPE = event.target.value;
 
     let protocolValue = "TCP";
 
-    if (udpTypes.includes(selectedType)) {
+    if (UDP_TYPE.includes(SELECTED_TYPE)) {
       protocolValue = "UDP";
-      if (selectedType === "ALL UDP") {
-        source_port.value = "";
-        destination_port.value = "";
+      if (SELECTED_TYPE === "ALL UDP") {
+        SOURCE_PORT.value = "";
+        DESTINATION_PORT.value = "";
       }
-      source_port.disabled = destination_port.disabled =
-        selectedType === "ALL UDP";
-      source_address.disabled = destination_address.disabled = false;
-    } else if (tcpTypes.includes(selectedType)) {
-      if (selectedType === "ALL TCP") {
-        source_port.value = "";
-        destination_port.value = "";
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled =
+        SELECTED_TYPE === "ALL UDP";
+      SOURCE_ADDRESS.disabled = DESTINATION_ADDRESS.disabled = false;
+    } else if (TCP_TYPE.includes(SELECTED_TYPE)) {
+      if (SELECTED_TYPE === "ALL TCP") {
+        SOURCE_PORT.value = "";
+        DESTINATION_PORT.value = "";
       }
-      source_port.disabled = destination_port.disabled =
-        selectedType === "ALL TCP";
-      source_address.disabled = destination_address.disabled = false;
-    } else if (selectedType == "CUSTOM ICMP" || selectedType == "ALL ICMP") {
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled =
+        SELECTED_TYPE === "ALL TCP";
+      SOURCE_ADDRESS.disabled = DESTINATION_ADDRESS.disabled = false;
+    } else if (SELECTED_TYPE == "CUSTOM ICMP" || SELECTED_TYPE == "ALL ICMP") {
       protocolValue = "ICMP";
-      source_port.value = destination_port.value = "";
-      source_port.disabled = destination_port.disabled = true;
+      SOURCE_PORT.value = DESTINATION_PORT.value = "";
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true;
     }
 
-    protocolSelect.value = protocolValue;
+    PROTOCOL_SELECT.value = protocolValue;
 
-    if (selectedType in portMapping) {
-      const portNumber = portMapping[selectedType];
-      if (traffic_direction.value === "Inbound") {
-        source_port.value = portNumber;
-        source_port.disabled = true;
-        destination_port.disabled = false;
+    if (SELECTED_TYPE in PORT_MAPPING) {
+      const PORT_NUMBER = PORT_MAPPING[SELECTED_TYPE];
+      if (TRAFFIC_DIRECTION.value === "Inbound") {
+        SOURCE_PORT.value = PORT_NUMBER;
+        SOURCE_PORT.disabled = true;
+        DESTINATION_PORT.disabled = false;
       } else {
-        destination_port.value = portNumber;
-        destination_port.disabled = true;
-        source_port.disabled = false;
+        DESTINATION_PORT.value = PORT_NUMBER;
+        DESTINATION_PORT.disabled = true;
+        SOURCE_PORT.disabled = false;
       }
-      source_address.disabled = destination_address.disabled = false;
+      SOURCE_ADDRESS.disabled = DESTINATION_ADDRESS.disabled = false;
     }
   });
-  protocolSelect.addEventListener("change", (event) => {
-    const selectedType = event.target.value;
-    if (selectedType == "UDP") {
+  PROTOCOL_SELECT.addEventListener("change", (event) => {
+    const SELECTED_TYPE = event.target.value;
+    if (SELECTED_TYPE == "UDP") {
       TypeValue = "CUSTOM UDP";
-      source_port.disabled = false;
-      destination_port.disabled = false;
-      source_address.disabled = false;
-      destination_address.disabled = false;
-    } else if (selectedType == "ICMP") {
+      SOURCE_PORT.disabled = false;
+      DESTINATION_PORT.disabled = false;
+      SOURCE_ADDRESS.disabled = false;
+      DESTINATION_ADDRESS.disabled = false;
+    } else if (SELECTED_TYPE == "ICMP") {
       TypeValue = "CUSTOM ICMP";
-      source_port.value = "";
-      destination_port.value = "";
-      source_port.disabled = true;
-      destination_port.disabled = true;
-      source_address.disabled = false;
-      destination_address.disabled = false;
-    } else if (selectedType == "TCP") {
+      SOURCE_PORT.value = "";
+      DESTINATION_PORT.value = "";
+      SOURCE_PORT.disabled = true;
+      DESTINATION_PORT.disabled = true;
+      SOURCE_ADDRESS.disabled = false;
+      DESTINATION_ADDRESS.disabled = false;
+    } else if (SELECTED_TYPE == "TCP") {
       TypeValue = "CUSTOM TCP";
-      source_port.disabled = false;
-      destination_port.disabled = false;
-      source_address.disabled = false;
-      destination_address.disabled = false;
+      SOURCE_PORT.disabled = false;
+      DESTINATION_PORT.disabled = false;
+      SOURCE_ADDRESS.disabled = false;
+      DESTINATION_ADDRESS.disabled = false;
     }
-    typeSelect.value = TypeValue;
+    TYPE_SELECT.value = TypeValue;
   });
 
-  submitBtn.addEventListener("click", (event) => {
-    if (!ruleNum.value || !description.value) {
+  SUBMIT_BUTTON.addEventListener("click", (event) => {
+    if (!RULE_NUM.value || !DESCRIPTION.value) {
       errorModalBody.innerHTML = 'Both rule number and description are required.';
       $('#errorModal').modal("show");
       event.preventDefault();
       return;
     }
     else {
-      if (UpdateOrSubmit == "UPDATE") {
-        if (OriginalRuleNum == ruleNum.value) {
-          source_port.disabled = false;
-          destination_port.disabled = false;
-          source_address.disabled = false;
-          destination_address.disabled = false;
-          traffic_direction.disabled = false;
-          IP_family.disabled = false;
-          form.submit();
+      if (UPDATE_OR_SUBMIT == "UPDATE") {
+        if (original_rule_id == RULE_NUM.value) {
+          SOURCE_PORT.disabled = false;
+          DESTINATION_PORT.disabled = false;
+          SOURCE_ADDRESS.disabled = false;
+          DESTINATION_ADDRESS.disabled = false;
+          TRAFFIC_DIRECTION.disabled = false;
+          IP_FAMILY.disabled = false;
+          FORM.submit();
         }
       }
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', `/firewall/check_rule_uniqueness/?rule_num=${ruleNum.value}&traffic_direction=${traffic_direction.value}&IP_family=${IP_family.value}`);
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const response = JSON.parse(xhr.responseText);
-          if (response.exists) {
+      const XML_HTTP_REQUEST = new XMLHttpRequest();
+      XML_HTTP_REQUEST.open('GET', `/firewall/check_rule_uniqueness/?rule_id=${RULE_NUM.value}&traffic_direction=${TRAFFIC_DIRECTION.value}&ip_family=${IP_FAMILY.value}`);
+      XML_HTTP_REQUEST.onload = () => {
+        if (XML_HTTP_REQUEST.status === 200) {
+          const XML_HTTP_RESPONSE = JSON.parse(XML_HTTP_REQUEST.responseText);
+          if (XML_HTTP_RESPONSE.exists) {
             errorModalBody.innerHTML = 'This rule number alread exists, please choose a unique rule number.';
             $('#errorModal').modal("show");
           }
           else {
-            // Enable disabled fields and submit the form
-            source_port.disabled = false;
-            destination_port.disabled = false;
-            source_address.disabled = false;
-            destination_address.disabled = false;
-            traffic_direction.disabled = false;
-            IP_family.disabled = false;
-            form.submit();
+            SOURCE_PORT.disabled = false;
+            DESTINATION_PORT.disabled = false;
+            SOURCE_ADDRESS.disabled = false;
+            DESTINATION_ADDRESS.disabled = false;
+            TRAFFIC_DIRECTION.disabled = false;
+            IP_FAMILY.disabled = false;
+            FORM.submit();
           }
         } else {
           errorModalBody.innerHTML = 'An error occurred while checking the rule uniqueness.';
           $('#errorModal').modal("show");
         }
       };
-      xhr.send();
-      event.preventDefault(); // Prevent the form from being submitted before the AJAX request completes
+      XML_HTTP_REQUEST.send();
+      event.preventDefault(); 
     }
   });
 
   // input constraints
 
-  var ruleNumField = document.querySelector('input[name="rule_num"]');
-  ruleNumField.addEventListener("input", function () {
+  var rule_id_field = document.querySelector('input[name="rule_id"]');
+  rule_id_field.addEventListener("input", function () {
     if (
-      ruleNumField.validity.rangeOverflow ||
-      ruleNumField.validity.rangeUnderflow
+      rule_id_field.validity.rangeOverflow ||
+      rule_id_field.validity.rangeUnderflow
     ) {
       alert("The value must be between 1 and 999");
-      ruleNumField.value = "";
+      rule_id_field.value = "";
     }
   });
 
   function validateIPAddress(input) {
-    const regex = new RegExp(
-      //Normal IPv6 Regex : "^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"
-      //Compressed IPv6 Regex : "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
-      //IPv4 Regex : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$"
-      pattern
+    const REGEX = new RegExp(
+      //Normal IPv6 REGEX : "^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"
+      //Compressed IPv6 REGEX : "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+      //IPv4 REGEX : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$"
+      PATTERN
     );
-    if (!regex.test(input.value)) {
+    if (!REGEX.test(input.value)) {
       input.value = null;
-      if (pattern == "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$")
+      if (PATTERN == "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$")
         errorModalBody.innerHTML = 'Please enter a valid IPv4 address.';
       else
         errorModalBody.innerHTML = 'Please enter a valid IPv6 address.';
@@ -219,29 +218,29 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validatePort(input) {
-    const regex = new RegExp(
+    const REGEX = new RegExp(
       "^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))$"
     );
-    if (!regex.test(input.value)) {
+    if (!REGEX.test(input.value)) {
       input.value = "";
       errorModalBody.innerHTML = 'Please enter a valid port number';
       $('#errorModal').modal("show");
     }
   }
 
-  source_port.addEventListener("input", function () {
-    validatePort(source_port);
+  SOURCE_PORT.addEventListener("input", function () {
+    validatePort(SOURCE_PORT);
   });
 
-  destination_port.addEventListener("input", function () {
-    validatePort(destination_port);
+  DESTINATION_PORT.addEventListener("input", function () {
+    validatePort(DESTINATION_PORT);
   });
 
-  source_address.addEventListener("blur", function () {
-    validateIPAddress(source_address);
+  SOURCE_ADDRESS.addEventListener("blur", function () {
+    validateIPAddress(SOURCE_ADDRESS);
   });
 
-  destination_address.addEventListener("blur", function () {
-    validateIPAddress(destination_address);
+  DESTINATION_ADDRESS.addEventListener("blur", function () {
+    validateIPAddress(DESTINATION_ADDRESS);
   });
 });
