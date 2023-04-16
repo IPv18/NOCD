@@ -31,7 +31,7 @@ class FirewallRule(models.Model):
         ('UDP', 'UDP'),
         ('ICMP', 'ICMP')
     ]
-    rule_id = models.IntegerField()                                                                    
+    rule_priority = models.IntegerField()                                                                    
     description = models.CharField(max_length=255)                                                      
     traffic_direction = models.CharField(max_length=30, choices=direction_choices, default='Inbound')   
     ip_family = models.CharField(max_length=30, choices=ip_family_choices, default='IPv4')      
@@ -46,7 +46,7 @@ class FirewallRule(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
 
     class Meta:
-        unique_together = ('rule_id', 'traffic_direction', 'ip_family')
+        unique_together = ('rule_priority', 'traffic_direction', 'ip_family')
 
     def __str__(self):
         return self.description

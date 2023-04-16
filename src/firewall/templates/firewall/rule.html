@@ -1,6 +1,6 @@
 <tr>
     <!-- Number -->
-    <td>{{ rule.rule_id }}</td>
+    <td>{{ rule.rule_priority }}</td>
     <!-- Description -->
     <td>{{ rule.description }}</td>
     <!-- Protocol -->
@@ -46,7 +46,7 @@
     <!-- Action -->
     <td>{{ rule.action }}</td>
     <!-- ------------------------------break------------------------------ -->
-    {% if rule.rule_id != 1000 %}
+    {% if rule.rule_priority != 1000 %}
         <!-- Edit -->
         <td>
             <button type="button"
