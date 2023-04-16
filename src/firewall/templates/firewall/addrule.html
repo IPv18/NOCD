@@ -61,7 +61,7 @@
                             <input id="id_{{ field.name }}"
                                    type="text" 
                                    name="description" 
-                                   maxlength="255"      
+                                   maxlength="255"
                                    required>
                         {% endif %}
                     {% elif field.name == "source_port" %} 
@@ -87,7 +87,7 @@
                                    type="number" 
                                    name="{{ field.name }}" 
                                    min="1" 
-                                   max="65536"  
+                                   max="65536"
                                    value="{{ instance.destination_port }}">
                         {% else %}
                             <input id="id_{{ field.name }}" 
@@ -116,7 +116,7 @@
                             {% else %}
                                 <input id="id_{{ field.name }}" 
                                        type="text" name="{{ field.name }}" 
-                                       pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"  
+                                       pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"
                                        value="{{ instance.source_address }}">
                             {% endif %} 
                         {% else %}
@@ -145,12 +145,12 @@
                             {% if ip_family == 'IPv4' %}
                                 <input id="id_{{ field.name }}" 
                                        type="text" name="{{ field.name }}" 
-                                       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$"  
+                                       pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$"
                                        value="{{ instance.destination_address }}">
                             {% else %}
                                 <input id="id_{{ field.name }}" 
                                        type="text" name="{{ field.name }}" 
-                                       pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"  
+                                       pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"
                                        value="{{ instance.destination_address }}">
                             {% endif %} 
                         {% else %}
