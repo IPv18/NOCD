@@ -31,19 +31,16 @@ class FirewallRule(models.Model):
         ('UDP', 'UDP'),
         ('ICMP', 'ICMP')
     ]
-<<<<<<< HEAD
     rule_priority = models.IntegerField()                                                                    
     description = models.CharField(max_length=255)                                                      
     traffic_direction = models.CharField(max_length=30, choices=direction_choices, default='Inbound')   
     ip_family = models.CharField(max_length=30, choices=ip_family_choices, default='IPv4')      
     type = models.CharField(max_length=50, choices=type_choices, default="CUSTOM TCP", null=True, blank=True)   
-=======
     rule_id = models.IntegerField()
     description = models.CharField(max_length=255)
     traffic_direction = models.CharField(max_length=30, choices=direction_choices, default='Inbound')
     ip_family = models.CharField(max_length=30, choices=ip_family_choices, default='IPv4')
     type = models.CharField(max_length=50, choices=type_choices, default="CUSTOM TCP", null=True, blank=True)
->>>>>>> be26b163f889044a2169f46b6683813350a2edd7
     protocol = models.CharField(max_length=10, choices=protocol_choices, default="TCP", null=True, blank=True) 
     source_address = models.CharField(max_length=45, null=True, blank=True)
     source_port = models.IntegerField(null=True, blank=True)

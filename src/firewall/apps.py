@@ -20,7 +20,6 @@ class FirewallConfig(AppConfig):
             FirewallRule.objects.filter(
                 ip_family='IPv6', traffic_direction='Outbound', rule_priority=1000),
         ]
-<<<<<<< HEAD
 
         if not rules[0]:
             FirewallRule.objects.create(
@@ -37,7 +36,6 @@ class FirewallConfig(AppConfig):
         if not rules[3]:
             FirewallRule.objects.create(
                 ip_family='IPv6', traffic_direction='Outbound', rule_priority=1000, description="ALL TRAFFIC", action='ACCEPT')
-=======
         
         try:
             if not rules[0]:
@@ -59,4 +57,3 @@ class FirewallConfig(AppConfig):
             # TODO: log error or handle exception
             pass
         
->>>>>>> be26b163f889044a2169f46b6683813350a2edd7
