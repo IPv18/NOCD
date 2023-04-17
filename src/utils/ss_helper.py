@@ -1,3 +1,4 @@
+import subprocess
 from collections import OrderedDict
 
 
@@ -72,6 +73,21 @@ class SocketInfo():
 
 
 
+    def update_info(self) -> None:
+        '''
+        Updates the socket info with the latest info from the syste.
+        '''
+        SsHelper.update_socket_info(self)
+
+
+    def copy(self, other) -> None:
+        '''
+        Copies the attributes of the other socket info object to this socket info object.
+        '''
+        for attr in self.__slots__:
+            setattr(self, attr, getattr(other, attr))
+
+
 class PacketRingBuf(OrderedDict):
     '''
     A ring buffer that stores the last n packet info in a FIFO manner
@@ -86,5 +102,96 @@ class PacketRingBuf(OrderedDict):
         if self._size > 0:
             if len(self) > self._size:
                 self.popitem(False)
+
+
+class SsHelper():
+    '''
+    A helper class that provides functionality for working with network sockets 
+    on Linux using the iproute2/ss command. 
+    '''
+
+    sockets_buf = PacketRingBuf()
+
+    @staticmethod
+    def parse_ss_output(line: str)  -> None:
+        '''
+        Parses the output of the ss command and returns a SocketInfo objec.
+        '''
+        cols = line.split(" ")
+        return SocketInfo(
+            ip_src=cols[4].rsplit(":", 1)[0].split("%")[0],
+            port_src=cols[4].rsplit(":", 1)[1],
+            ip_dest=cols[5].rsplit(":", 1)[0].split("%")[0],
+            port_dest=cols[5].rsplit(":", 1)[1],
+            protocol=cols[0].lower(),
+            program=cols[6].split('"')[1]
+            if '"' in cols[6] else "Unknown"
+        )
+
+    @classmethod
+    def update_buffer(cls)  -> None:
+        '''
+        Runs the ss command and updates sockets in buffer or creates a new one if it doesn't exist.
+        '''
+
+        popen_process = subprocess.Popen(
+            ["sudo ss -tuopna | sed 's/\s\+/ /g'"],
+            stdout=subprocess.PIPE, shell=True)
+        # TODO - do we need to use sudo here?
+        # TODO - does this support ipv6? test it :)
+        try:
+            reader = iter(popen_process.stdout.readline, b'')
+            # skip the first line
+            next(reader)
+            for line in reader:
+                line = line.decode("utf-8").strip()
+                new_socket = cls.parse_ss_output(line)
+                key = (new_socket.ip_src, new_socket.port_src, new_socket.protocol)
+                cls.sockets_buf[key] = new_socket
+
+        except Exception as ex:
+            print(f"Error while updating ss buffer: {ex}")
+            # TODO - add logger and log this
+            # TODO - add exception handling
+
+
+    @classmethod
+    def update_socket_info(cls, socket_info:SocketInfo)  -> bool:
+        '''
+        Returns the socket that has created the input packet.
+        '''
+
+        ip_src = socket_info.ip_src
+        port_src = socket_info.port_src
+        ip_dest = socket_info.ip_dest
+        port_dest = socket_info.port_dest
+        protocol = socket_info.protocol
+
+        keys_to_check = [
+            (ip_src, port_src, protocol),
+            (ip_dest, port_dest, protocol),
+            (ip_src, "*", protocol),
+            (ip_dest, "*", protocol),
+            ("0.0.0.0", port_src, protocol),
+            ("[::]", port_src, protocol),
+            ("0.0.0.0", port_dest, protocol),
+            ("[::]", port_dest, protocol),
+            ("*", port_src, protocol),
+            ("*", port_dest, protocol),
+            ("*", "*", protocol),
+        ]
+
+        for key in keys_to_check:
+            if key in cls.sockets_buf.keys():
+                result = cls.sockets_buf[key]
+                if ip_src in key or port_src in key:
+                    result.direction = "outbound"
+                else:
+                    result.direction = "inbound"
+                # Deep copy the socket info object
+                socket_info.copy(result)
+                return True
+
+        return False
 
 
