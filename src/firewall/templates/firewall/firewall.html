@@ -69,14 +69,14 @@
                aria-controls="pills-IPv6-Outbound"
                aria-selected="false">IPv6 Outbound</a>
         </li>
-    </ul>
+    </ul> 
     <!-- ------------------------------break------------------------------ -->
     <div class="tab-content" id="pills-tabContent">
         {% for table in tables %}
             <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-            id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}"
-            role="tabpanel"
-            aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
+                 id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}"
+                 role="tabpanel"
+                aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
             <!-- ------------------------------break------------------------------ -->
                 <button type="button"
                         onclick="location.href='{% url "addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
