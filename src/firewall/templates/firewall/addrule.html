@@ -26,17 +26,17 @@
             {% csrf_token %} 
             {% for field in form %}
                 <p>
-                    {% if field.name == "rule_id" %} 
+                    {% if field.name == "rule_priority" %} 
                         <label>
                             Rule num <span style="color: red">*</span>:
                         </label>
-                        {% if UpdateOrSubmit == 'UPDATE' and instance.rule_id is not none %}
+                        {% if update_or_submit == 'UPDATE' and instance.rule_priority is not none %}
                             <input id="id_{{ field.name }}" 
                                    type="number" 
                                    name="{{ field.name }}" 
                                    min="1" 
                                    max="999" 
-                                   value="{{ instance.rule_id }}" 
+                                   value="{{ instance.rule_priority }}" 
                                    required>
                         {% else %}
                             <input id="id_{{ field.name }}" 
@@ -50,7 +50,7 @@
                         <label for="id_{{ field.name }}">
                             Description <span style="color: red">*</span>:
                         </label>
-                        {% if UpdateOrSubmit == 'UPDATE' and instance.rule_id is not none %}
+                        {% if update_or_submit == 'UPDATE' and instance.rule_priority is not none %}
                             <input id="id_{{ field.name }}" 
                                    type="text" 
                                    name="description" 
@@ -66,7 +66,7 @@
                         {% endif %}
                     {% elif field.name == "source_port" %} 
                         {{ field.label_tag }}
-                        {% if UpdateOrSubmit == 'UPDATE' and instance.source_port is not none %}
+                        {% if update_or_submit == 'UPDATE' and instance.source_port is not none %}
                             <input id="id_{{ field.name }}" 
                                    type="number" 
                                    name="{{ field.name }}" 
@@ -82,7 +82,7 @@
                         {% endif %} 
                     {% elif field.name == "destination_port" %} 
                         {{field.label_tag }} 
-                        {% if UpdateOrSubmit == 'UPDATE' and instance.destination_port is not none %}
+                        {% if update_or_submit == 'UPDATE' and instance.destination_port is not none %}
                             <input id="id_{{ field.name }}" 
                                    type="number" 
                                    name="{{ field.name }}" 
@@ -106,7 +106,7 @@
                                 IPv6 {{ field.label_tag }}
                             </label>
                         {% endif %}
-                        {% if UpdateOrSubmit == 'UPDATE' and instance.source_address is not none %}
+                        {% if update_or_submit == 'UPDATE' and instance.source_address is not none %}
                             {% if ip_family == 'IPv4' %}
                                 <input id="id_{{ field.name }}" 
                                        type="text" 
@@ -141,7 +141,7 @@
                                 IPv6 {{ field.label_tag }}
                             </label>
                         {% endif %}
-                        {% if UpdateOrSubmit == 'UPDATE' and instance.destination_address is not none %}
+                        {% if update_or_submit == 'UPDATE' and instance.destination_address is not none %}
                             {% if ip_family == 'IPv4' %}
                                 <input id="id_{{ field.name }}" 
                                        type="text" name="{{ field.name }}" 
@@ -172,13 +172,13 @@
                 </p>
             {% endfor %}
             <br />
-            {% if UpdateOrSubmit == 'SUBMIT' %}
+            {% if update_or_submit == 'SUBMIT' %}
                 <input type="submit" 
-                       UpdateOrSubmit="SUBMIT" 
+                       update_or_submit="SUBMIT" 
                        value="Submit">
             {% else %}
                 <input type="submit" 
-                       UpdateOrSubmit="UPDATE" 
+                       update_or_submit="UPDATE" 
                        value="Update">
             {% endif %}
             <button type="button" onclick="location.href='{% url "home" %}'">

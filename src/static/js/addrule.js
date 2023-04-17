@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const TRAFFIC_DIRECTION_PARAM = URL_PARAMS.get("traffic_direction");
 
   const FORM = document.getElementById("rule_form");
-  const RULE_NUM = document.getElementById("id_rule_id");
+  const RULE_NUM = document.getElementById("id_rule_priority");
   const DESCRIPTION = document.getElementById("id_description");
   const TYPE_SELECT = document.getElementById("id_type");
   const PROTOCOL_SELECT = document.getElementById("id_protocol");
@@ -16,14 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const DESTINATION_ADDRESS = document.getElementById("id_destination_address");
 
   const SUBMIT_BUTTON = FORM.querySelector('input[type="submit"]');
-  const UPDATE_OR_SUBMIT = SUBMIT_BUTTON.getAttribute('UpdateOrSubmit');
+  const UPDATE_OR_SUBMIT = SUBMIT_BUTTON.getAttribute('update_or_submit');
   const PATTERN = SOURCE_ADDRESS.getAttribute('pattern');
 
   const UDP_TYPE = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
   const TCP_TYPE = ["CUSTOM TCP", "ALL TCP"];
 
   if (UPDATE_OR_SUBMIT == "UPDATE")
-    original_rule_id = RULE_NUM.value;
+    original_rule_priority = RULE_NUM.value;
 
   const PORT_MAPPING = {
     "SSH 22": 22,
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     else {
       if (UPDATE_OR_SUBMIT == "UPDATE") {
-        if (original_rule_id == RULE_NUM.value) {
+        if (original_rule_priority == RULE_NUM.value) {
           SOURCE_PORT.disabled = false;
           DESTINATION_PORT.disabled = false;
           SOURCE_ADDRESS.disabled = false;
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
       const XML_HTTP_REQUEST = new XMLHttpRequest();
-      XML_HTTP_REQUEST.open('GET', `/firewall/check_rule_uniqueness/?rule_id=${RULE_NUM.value}&traffic_direction=${TRAFFIC_DIRECTION.value}&ip_family=${IP_FAMILY.value}`);
+      XML_HTTP_REQUEST.open('GET', `/firewall/check_rule_uniqueness/?rule_priority=${RULE_NUM.value}&traffic_direction=${TRAFFIC_DIRECTION.value}&ip_family=${IP_FAMILY.value}`);
       XML_HTTP_REQUEST.onload = () => {
         if (XML_HTTP_REQUEST.status === 200) {
           const XML_HTTP_RESPONSE = JSON.parse(XML_HTTP_REQUEST.responseText);
@@ -189,14 +189,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // input constraints
 
-  var rule_id_field = document.querySelector('input[name="rule_id"]');
-  rule_id_field.addEventListener("input", function () {
+  var rule_priority_field = document.querySelector('input[name="rule_priority"]');
+  rule_priority_field.addEventListener("input", function () {
     if (
-      rule_id_field.validity.rangeOverflow ||
-      rule_id_field.validity.rangeUnderflow
+      rule_priority_field.validity.rangeOverflow ||
+      rule_priority_field.validity.rangeUnderflow
     ) {
-      alert("The value must be between 1 and 999");
-      rule_id_field.value = "";
+      rule_priority_field.value = "";
+      errorModalBody.innerHTML = 'The value must be between 1 and 999';
+      $('#errorModal').modal("show");
     }
   });
 
