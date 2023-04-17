@@ -34,9 +34,9 @@ class TCPDumpHelper:
 
         if not isinstance(self.interface, str):
             raise TypeError('interface must be a string')
-        elif not isinstance(self.output_handler, (type(None), callable)):
+        elif self.output_handler and not callable(self.output_handler):
             raise TypeError('output_handler must be a callable or None')
-        elif not isinstance(self.args, (type(None), list)):
+        elif self.args and not isinstance(self.args, list):
             raise TypeError('args must be a list or None')
         elif self.args and not all(isinstance(x, str) for x in self.args):
             raise TypeError('args must be a list of strings')
@@ -50,10 +50,12 @@ class TCPDumpHelper:
         """
 
         self.process = subprocess.Popen(
-            ['tcpdump', '-i', self.interface, " ".join(self.args) if self.args else ""],
+            # TODO - Fix sudo
+            ['sudo', 'tcpdump', '-i', self.interface, " ".join(self.args) if self.args else ""],
             stdout=subprocess.PIPE
         )
-        reader = self.process.stdout.readline
+        output = iter(self.process.stdout.readline, b'')
+        reader = self.tcpdump_parser(output)
         if self.output_handler:
             self.output_handler(reader)
         else:
@@ -78,3 +80,30 @@ class TCPDumpHelper:
 
         for line in iter(reader, b''):
             print(line.decode('utf-8').rstrip())
+
+
+    def tcpdump_parser(self, output):
+        """
+        Parses the output of the tcpdump process and yields the output line by line.
+        """
+
+        for line in output:
+            line = line.decode('utf-8').rstrip()
+            cols = line.split(" ")
+
+            network_proto = cols[1]
+
+            if network_proto != "IP":
+                continue
+
+            yield {
+                "timestamp" : cols[0],
+                # For IP: remove port - e.g. 10.3.141.250.31686
+                "ip_src" : ".".join(cols[2].split(".")[:-1]),
+                "port_src" : cols[2].split(".")[-1],
+                "ip_dest" : ".".join(cols[4].split(".")[:-1]),
+                "port_dest" : cols[4].split(".")[-1],
+                "protocol" : "TCP"  if cols[5] == "Flags" else "UDP",
+                "length" : cols[-1] if cols[5] == "Flags" else cols[-1][1:-1]
+            }
+
