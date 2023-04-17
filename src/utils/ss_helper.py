@@ -1,3 +1,6 @@
+from collections import OrderedDict
+
+
 class SocketInfo():
     '''
     A class that represents information for a network socket
@@ -66,5 +69,22 @@ class SocketInfo():
         Returns an iterator of the values of the socket info object.
         '''
         return iter(getattr(self, attr) for attr in self.__slots__)
+
+
+
+class PacketRingBuf(OrderedDict):
+    '''
+    A ring buffer that stores the last n packet info in a FIFO manner
+    '''
+
+    def __init__(self, *args, size: int = 1024, **kwargs)  -> None:
+        self._size = size
+        super().__init__(*args, **kwargs)
+
+    def __setitem__(self, key, value) -> None:
+        OrderedDict.__setitem__(self, key, value)
+        if self._size > 0:
+            if len(self) > self._size:
+                self.popitem(False)
 
 
