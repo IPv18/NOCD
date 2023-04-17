@@ -59,30 +59,26 @@ print(socket_info)
 import subprocess
 
 from collections import OrderedDict
+from dataclasses import dataclass
 
 
+@dataclass(slots=True)
 class SocketInfo():
     '''
     A class that represents information for a network socket
     connection between two hosts and ports on the network
     '''
+    
+    ip_src: str = None
+    port_src: int = None
+    ip_dest: str = None
+    port_dest: int = None
+    program: str = None
+    protocol: str = None
+    direction: str = None
 
-    __slots__ = ("ip_src", "port_src", "ip_dest", "port_dest", "program", "protocol", "direction")
-
-
-    def __init__(self, ip_src: str = None, port_src: int = None,
-                 ip_dest: str = None, port_dest: int = None,
-                 program: str = None, protocol: str = None, direction: str = None) -> None:
-        '''
-        Initializes a socket info object, all the parameters are optional.
-        '''
-        self.ip_src = ip_src
-        self.port_src = port_src
-        self.ip_dest = ip_dest
-        self.port_dest = port_dest
-        self.program = program
-        self.protocol = protocol.lower() if protocol else None
-        self.direction = direction
+    def __post_init__(self):
+        self.protocol = self.protocol.lower() if self.protocol else None
 
 
     def __iter__(self) -> iter:
@@ -97,7 +93,7 @@ class SocketInfo():
         Compares two socket info objects.
         Two socket info objects can be equal even if their ( ip_dest, port_dest, direction ) diffe.
         '''
-        print("__eq__")
+
         if isinstance(other, SocketInfo):
             return all(
                 (getattr(self, attr) == getattr(other, attr)) \
@@ -117,7 +113,7 @@ class SocketInfo():
         Returns a hash value for the socket info object.
         Two socket info hashes can be equal even if their ( ip_dest, port_dest, direction ) diffe.
         '''
-        print("__hash__")
+
         return hash((self.ip_src, self.port_src, self.protocol))
 
 
@@ -153,6 +149,7 @@ class SocketInfo():
         '''
         Copies the attributes of the other socket info object to this socket info object.
         '''
+
         for attr in self.__slots__:
             setattr(self, attr, getattr(other, attr))
 
