@@ -89,7 +89,7 @@ class SocketInfo():
         '''
         Returns an iterator of key value pairs for all the attributes in the socket info objec.
         '''
-        return iter({attr: getattr(self, attr) or "Not Set"  for attr in self.__slots__}.items())
+        return iter({attr: getattr(self, attr) for attr in self.__slots__}.items())
 
 
     def __eq__(self, other) -> bool:
