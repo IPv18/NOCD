@@ -1,7 +1,7 @@
 """
 A module for working with network sockets on Linux using the iproute2/ss command.
 
-The module provides two classes: SocketInfo and PacketRingBuf, and a helper class SsHelper.
+The module provides two classes: SocketInfo, and SsHelper.
 
 SocketInfo: 
 A class that represents information for a network socket connection
@@ -15,12 +15,13 @@ The class has the following attributes:
     - protocol: str, optional, the protocol used by the socket (e.g., TCP or UDP)
     - direction: str, optional, the direction of the connection (e.g., incoming or outgoing)
 
-PacketRingBuf: 
-A ring buffer that stores the last n packet info in a FIFO manner
-
 SsHelper: 
 A helper class that provides functionality for working with network sockets 
 on Linux using the iproute2/ss command. 
+
+it has PacketRingBuf class and object (sockets_buf): 
+A ring buffer that stores the last n packet info in a FIFO manner
+
 It has the following methods:
     - parse_ss_output: Parses the output of the ss command and returns a SocketInfo object.
     - update_buffer: Runs the ss command and updates sockets in buffer or 
@@ -36,13 +37,13 @@ to update the socket info object with the latest information from the system.
 
 Example:
 
-from ss_helper import SocketInfo, PacketRingBuf, SsHelper
+from ss_helper import SocketInfo, SsHelper
 
 # update the sockets buffer
 SsHelper.update_buffer()
 
 # create a socket info object
-socket_info = SocketInfo(ip_src="127.0.0.1", port_src=8080, ip_dest="192.168.0.1", port_dest=80)
+socket_info = SocketInfo(ip_src="127.0.0.1", port_src=8080, protocol="tcp")
 
 # update the socket info object with the latest information from the system
 socket_info.update_info()
@@ -52,8 +53,6 @@ print(socket_info.direction)
 
 # print the socket info object
 print(socket_info)
-
-
 """
 
 
