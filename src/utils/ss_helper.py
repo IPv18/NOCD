@@ -58,6 +58,7 @@ print(socket_info)
 
 
 import subprocess
+
 from collections import OrderedDict
 
 
@@ -97,10 +98,19 @@ class SocketInfo():
         Compares two socket info objects.
         Two socket info objects can be equal even if their ( ip_dest, port_dest, direction ) diffe.
         '''
-        return all(
-            (getattr(self, attr) == getattr(other, attr)) \
-                for attr in ("ip_src", "port_src", "protocol")
-        )
+        print("__eq__")
+        if isinstance(other, SocketInfo):
+            return all(
+                (getattr(self, attr) == getattr(other, attr)) \
+                    for attr in ("ip_src", "port_src", "protocol")
+            )
+        elif isinstance(other, tuple):
+            return all(
+                (getattr(self, attr) == other[i]) \
+                    for i, attr in enumerate(("ip_src", "port_src", "protocol"))
+            )
+        else:
+            return False
 
 
     def __hash__(self) -> int:
@@ -108,6 +118,7 @@ class SocketInfo():
         Returns a hash value for the socket info object.
         Two socket info hashes can be equal even if their ( ip_dest, port_dest, direction ) diffe.
         '''
+        print("__hash__")
         return hash((self.ip_src, self.port_src, self.protocol))
 
 
@@ -205,8 +216,7 @@ class SsHelper():
             for line in reader:
                 line = line.decode("utf-8").strip()
                 new_socket = cls.parse_ss_output(line)
-                key = (new_socket.ip_src, new_socket.port_src, new_socket.protocol)
-                cls.sockets_buf[key] = new_socket
+                cls.sockets_buf[new_socket] = new_socket
 
         except Exception as ex:
             print(f"Error while updating ss buffer: {ex}")
@@ -308,22 +318,24 @@ class SsHelperTest():
         '''
         Tests the update_socket_info method
         '''
-        first_key = next(iter(SsHelper.sockets_buf.keys()))
-        test_socket = SocketInfo(
-            ip_src=first_key[0],
-            port_src=first_key[1],
-            protocol=first_key[2]
+        target_socket = next(iter(SsHelper.sockets_buf.keys()))
+        result = SocketInfo(
+            ip_src=target_socket.ip_src,
+            port_src=target_socket.port_src,
+            protocol=target_socket.protocol
         )
-        SsHelper.update_socket_info(test_socket)
-        print(test_socket)
-        assert test_socket is not None
-        assert test_socket.ip_src is not None
-        assert test_socket.port_src is not None
-        assert test_socket.ip_dest is not None
-        assert test_socket.port_dest is not None
-        assert test_socket.protocol is not None
-        assert test_socket.program is not None
-        assert test_socket.direction is not None
+        SsHelper.update_socket_info(result)
+        print(result)
+        assert result is not None
+        assert result == target_socket
+        assert result.ip_dest is not None \
+            and result.ip_dest == target_socket.ip_dest
+        assert result.port_dest is not None \
+            and result.port_dest == target_socket.port_dest
+        assert result.program is not None \
+            and result.program == target_socket.program
+        assert result.direction is not None \
+            and result.direction == "outbound"
 
 
 if __name__ == "__main__":
