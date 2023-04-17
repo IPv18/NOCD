@@ -195,3 +195,77 @@ class SsHelper():
         return False
 
 
+class SsHelperTest():
+    '''
+    Test class for SsHelper
+    '''
+
+    @classmethod
+    def run(cls)  -> None:
+        '''
+        Runs the test
+        '''
+        cls.test_parse_ss_output()
+        cls.test_update_buffer()
+        cls.test_update_socket_info()
+
+    @staticmethod
+    def test_parse_ss_output()  -> None:
+        '''
+        Tests the parse_ss_output method
+        '''
+        line = 'tcp ESTAB 0 0 192.168.1.23:55372 13.227.219.62:443 users:(("chrome",pid=702871,fd=33)) timer:(keepalive,1.010ms,0) '
+        try :
+            socket_info = SsHelper.parse_ss_output(line)
+            assert socket_info.ip_src == "192.168.1.23"
+            assert socket_info.port_src == "55372"
+            assert socket_info.ip_dest == "13.227.219.62"
+            assert socket_info.port_dest == "443"
+            assert socket_info.protocol == "tcp"
+            assert socket_info.program == "chrome"
+        except Exception as ex:
+            print(f"Error while testing parse_ss_output: {ex}")
+
+
+    @staticmethod
+    def test_update_buffer() -> None:
+        '''
+        Tests the update_buffer method
+        '''
+        SsHelper.update_buffer()
+        assert len(SsHelper.sockets_buf.values()) > 0
+        first_socket = next(iter(SsHelper.sockets_buf.values()))
+        assert first_socket is not None
+        assert first_socket.ip_src is not None
+        assert first_socket.port_src is not None
+        assert first_socket.ip_dest is not None
+        assert first_socket.port_dest is not None
+        assert first_socket.protocol is not None
+        assert first_socket.program is not None
+
+
+    @staticmethod
+    def test_update_socket_info() -> None:
+        '''
+        Tests the update_socket_info method
+        '''
+        first_key = next(iter(SsHelper.sockets_buf.keys()))
+        test_socket = SocketInfo(
+            ip_src=first_key[0],
+            port_src=first_key[1],
+            protocol=first_key[2]
+        )
+        SsHelper.update_socket_info(test_socket)
+        print(test_socket)
+        assert test_socket is not None
+        assert test_socket.ip_src is not None
+        assert test_socket.port_src is not None
+        assert test_socket.ip_dest is not None
+        assert test_socket.port_dest is not None
+        assert test_socket.protocol is not None
+        assert test_socket.program is not None
+        assert test_socket.direction is not None
+
+
+if __name__ == "__main__":
+    SsHelperTest.run()
