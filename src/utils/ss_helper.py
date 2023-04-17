@@ -147,27 +147,27 @@ class SocketInfo():
             setattr(self, attr, getattr(other, attr))
 
 
-class PacketRingBuf(OrderedDict):
-    '''
-    A ring buffer that stores the last n packet info in a FIFO manner
-    '''
-
-    def __init__(self, *args, size: int = 1024, **kwargs)  -> None:
-        self._size = size
-        super().__init__(*args, **kwargs)
-
-    def __setitem__(self, key, value) -> None:
-        OrderedDict.__setitem__(self, key, value)
-        if self._size > 0:
-            if len(self) > self._size:
-                self.popitem(False)
-
-
 class SsHelper():
     '''
     A helper class that provides functionality for working with network sockets 
     on Linux using the iproute2/ss command. 
     '''
+
+    class PacketRingBuf(OrderedDict):
+        '''
+        A ring buffer that stores the last n packet info in a FIFO manner
+        '''
+
+        def __init__(self, *args, size: int = 1024, **kwargs)  -> None:
+            self._size = size
+            super().__init__(*args, **kwargs)
+
+        def __setitem__(self, key, value) -> None:
+            OrderedDict.__setitem__(self, key, value)
+            if self._size > 0:
+                if len(self) > self._size:
+                    self.popitem(False)
+
 
     sockets_buf = PacketRingBuf()
 
