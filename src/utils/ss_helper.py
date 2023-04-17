@@ -63,12 +63,12 @@ from dataclasses import dataclass
 
 
 @dataclass(slots=True)
-class SocketInfo():
+class SocketInfo:
     '''
     A class that represents information for a network socket
     connection between two hosts and ports on the network
     '''
-    
+
     ip_src: str = None
     port_src: int = None
     ip_dest: str = None
@@ -85,6 +85,7 @@ class SocketInfo():
         '''
         Returns an iterator of key value pairs for all the attributes in the socket info objec.
         '''
+
         return iter({attr: getattr(self, attr) for attr in self.__slots__}.items())
 
 
@@ -121,6 +122,7 @@ class SocketInfo():
         '''
         Returns a pretty string representation of the socket info objec.
         '''
+
         return \
             f"""
             Program  : {self.program}
