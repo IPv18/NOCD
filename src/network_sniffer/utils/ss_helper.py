@@ -121,6 +121,20 @@ class PacketRecord(IPLink):
             """
 
 
+    def stream_key(self) -> tuple:
+        '''
+        Returns a tuple representation of the packet stream key.
+        EXECLUDES the timestamp, MACs, and length attributes.
+        Can be used for collecting network traffic statistics
+        for packets that belong to the same stream.
+        '''
+
+        return(
+            self.program, self.protocol, self.direction,
+            self.ip_src, self.port_src, self.ip_dest, self.port_dest
+        )
+
+
     def values(self) -> iter:
         '''
         Returns an iterator of the values of the socket info object.
