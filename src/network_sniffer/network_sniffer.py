@@ -47,7 +47,7 @@ def sniff_traffic(interface):
     csv_path = os.path.dirname(__file__) +  f"/data/{interface}.csv" # TODO - Fix path
     if not os.path.exists(csv_path):
         csv_header = [
-            "timestamp", "program", "protocol", "direction"
+            "timestamp", "program", "protocol", "direction",
             "ip_src", "port_src", "ip_dest", "port_dest", 
             "length", "pkt_count"
         ]
