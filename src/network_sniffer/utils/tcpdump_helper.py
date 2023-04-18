@@ -7,6 +7,8 @@ a default output handler to print the captured packets.
 
 import subprocess
 from dataclasses import dataclass
+from utils.ss_helper import PacketRecord
+from utils.utils import get_local_macs
 
 @dataclass
 class TCPDumpHelper:
@@ -51,15 +53,15 @@ class TCPDumpHelper:
 
         self.process = subprocess.Popen(
             # TODO - Fix sudo
-            ['sudo', 'tcpdump', '-i', self.interface, " ".join(self.args) if self.args else ""],
+            ['sudo', 'tcpdump', '-i', self.interface, *self.args],
             stdout=subprocess.PIPE
         )
         output = iter(self.process.stdout.readline, b'')
-        reader = self.tcpdump_parser(output)
+        pkt_reader = self.tcpdump_parser(output)
         if self.output_handler:
-            self.output_handler(reader)
+            self.output_handler(pkt_reader)
         else:
-            self.default_output_handler(reader)
+            self.default_output_handler(pkt_reader)
 
 
     def stop(self):
@@ -72,38 +74,39 @@ class TCPDumpHelper:
             self.process.wait()
 
 
-    def default_output_handler(self, reader):
+    def default_output_handler(self, pkt_reader):
         """
         Prints the output of the tcpdump process to the console.
         This method is called by start() method if no output_handler is provided.
         """
 
-        for line in iter(reader, b''):
+        for line in iter(pkt_reader, b''):
             print(line.decode('utf-8').rstrip())
 
 
     def tcpdump_parser(self, output):
         """
-        Parses the output of the tcpdump process and yields the output line by line.
+        Parses the output of the tcpdump process and yields a PacketRecord object
+        for each packet captured.
         """
 
         for line in output:
             line = line.decode('utf-8').rstrip()
             cols = line.split(" ")
 
-            network_proto = cols[1]
+            network_proto = cols[5]
 
-            if network_proto != "IP":
-                continue
-
-            yield {
-                "timestamp" : cols[0],
-                # For IP: remove port - e.g. 10.3.141.250.31686
-                "ip_src" : ".".join(cols[2].split(".")[:-1]),
-                "port_src" : cols[2].split(".")[-1],
-                "ip_dest" : ".".join(cols[4].split(".")[:-1]),
-                "port_dest" : cols[4].split(".")[-1],
-                "protocol" : "TCP"  if cols[5] == "Flags" else "UDP",
-                "length" : cols[-1] if cols[5] == "Flags" else cols[-1][1:-1]
-            }
-
+            if network_proto == "IPv4" or network_proto == "IPv6":
+                if cols[1] not in get_local_macs() and cols[3][:-1] not in get_local_macs():
+                    continue
+                yield PacketRecord(
+                    timestamp   = int(cols[0].split(".")[0]),
+                    mac_src     = cols[1],
+                    mac_dest    = cols[3][:-1],
+                    ip_src      = ".".join(cols[9].split(".")[:-1]),
+                    port_src    = cols[9].split(".")[-1],
+                    ip_dest     = ".".join(cols[11].split(".")[:-1]),
+                    port_dest   = cols[11].split(".")[-1][:-1],
+                    protocol    = "udp" if cols[12] == "UDP," else "tcp",
+                    length      = int(cols[8][:-1]) if "(" not in cols[-1] else int(cols[-1][1:-2])
+                )
