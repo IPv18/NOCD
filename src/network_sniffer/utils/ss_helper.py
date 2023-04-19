@@ -1,4 +1,31 @@
-# TODO - Add docstrings
+"""
+Module that provides functionality for working with network sockets 
+on Linux using the iproute2/ss command.
+
+It includes the following classes:
+    - SsHelper: A helper class that provides functionality for working 
+        with network sockets on Linux using the iproute2/ss command.
+    - PacketRingBuf: A ring buffer that stores the last n packet info in a FIFO manner.
+
+It includes the following functions:
+    - parse_ss_output: Parses the output of the ss command and returns a SocketRecord object.
+    - update_buffer: Runs the ss command and updates sockets in 
+        the buffer or creates a new one if it doesn't exist.
+    - update_packet_record: Updates the PacketRecord with the SocketRecord info that has created it.
+
+It also includes the following variables:
+    - LOCAL_MAC_LIST: List of local MAC addresses.
+
+This module depends on the following external modules:
+    - subprocess
+    - collections
+    - utils.utils
+    - utils.network
+
+This module can be executed as a script to test the functionality of the SsHelper class. 
+When executed as a script, it runs a test function that tests the functionality 
+of the SsHelper class.
+"""
 
 import subprocess
 

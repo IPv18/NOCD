@@ -1,3 +1,16 @@
+"""
+Module that defines data classes for representing network traffic information.
+
+Classes:
+- IPLink: Represents information for an IP network link (regardless connection or connectionless) 
+  between two hosts and ports on the network.
+- PacketRecord: Represents information for a network traffic record between two hosts and ports 
+  on the network. Inherits from IPLink.
+- SocketRecord: Represents information for a network socket between two hosts and ports on the 
+  network. Inherits from IPLink.
+
+"""
+
 from dataclasses import dataclass
 
 

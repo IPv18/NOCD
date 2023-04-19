@@ -1,3 +1,23 @@
+"""
+This module provides a packet sniffing tool to monitor network traffic 
+and store the information in a CSV file. It also provides a daemon 
+to periodically update the buffer used by the `SsHelper` class.
+
+Functions:
+    - store_pkt_info: A wrapper function that returns a function 
+        to store packet information in a CSV file.
+    - sniff_traffic: Function that uses TCPDump to capture network 
+        packets and store the packet information in a CSV file.
+    - update_ss_buffer_daemon: A daemon that periodically updates 
+        the buffer used by the `SsHelper` class.
+    - main: The main function that starts the packet sniffing and 
+        buffer update threads.
+
+Constants:
+    - SS_DAEMON_INTERVAL: The interval at which the buffer used by 
+        the `SsHelper` class should be updated.
+"""
+
 import csv
 import os
 import threading
