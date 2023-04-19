@@ -66,8 +66,8 @@ class PacketRecord(IPLink):
             Program  : {self.program}
             Protocol : {self.protocol}
             Direction: {self.direction}
-            IP       : { {self.ip_src}:{self.port_src}:<{20} } --> {self.ip_dest}:{self.port_dest}
-            MAC      : { self.mac_src:<{20} } --> {self.mac_dest}
+            IP       : {self.ip_src}:{self.port_src} --> {self.ip_dest}:{self.port_dest}
+            MAC      : {self.mac_src} --> {self.mac_dest}
             """
 
 
@@ -89,6 +89,7 @@ class PacketRecord(IPLink):
         '''
         Returns an iterator of the values of the socket info object.
         '''
+        
         return iter(getattr(self, attr) for attr in self.__slots__)
 
 
@@ -97,7 +98,7 @@ class PacketRecord(IPLink):
         '''
         Updates the network traffic record with the latest info from the system.
         '''
-        SsHelper.update_packet_record(self)
+        
 
 
     def copy(self, other) -> None:
@@ -120,6 +121,7 @@ class SocketRecord(IPLink):
         Two record objects can be equal given their 
         ("ip_src", "port_src", "protocol", "program") are equal.
         '''
+        
         if isinstance(other, SocketRecord):
             # if two records being inserted -or checked- and they have
             # the same ("ip_src", "port_src", "protocol", "program") then
