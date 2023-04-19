@@ -1,12 +1,13 @@
 """
-The `scapy_helper` module provides helper functions for working with the Scapy network tool.
+This module provides functions for obtaining information about the local network interfaces.
 
 Functions:
-- `get_interfaces()`: Returns a list of the local network interfaces, 
-                      excluding the loopback interface.
-
-Dependencies:
-- `scapy.all`: The Scapy library, which must be installed in order to use this module.
+    - get_interfaces(): Returns a list of the local network interfaces,
+        excluding the loopback interface.
+    - get_local_ips(): Returns a list of the local IP addresses for
+        each network interface, excluding the loopback interface.
+    - get_local_macs(): Returns a list of the local MAC addresses for
+        each network interface, excluding the loopback interface.
 """
 
 import subprocess
