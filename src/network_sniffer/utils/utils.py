@@ -17,7 +17,6 @@ def get_interfaces():
     '''
     Returns a list of the local network interfaces, excluding the loopback interface.
     '''
-
     output = subprocess.check_output(
         ["ip link show | awk -F': ' '{print $2}'"],
         shell=True
@@ -35,7 +34,6 @@ def get_local_ips():
     '''
     Returns a list of the local network interfaces, excluding the loopback interface.
     '''
-
     output = subprocess.check_output(
         ["""ip addr show | awk '/inet / {split($2,a,"/"); print a[1]}'"""],
         shell=True
@@ -53,7 +51,6 @@ def get_local_macs():
     '''
     Returns a list of the local network interfaces, excluding the loopback interface.
     '''
-
     output = subprocess.check_output(
         ["""ip addr show | awk '/ether / {split($2,a,"/"); print a[1]}'"""],
         shell=True

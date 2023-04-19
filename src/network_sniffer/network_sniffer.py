@@ -33,12 +33,10 @@ def store_pkt_info(writer):
     '''
     A wraper function, returns a function that stores packet information in a csv file
     '''
-
     def extract_pkt_info(pkt_reader):
         '''
             TODO
         '''
-
         interval_length = 5
         interval = 0
         pkts_on_interval = defaultdict(
@@ -89,9 +87,8 @@ def sniff_traffic(interface):
 
 def update_ss_buffer_daemon():
     '''
-    TODO
+    A daemon that periodically updates the buffer used by the `SsHelper` class.
     '''
-
     SsHelper.update_buffer()
     threading.Timer(SS_DAEMON_INTERVAL, update_ss_buffer_daemon).start()
     print("Updated buffer")

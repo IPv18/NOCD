@@ -20,7 +20,6 @@ class IPLink:
     A data class that represents information for an IP network link 
     (regardless connection or connectionless) between two hosts and ports on the network
     '''
-
     protocol: str = None
     ip_src: str = None
     port_src: int = None
@@ -51,7 +50,6 @@ class PacketRecord(IPLink):
         '''
         Returns an iterator of key value pairs for all the attributes in the record.
         '''
-
         return iter({attr: getattr(self, attr) for attr in self.__slots__}.items())
 
 
@@ -59,7 +57,6 @@ class PacketRecord(IPLink):
         '''
         Returns a pretty string representation of the record object.
         '''
-
         return \
             f"""
             Timestamp: {self.timestamp}
@@ -78,7 +75,6 @@ class PacketRecord(IPLink):
         Can be used for collecting network traffic statistics
         for packets that belong to the same stream.
         '''
-
         return(
             self.program, self.protocol, self.direction,
             self.ip_src, self.port_src, self.ip_dest, self.port_dest
@@ -105,7 +101,6 @@ class PacketRecord(IPLink):
         '''
         Deep copies the attributes of the other record object to this record object.
         '''
-
         for attr in other.__slots__:
             setattr(self, attr, getattr(other, attr))
 

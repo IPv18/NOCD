@@ -41,12 +41,10 @@ class SsHelper():
     A helper class that provides functionality for working with network sockets 
     on Linux using the iproute2/ss command. 
     '''
-
     class PacketRingBuf(OrderedDict):
         '''
         A ring buffer that stores the last n packet info in a FIFO manner
         '''
-
         def __init__(self, *args, size: int = 1024, **kwargs)  -> None:
             self._size = size
             super().__init__(*args, **kwargs)
@@ -84,7 +82,6 @@ class SsHelper():
         '''
         Runs the ss command and updates sockets in buffer or creates a new one if it doesn't exist.
         '''
-
         popen_process = subprocess.Popen(
             ["sudo ss -tuopna | sed 's/\s\+/ /g'"],
             stdout=subprocess.PIPE, shell=True)
@@ -109,7 +106,6 @@ class SsHelper():
         Updates the PacketRecord with the SocketRecord info that has created it.
         For now, we only update the dirction and program name.
         '''
-
         mac_src     = packet_record.mac_src
         mac_dest    = packet_record.mac_dest
         ip_src      = packet_record.ip_src
@@ -151,7 +147,6 @@ class SsHelperTest():
     '''
     Test class for SsHelper
     '''
-
     @classmethod
     def run(cls)  -> None:
         '''
