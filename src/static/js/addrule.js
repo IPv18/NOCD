@@ -44,30 +44,24 @@ document.addEventListener("DOMContentLoaded", function () {
     "NFS 2049": 2049,
   };
 
-  if (IP_FAMILY_PARAM !== null && TRAFFIC_DIRECTION_PARAM !== null) {
+  if (IP_FAMILY_PARAM !== null && TRAFFIC_DIRECTION_PARAM !== null) 
+  {
     TRAFFIC_DIRECTION.value = TRAFFIC_DIRECTION_PARAM;
     IP_FAMILY.value = IP_FAMILY_PARAM;
     TRAFFIC_DIRECTION.disabled = true;
     IP_FAMILY.disabled = true;
-  } else {
+  } 
+  else 
+  {
     TRAFFIC_DIRECTION.disabled = true;
     IP_FAMILY.disabled = true;
-    if (TYPE_SELECT.value == "ALL UDP") {
-      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true;
-    } else if (TYPE_SELECT.value == "ALL TCP") {
-      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true;
-    } else if (
-      TYPE_SELECT.value == "CUSTOM ICMP" ||
-      TYPE_SELECT.value === "ALL ICMP"
-    ) {
-      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true;
-    } else {
-      if (TRAFFIC_DIRECTION.value === "Inbound") {
+    if (TYPE_SELECT.value == "ALL UDP" || TYPE_SELECT.value == "ALL TCP" || TYPE_SELECT.value == "CUSTOM ICMP" || TYPE_SELECT.value === "ALL ICMP") 
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true; 
+    else 
+      if (TRAFFIC_DIRECTION.value == "Inbound" && TYPE_SELECT.value != "CUSTOM UDP" && TYPE_SELECT.value != "CUSTOM TCP") 
         SOURCE_PORT.disabled = true;
-      } else {
+      else if (TRAFFIC_DIRECTION.value == "Outbound" && TYPE_SELECT.value != "CUSTOM UDP" && TYPE_SELECT.value != "CUSTOM TCP")
         DESTINATION_PORT.disabled = true;
-      }
-    }
   }
 
   TYPE_SELECT.addEventListener("change", (event) => {

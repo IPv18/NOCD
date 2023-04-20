@@ -1,3 +1,5 @@
+{% load static %}
+
 {% block header %}
 
     <link rel="stylesheet" type="text/css" href='{% static "styles/addrule.css" %}' />
@@ -54,11 +56,17 @@
                     <input  id="id_{{ field.name }}" 
                             type="number" 
                             name="{{ field.name }}" 
-                            {% if update_or_submit == 'UPDATE' and instance.{{ field.name }} is not none %}
-                               value="{{ instance.{{ fieldname }} }}"
+                            {% if update_or_submit == 'UPDATE' %}
+                                {% if instance.source_port is not None or instance.destination_port is not None %}
+                                    {% if field.name == "source_port" and instance.source_port is not None %}
+                                        value="{{ instance.source_port }}"
+                                    {% elif field.name == "destination_port" and instance.destination_port is not None%}
+                                        value="{{ instance.destination_port }}"
+                                    {% endif %}
+                                {% endif %}
                             {% endif %} 
                             min="1" 
-                            max="65536">
+                            max="65536">                                    
                 {% elif field.name == "source_address" or field.name == "destination_address" %}
                     <label for="id_{{ field.name }}">
                         {{ ip_family }} {{ field.label_tag }}
@@ -70,8 +78,14 @@
                             {% else %}
                                 pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"
                             {% endif %}
-                            {% if update_or_submit == 'UPDATE' and instance.{{ field.name }} is not none %}
-                                value="{{ instance.{{ field.name }} }}"
+                            {% if update_or_submit == 'UPDATE'  %}
+                                {% if instance.source_address is not None or instance.destination_address is not None  %}
+                                    {% if field.name == "source_address" and instance.source_address is not None %}
+                                        value="{{ instance.source_address }}"
+                                    {% elif field.name == "destination_address" and instance.destination_address is not None %}
+                                        value="{{ instance.destination_address }}"
+                                    {% endif %}
+                                {% endif %}
                             {% endif %}
                             name="{{ field.name }}">
                 {% else %} 
@@ -83,6 +97,9 @@
         <input  type="submit"
                 update-or-submit="{{ update_or_submit }}"
                 value="{{ update_or_submit }}">
+        <button type="button" onclick="location.href='{% url "home" %}'">
+            Cancel
+        </button>
     </form>
     {% include 'firewall/error.html' %}
 

@@ -82,15 +82,6 @@
                         onclick="location.href='{% url "addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
                     Add Rule
                 </button>
-                <!--
-                <button type="button" 
-                        class="btn btn-primary" 
-                        data-toggle="modal" 
-                        data-target="#exampleModalLong">
-                    Add Rule
-                </button>
-                {% include "firewall/scrolling-long.html" with update_or_submit='SUBMIT' %}
-                -->
                 {% if table.last.action == 'ACCEPT' %}
                     <button type="button"
                             onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=0'">
