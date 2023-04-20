@@ -19,34 +19,6 @@
 	transition: opacity 0.5s ease-in-out;
 }
 
-
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
-}
-
-h1 {
-    text-align: center;
-    font-size: 36px;
-    color: #444444;
-    margin-top: 50px;
-    margin-bottom: 20px;
-}
-
-h2 {
-    font-size: 24px;
-    color: #444444;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
-h3 {
-    font-size: 20px;
-    color: #333333;
-    margin-left: 20px;
-}
-
 table {
     border-collapse: collapse;
     width: 100%;

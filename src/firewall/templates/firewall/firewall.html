@@ -8,12 +8,6 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Firewall</title>
     <meta='viewport' conent='width=device-width, initial-scale=1'>
-    <link rel="stylesheet" href='{% static "css/style.css" %}'>
-    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-          crossorigin="anonymous">
     <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
 
 {% endblock header %}
@@ -79,17 +73,17 @@
             aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
             <!-- ------------------------------break------------------------------ -->
                 <button type="button"
-                        onclick="location.href='{% url "addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
+                        onclick="location.href='{% url "firewall:addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
                     Add Rule
                 </button>
                 {% if table.last.action == 'ACCEPT' %}
                     <button type="button"
-                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=0'">
+                            onclick="location.href='{% url "firewall:home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=0'">
                         Switch to Least Privilege
                     </button>
                 {% else %}
                     <button type="button"
-                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=1'">
+                            onclick="location.href='{% url "firewall:home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=1'">
                         Switch to Zero Trust
                     </button>
                 {% endif %}
