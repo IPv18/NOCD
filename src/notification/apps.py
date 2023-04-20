@@ -1,5 +1,6 @@
 from os import environ
 from django.apps import AppConfig
+from django.conf import settings
 from notification import topic
 
 
@@ -11,7 +12,7 @@ class NotificationConfig(AppConfig):
         from notification import jobs
         if environ.get('RUN_MAIN', None) != 'true':
             self.add_topics()
-            if environ.get('DEBUG') == True:
+            if settings.DEBUG:
                 jobs.start_scheduler()
 
     def add_topics(self):
