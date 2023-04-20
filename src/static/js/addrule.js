@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const DESTINATION_ADDRESS = document.getElementById("id_destination_address");
 
   const SUBMIT_BUTTON = FORM.querySelector('input[type="submit"]');
-  const UPDATE_OR_SUBMIT = SUBMIT_BUTTON.getAttribute('update_or_submit');
+  const UPDATE_OR_SUBMIT = SUBMIT_BUTTON.getAttribute('update-or-submit');
   const PATTERN = SOURCE_ADDRESS.getAttribute('pattern');
 
   const UDP_TYPE = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
