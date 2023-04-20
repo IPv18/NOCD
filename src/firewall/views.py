@@ -66,7 +66,7 @@ def add_rule(request):
         if form.is_valid():
             form.save()
             success_message = "Rule added successfully!"
-            return redirect(reverse('home') + "?success_message=" + success_message)
+            return redirect(reverse('firewall:home') + "?success_message=" + success_message)
 
     return render(request, 'firewall/addrule.html', context)
 
@@ -82,7 +82,7 @@ def update_rule(request, pk):
         if form.is_valid():
             form.save()
             success_message = "Rule updated successfully!"
-            return redirect(reverse('home') + "?success_message=" + success_message)
+            return redirect(reverse('firewall:home') + "?success_message=" + success_message)
 
     context = {'form':form, 'UpdateOrSubmit':UpdateOrSubmit, 'instance':rule, 
                 'ip_family':ip_family , 'traffic_direction':traffic_direction}
@@ -92,4 +92,4 @@ def remove_rule(request, pk):
     rule = FirewallRule.objects.get(id=pk)
     rule.delete()
     success_message = "Rule removed successfully!"
-    return redirect(reverse('home') + "?success_message=" + success_message)
+    return redirect(reverse('firewall:home') + "?success_message=" + success_message)
