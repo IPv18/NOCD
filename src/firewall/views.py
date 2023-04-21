@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+import json
 from django.http import JsonResponse
 from django.urls import reverse
+from django.core import serializers
 from firewall.models import FirewallRule
 from .forms import FirewallRuleForm
 import subprocess
@@ -41,7 +43,7 @@ def index(request):
         return render(request, 'firewall/firewall.html', context)
     elif request.method == 'POST':
         pass # TODO add iptables control here
-
+    
 def check_rule_uniqueness(request):
     rule_priority = request.GET.get('rule_priority')
     traffic_direction = request.GET.get('traffic_direction')
@@ -93,3 +95,117 @@ def remove_rule(request, pk):
     rule.delete()
     success_message = "Rule removed successfully!"
     return redirect(reverse('home') + "?success_message=" + success_message)
+
+def index_RESTful(request):
+    if request.method == 'GET':
+        return render(request, 'firewall/firewall.html')
+    
+def rule_RESTful(request):
+    if request.method == 'GET':
+        # check rule uniqueness
+        if 'ip_family' in request.GET and 'traffic_direction' in request.GET and 'rule_priority' in request.GET:
+            rule_priority = request.GET.get('rule_priority')
+            traffic_direction = request.GET.get('traffic_direction')
+            ip_family = request.GET.get('ip_family')
+            try:
+                FirewallRule.objects.get(
+                    rule_priority=rule_priority, traffic_direction=traffic_direction, ip_family=ip_family)
+                exists = True
+            except FirewallRule.DoesNotExist:
+                exists = False
+            return JsonResponse({'exists': exists})
+        # asks for rule form
+        elif 'ip_family' in request.GET and 'traffic_direction' in request.GET:
+            form = FirewallRuleForm()
+            ip_family = request.GET['ip_family']
+            traffic_direction = request.GET['traffic_direction']
+            context = {'form':form, 'ip_family':ip_family, 'traffic_direction':traffic_direction}
+            return JsonResponse(context)
+        # asks for tables content
+        else:
+            context = {
+                "tables": [
+                    FirewallRule.objects.filter(
+                        ip_family='IPv4', traffic_direction='Inbound').order_by('rule_priority'),
+                    FirewallRule.objects.filter(
+                        ip_family='IPv4', traffic_direction='Outbound').order_by('rule_priority'),
+                    FirewallRule.objects.filter(
+                        ip_family='IPv6', traffic_direction='Inbound').order_by('rule_priority'),
+                    FirewallRule.objects.filter(
+                        ip_family='IPv6', traffic_direction='Outbound').order_by('rule_priority'),
+                ]
+            }
+            serialized_tables = []
+            for table in context['tables']:
+                serialized_table = serializers.serialize('json', table)
+                serialized_tables.append(serialized_table)
+            return JsonResponse(serialized_tables, safe=False)
+
+    # flips the action of last rule of each table between DROP and ACCEPT
+    elif request.method == 'PATCH':
+        ip_family = request.GET['ip_family']
+        traffic_direction = request.GET['traffic_direction']
+        rule = FirewallRule.objects.get(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=1000)
+        if rule.action == 'ACCEPT':
+            rule.action = 'DROP'
+        else:
+            rule.action = 'ACCEPT'
+        rule.save()
+        return JsonResponse({'success': True, 'message': 'Rule action updated successfully'})
+        # return JsonResponse({'success': False, 'message': 'Rule not found'}, status=404) is it possible to fail?
+
+    # rule addition
+    elif request.method == 'POST':
+        if request.method == 'POST':
+            form = FirewallRuleForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return JsonResponse({'success': True, 'message': 'Rule added successfully!'})
+            else:
+                return JsonResponse({'success': False, 'message': 'An error has occurred while adding rule!'}, status=400)
+            
+def rule_handler_RESTFUL(request, pk):
+    rule = FirewallRule.objects.get(id=pk)
+    if request.method == 'GET':
+        form = FirewallRuleForm(instance=rule)
+        data = json.dumps(form.cleaned_data)
+        return JsonResponse(data, safe=False)
+    """
+        if request.method == 'PATCH':
+            field_name = request.POST.get('field_name')
+            field_value = request.POST.get('field_value')
+            if field_name and field_value:
+                setattr(rule, field_name, field_value)
+                rule.save()
+                return JsonResponse(rule.to_dict())
+            else:
+                return JsonResponse({'error': 'Invalid PATCH request'}, status=400)
+
+        # update two or more fields
+        elif request.method == 'PUT':
+            rule_data = request.POST.dict()
+            del rule_data['id'] # exclude the primary key from the update
+            for key, value in rule_data.items():
+                setattr(rule, key, value)
+            try:
+                rule.full_clean()
+            except ValidationError as e:
+                return JsonResponse({'error': e.message_dict}, status=400)
+            else:
+                rule.save()
+                return JsonResponse(rule.to_dict())
+    """
+    if request.method == 'POST':
+        form = FirewallRuleForm(request.POST, instance=rule)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'status': 'success', 'rule': rule.to_dict()})
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors})
+
+    elif request.method == 'DELETE':
+        rule.delete()
+        return JsonResponse({'status': 'success', 'message': 'Rule deleted.'})
+
+    # Return an error message for unsupported request methods
+    return JsonResponse({'status': 'error', 'message': 'Unsupported request method.'})
