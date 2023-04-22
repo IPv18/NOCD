@@ -21,9 +21,8 @@
     <!-- Fonts and icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
 
-<<<<<<< HEAD
-    <!-- Specific Page CSS goes HERE  -->
-    {% block stylesheets %}{% endblock stylesheets %}
+    <!-- Specific Page CSS & JS goes HERE  -->
+    {% block header %}{% endblock header %}
 </head>
 
 <body>
@@ -31,7 +30,7 @@
 
         {% include 'navbar.html' %}
         
-        <div class="container vh-100 vw-100">
+        <div class="container-fluid">
 
             {% block content %}
             {% endblock content %}
@@ -44,27 +43,6 @@
     <!-- Specific Page JS goes HERE  -->
     {% block javascripts %}{% endblock javascripts %}
     
-=======
-    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
-
-    {% block header %}
-    {% endblock header %}
-</head>
-
-<body>
-    <div class="wrapper">
-        {% include "navbar.html" %}
-        <div class="content">
-            <div class="container">
-                {% block content %}
-                {% endblock content %}
-            </div>
-        </div>
-        <div class="footer">
-            {% include "footer.html" %}
-        </div>
-    </div>
->>>>>>> fe825e7cac596f7c0023d5137e93054d7f2e3a88
 </body>
 
 </html>

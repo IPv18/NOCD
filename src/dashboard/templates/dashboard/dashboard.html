@@ -1,41 +1,256 @@
 {% extends 'main.html' %}
 {% load static %}
 
+{% block title %} Dashboard {% endblock %} 
+
 {% block header %}
-
-<title> NOCD </title>
-
-<!-- Charts.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<link rel="stylesheet" type="text/css" href="{% static 'dashboard/styles/style.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'styles/style.css' %}">
-
-<script src="{% static 'dashboard/js/pie-chart.js' %}"></script>
-
+  <!-- Charts.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
 
-<div class="pieContainer">
-  <canvas id="pieChart"></canvas>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <div class="card-title">Pie Chart1</div>
+          <!-- Modal 1 -->
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm"> <strong> + </strong> </button>
+          <div id="pieChart1Model" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content p-3">
+                
+                <form action="" id="pieChart1From"> 
+                  <div class="form-group">
+                    <label for="exampleSelect1">Example select</label>
+                    <select class="form-control" id="exampleSelect1" name="select" size="5">
+                      <option>Option 1</option>
+                      <option>Option 2</option>
+                      <option>Option 3</option>
+                      <option>Option 4</option>
+                      <option>Option 5</option>
+                      <option>Option 6</option>
+                      <option>Option 7</option>
+                      <option>Option 8</option>
+                    </select>
+                  </div>
+
+                  <label for="color-picker">Choose a color:</label>
+                  <input type="color" name="color-picker">
+
+                  <br>
+                  <input class="btn btn-primary" type="submit" value="Submit" data-bs-dismiss="modal">
+                </form>
+                
+              </div>
+            </div>
+          </div>
+
+          <button id="pieChart1Model2Btn" type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal2-sm" style="display:none;"> </button>
+          <div id="pieChart1Model2" class="modal fade bd-example-modal2-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content p-3">
+                
+                <form action="" id="pieChart1From2"> 
+                  <label for="color-picker">Choose a different color: </label>
+                  <br>
+                  <input type="color" name="color-picker" class="btn btn-outline-info">
+                  <br>
+                  <br>
+                  <div class="dropdown-divider"></div>
+                  <input class="btn btn-outline-info" type="submit" value="Change" data-bs-dismiss="modal">
+                  <input class="btn btn-outline-danger" type="submit" name="remove" value="Remove the label !" data-bs-dismiss="modal">
+                  
+                </form>
+                
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="pieChart1"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Pie Chart2</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="pieChart2"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Pie Chart3</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="pieChart3" style="width: 50%; height: 50%"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Other Chart</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="doughnutChart" style="width: 50%; height: 50%"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Other Chart</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Other Chart</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="bubbleChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Other Chart</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="multipleLineChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Other Chart</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="multipleBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Chart with HTML Legends</div>
+        </div>
+        <div class="card-body">
+          <div class="card-sub">
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Inventore ipsum non, est nesciunt nulla quaerat aliquid ratione alias quos cum nobis perferendis quidem optio. Similique corporis consectetur sit dolorem delectus!
+          </div>
+          <div class="chart-container">
+            <canvas id="htmlLegendsChart"></canvas>
+          </div>
+          <div id="myChartLegend"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<script>
-
-  const ctx = document.getElementById('pieChart');
-  const pieChart = createPieChart(ctx);
-
-  ctx.addEventListener('click', function (event) {
-    handleLabelClickPie(event, pieChart);
-  });
-
-  setInterval(() => {
-    let Rand = Math.random() * 100 + 1;
-    updateDataPie(pieChart, 'TCP', Rand);
-  }, 2000);
-
-</script>
+{% endblock %} 
 
 
-{% endblock %}
+{% block javascripts %}
+  <script src="{% static 'dashboard/js/pie-chart.js' %}"></script>
+  <script>
+
+    const ctx = document.getElementById('pieChart1');
+    const pieChart1 = new PieChart(ctx);
+    pieChart1.debug();
+    // pieChart1.changeColor("TCP", "#aaaabb");
+
+    const pieChart2 = new PieChart(document.getElementById('pieChart2'));
+    pieChart2.debug();
+
+    const pieChart3 = new PieChart(document.getElementById('pieChart3'));
+    pieChart3.debug();
+
+
+    // ToDO !!!!!!
+    // Get a reference to the form element
+    var form = document.getElementById("pieChart1From");
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      var select = form.elements["select"].value;
+      console.log("Selected Value: " + select);
+
+      var color = form.elements["color-picker"].value;
+      console.log("Selected Color: " + color);
+
+      pieChart1.addData(select, 55, color);
+
+      var myModal = document.getElementById("pieChart1Model");
+      $(myModal).modal("hide");
+    });
+
+
+    // TODO !!!!!!
+    ctx.addEventListener('click', function (event) {
+      const lable = pieChart1.handleLabelClick(event);
+      if(lable){
+        document.getElementById("pieChart1Model2Btn").click();
+
+        const form = document.getElementById("pieChart1From2");
+        form.addEventListener("submit", function(event) {
+          event.preventDefault();
+
+          if (event.submitter.name === 'remove') {
+            pieChart1.removeData(lable);
+          }else{
+            pieChart1.changeColor(lable, form.elements["color-picker"].value)
+          }
+          
+          var myModal = document.getElementById("pieChart1Model2");
+          $(myModal).modal("hide");
+        });
+      }
+    });
+
+    
+
+
+
+
+
+
+
+
+
+
+  </script>
+{% endblock %} 
+
+
