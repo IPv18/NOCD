@@ -1,0 +1,87 @@
+{% extends "main.html" %}
+<!-- ------------------------------break------------------------------ -->
+{% load static %}
+<!-- ------------------------------break------------------------------ -->
+{% block header %}
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Notifications</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
+    <link rel="stylesheet" href="{% static 'styles/notification.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock header %}
+<!-- ------------------------------break------------------------------ -->
+{% block content %}
+    <div id="notification-container">
+        {% for notification in page_obj %}
+            <div class="notification{% if not notification.read %} unread{% endif %}">
+                <span class="date">{{ notification.date }}</span>
+                <br>
+                <span class="message">{{ notification.message }}</span>
+                <div class="content">
+                    <div class="type">{{ notification.type }}</div>
+                    <div class="buttons">
+                        <button type="submit"
+                                class="read-button"
+                                url="{% url 'toggle_read_notification' notification.pk %}">
+                            Mark as
+                            {% if not notification.read %}
+                                Read
+                            {% else %}
+                                Unread
+                            {% endif %}
+                        </button>
+                        <button type="submit"
+                                class="delete-button"
+                                url="{% url 'delete_notification' notification.pk %}">Delete</button>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <h1>No notifications</h1>
+        {% endfor %}
+        <!-- ------------------------------break------------------------------ -->
+        {% if page_obj.paginator.count > 0 %}
+            <div class="pagination">
+                <div id="page-numbers">
+                    {% if page_obj.number > 3 %}
+                        <a href="?page=1">1</a>
+                        {% if page_obj.number > 4 %}<span>…</span>{% endif %}
+                    {% endif %}
+                    <!-- ------------------------------break------------------------------ -->
+                    {% for i in page_obj.paginator.page_range %}
+                        {% if i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                            {% if i == page_obj.number %}
+                                <span class="current-page">{{ i }}</span>
+                            {% else %}
+                                <a href="?page={{ i }}">{{ i }}</a>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- ------------------------------break------------------------------ -->
+                    {% if page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+                        {% if page_obj.paginator.num_pages > page_obj.number|add:'3' %}
+                            <span>…</span>
+                        {% endif %}
+                        <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- ------------------------------break------------------------------ -->
+            <form method="post" action="{% url 'clear_notifications' %}">
+                {% csrf_token %}
+                <button id="clear-button"
+                        type="submit"
+                        name="clear_notifications"
+                        onclick="return confirm('Are you sure you want to clear all notifications?')">
+                    Clear All Notifications
+                </button>
+            </form>
+        {% endif %}
+    </div>
+    <!-- ------------------------------break------------------------------ -->
+    <script src="{% static 'js/update_notifications.js' %}"></script>
+{% endblock content %}

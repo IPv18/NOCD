@@ -1,0 +1,67 @@
+<tr>
+    <!-- Number -->
+    <td>{{ rule.rule_priority }}</td>
+    <!-- Description -->
+    <td>{{ rule.description }}</td>
+    <!-- Protocol -->
+    <td>
+        {% if rule.protocol is not none %}
+            {{ rule.protocol }}
+        {% else %}
+            any
+        {% endif %}
+    </td>
+    <!-- Source Address -->
+    <td>
+        {% if rule.source_address is not none %}
+            {{ rule.source_address }}
+        {% else %}
+            any
+        {% endif %}
+    </td>
+    <!-- Source Port -->
+    <td>
+        {% if rule.source_port is not none %}
+            {{ rule.source_port }}
+        {% else %}
+            any
+        {% endif %}
+    </td>
+    <!-- Destination Address -->
+    <td>
+        {% if rule.destination_address is not none %}
+            {{ rule.destination_address }}
+        {% else %}
+            any
+        {% endif %}
+    </td>
+    <!-- Destination Port -->
+    <td>
+        {% if rule.destination_port is not none %}
+            {{ rule.destination_port }}
+        {% else %}
+            any
+        {% endif %}
+    </td>
+    <!-- Action -->
+    <td>{{ rule.action }}</td>
+    <!-- ------------------------------break------------------------------ -->
+    {% if rule.rule_priority != 1000 %}
+        <!-- Edit -->
+        <td>
+            <button type="button"
+                    class="btn btn-primary"
+                    onclick="location.href='{% url 'updaterule' rule.id %}'">Edit</button>
+        </td>
+        <!-- Remove -->
+        <td>
+            <!-- Button trigger modal -->
+            <button type="button"
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#exampleModal{{ rule.id }}">Remove</button>
+            <!-- Modal -->
+            {% include "firewall/confirmation.html" with question="Are you sure you want to delete this rule?" %}
+        </td>
+    {% endif %}
+</tr>

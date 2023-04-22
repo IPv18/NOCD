@@ -20,4 +20,5 @@ urlpatterns = [
     path('', include('dashboard.urls'), name="dashboard"),
     path('admin/', admin.site.urls, name="admin"),
     path('firewall/', include('firewall.urls'), name="firewall"),
+    path('notifications/', include('notification.urls'), name='notifications'),
 ]
