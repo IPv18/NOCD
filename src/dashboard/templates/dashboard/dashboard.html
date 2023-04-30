@@ -6,14 +6,20 @@
 {% block header %}
   <!-- Charts.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
 {% endblock %}
 
 {% block content %}
 
-<div class="container-fluid">
+<div class="container-fluid mt-2 text-primary bg-dark">
+  <!-- Card -->
+  <h4 class="page-title"> Statistics </h4>
+  <!-- Card With Icon States Color -->
+  {% include 'dashboard/widgets.html' %}
+
   <div class="row">
     <div class="col-md-4">
-      <div class="card">
+      <div class="card bg-secondary shadow">
         <div class="card-header d-flex justify-content-between">
           <div class="card-title">Pie Chart1</div>
           <!-- Modal 1 -->
@@ -77,107 +83,60 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card">
+    <div class="col-md-8">
+      <div class="card h-100 bg-secondary shadow">
         <div class="card-header">
-          <div class="card-title">Pie Chart2</div>
+          <div class="card-title">Line Chart1</div>
         </div>
-        <div class="card-body">
-          <div class="chart-container">
-            <canvas id="pieChart2"></canvas>
+        <div class="card-body flex-row">
+          <div class="flex-row h-100">
+            <div class="col h-100">
+                <canvas id="lineChart1" ></canvas>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Pie Chart3</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-container">
-            <canvas id="pieChart3" style="width: 50%; height: 50%"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Other Chart</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-container">
-            <canvas id="doughnutChart" style="width: 50%; height: 50%"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Other Chart</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-container">
-            <canvas id="radarChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Other Chart</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-container">
-            <canvas id="bubbleChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Other Chart</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-container">
-            <canvas id="multipleLineChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Other Chart</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-container">
-            <canvas id="multipleBarChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Chart with HTML Legends</div>
-        </div>
-        <div class="card-body">
-          <div class="card-sub">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Inventore ipsum non, est nesciunt nulla quaerat aliquid ratione alias quos cum nobis perferendis quidem optio. Similique corporis consectetur sit dolorem delectus!
-          </div>
-          <div class="chart-container">
-            <canvas id="htmlLegendsChart"></canvas>
-          </div>
-          <div id="myChartLegend"></div>
         </div>
       </div>
     </div>
   </div>
+
+  <br>
+
+  <div class="row">
+    <div class="col">
+      <div class="card card-stats card-round bg-secondary shadow">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+
+              {% include 'dashboard/table.html' %}
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card card-stats card-round bg-secondary shadow">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <div class="chart">
+                <canvas id="geoChart1"> </canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
 </div>
 
 {% endblock %} 
@@ -185,19 +144,20 @@
 
 {% block javascripts %}
   <script src="{% static 'dashboard/js/pie-chart.js' %}"></script>
+  <script src="{% static 'dashboard/js/line-chart.js' %}"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-geo@4.1.2/build/index.umd.min.js"></script>
+  <script src="{% static 'dashboard/js/gro-chart.js' %}"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
   <script>
 
+    // Pie Chart
     const ctx = document.getElementById('pieChart1');
     const pieChart1 = new PieChart(ctx);
     pieChart1.debug();
-    // pieChart1.changeColor("TCP", "#aaaabb");
-
-    const pieChart2 = new PieChart(document.getElementById('pieChart2'));
-    pieChart2.debug();
-
-    const pieChart3 = new PieChart(document.getElementById('pieChart3'));
-    pieChart3.debug();
-
 
     // ToDO !!!!!!
     // Get a reference to the form element
@@ -239,18 +199,45 @@
       }
     });
 
-    
 
-
-
-
-
-
-
-
-
+    // Line Chart
+    const lineChart1 = new LineChart(document.getElementById('lineChart1').getContext('2d'));
+    lineChart1.debug(1);
 
   </script>
+
+  <script>
+    fetch('https://unpkg.com/world-atlas/countries-50m.json').then((r) => r.json()).then((data) => {
+      const countries = ChartGeo.topojson.feature(data, data.objects.countries).features;
+
+      const chart = new Chart(document.getElementById("geoChart1"), {
+        type: 'choropleth',
+        data: {
+          labels: countries.map((d) => d.properties.name),
+          datasets: [{
+            label: 'Countries',
+            data: countries.map((d) => ({feature: d, value: Math.random()})),
+          }]
+        },
+        options: {
+          showOutline: false,
+          showGraticule: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+          },
+          scales: {
+            projection: {
+              axis: 'x',
+              projection: 'equalEarth'
+            }
+          }
+        }
+      });
+    });
+  </script>
+
 {% endblock %} 
 
 

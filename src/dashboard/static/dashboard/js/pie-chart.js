@@ -25,7 +25,7 @@ class PieChart {
 			data: this.data,
 			options: {
 				responsive: true,
-				maintainAspectRatio: true,
+				maintainAspectRatio: false,
 				aspectRatio: 1,
 				cutout: 40,
 				// cutoutPercentage: 40,
@@ -33,7 +33,7 @@ class PieChart {
 				plugins: {
 					legend: {
 						display: true,
-						position: 'top',
+						position: 'right',
 						align: 'center',
 						labels: {
 							boxWidth: 20,
@@ -52,7 +52,7 @@ class PieChart {
 						}
 					},
 					title: {
-						display: true,
+						display: false,
 						text: 'Chart Title',
 						font: {
 							size: 20,
