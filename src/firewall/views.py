@@ -13,7 +13,36 @@ import subprocess
 #    full_command = f'sudo /sbin/iptables {command}'
 #    subprocess.run(full_command.split(), check=True)
 
-
+def update_ip_tables(ip_family, traffic_direction):
+    iptables_family = 'iptables' if ip_family == 'IPv4' else 'ip6tables'
+    iptables_direction = 'INPUT' if traffic_direction == 'Inbound' else 'OUTPUT'
+    table = FirewallRule.objects.filter(
+                    ip_family=ip_family, traffic_direction=traffic_direction).order_by('rule_priority')
+    cmd = f'sudo {iptables_family} --flush {iptables_direction}'
+    subprocess.run(cmd.split(), check=True)
+    rule_dicts = [rule.to_dict() for rule in table]
+    for rule in rule_dicts:
+        if rule['rule_priority'] == 1000:
+            cmd = f'sudo {iptables_family} -P {iptables_direction} {rule["action"]}'
+            subprocess.run(cmd.split(), check=True)
+        else:
+            cmd = f'sudo {iptables_family} -t filter -A {iptables_direction}'
+            if 'source_address' in rule and rule['source_address'] is not None:
+                cmd += f' -s {rule["source_address"]}'
+            if 'destination_address' in rule and rule['destination_address'] is not None:
+                cmd += f' -d {rule["destination_address"]}'
+            if 'protocol' in rule and rule['protocol'] is not None:
+                cmd += f' -p {rule["protocol"]}'
+            if 'source_port' in rule and rule['source_port'] is not None:
+                cmd += f' --sport {rule["source_port"]}'
+            if 'destination_port' in rule and rule['destination_port'] is not None:
+                cmd += f' --dport {rule["destination_port"]}'
+            cmd  += f' -j {rule["action"]}'
+            if rule['action'] == 'LOG':
+                cmd  += f' -j {rule["action"]} --log-prefix \"{rule["description"]}\"'
+            subprocess.run(cmd.split(), check=True)
+            
+    
 def index(request):
     if request.method == 'GET':
         if 'ip_family' in request.GET and 'traffic_direction' in request.GET and 'new_action_index' in request.GET:
@@ -23,6 +52,7 @@ def index(request):
             new_action_index = request.GET['new_action_index']
             FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=1000).update(
                 action=new_action[int(new_action_index)])
+            update_ip_tables(ip_family, traffic_direction)
 
         context = {
             "tables": [
@@ -68,6 +98,7 @@ def add_rule(request):
         if form.is_valid():
             form.save()
             success_message = "Rule added successfully!"
+            update_ip_tables(ip_family, traffic_direction)
             return redirect(reverse('home') + "?success_message=" + success_message)
 
     return render(request, 'firewall/addrule.html', context)
@@ -84,6 +115,7 @@ def update_rule(request, pk):
         if form.is_valid():
             form.save()
             success_message = "Rule updated successfully!"
+            update_ip_tables(ip_family, traffic_direction)
             return redirect(reverse('home') + "?success_message=" + success_message)
 
     context = {'form':form, 'update_or_submit':update_or_submit, 'instance':rule, 
@@ -94,8 +126,10 @@ def remove_rule(request, pk):
     rule = FirewallRule.objects.get(id=pk)
     rule.delete()
     success_message = "Rule removed successfully!"
+    update_ip_tables(ip_family, traffic_direction)
     return redirect(reverse('home') + "?success_message=" + success_message)
 
+"""
 def index_RESTful(request):
     if request.method == 'GET':
         return render(request, 'firewall/firewall.html')
@@ -170,7 +204,7 @@ def rule_handler_RESTFUL(request, pk):
         form = FirewallRuleForm(instance=rule)
         data = json.dumps(form.cleaned_data)
         return JsonResponse(data, safe=False)
-    """
+    #############################################
         if request.method == 'PATCH':
             field_name = request.POST.get('field_name')
             field_value = request.POST.get('field_value')
@@ -194,7 +228,7 @@ def rule_handler_RESTFUL(request, pk):
             else:
                 rule.save()
                 return JsonResponse(rule.to_dict())
-    """
+    #############################################
     if request.method == 'POST':
         form = FirewallRuleForm(request.POST, instance=rule)
         if form.is_valid():
@@ -209,3 +243,5 @@ def rule_handler_RESTFUL(request, pk):
 
     # Return an error message for unsupported request methods
     return JsonResponse({'status': 'error', 'message': 'Unsupported request method.'})
+
+"""

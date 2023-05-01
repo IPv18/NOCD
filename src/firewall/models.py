@@ -30,6 +30,7 @@ class FirewallRule(models.Model):
         ('UDP', 'UDP'),
         ('ICMP', 'ICMP')
     ]
+    
     rule_priority = models.IntegerField()
     description = models.CharField(max_length=255)
     traffic_direction = models.CharField(max_length=30, choices=direction_choices, default='Inbound')
@@ -49,3 +50,20 @@ class FirewallRule(models.Model):
 
     def __str__(self):
         return self.description
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'rule_priority': self.rule_priority,
+            'description': self.description,
+            'traffic_direction': self.traffic_direction,
+            'ip_family': self.ip_family,
+            'type': self.type,
+            'protocol': self.protocol,
+            'source_address': self.source_address,
+            'source_port': self.source_port,
+            'destination_address': self.destination_address,
+            'destination_port': self.destination_port,
+            'action': self.action
+        }
+    
