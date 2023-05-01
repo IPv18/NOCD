@@ -124,9 +124,10 @@ def update_rule(request, pk):
 
 def remove_rule(request, pk):
     rule = FirewallRule.objects.get(id=pk)
+    update_ip_tables(rule.ip_family, rule.traffic_direction)
     rule.delete()
     success_message = "Rule removed successfully!"
-    update_ip_tables(ip_family, traffic_direction)
+
     return redirect(reverse('home') + "?success_message=" + success_message)
 
 """
