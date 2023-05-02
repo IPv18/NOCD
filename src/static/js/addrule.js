@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (XML_HTTP_REQUEST.status === 200) {
           const XML_HTTP_RESPONSE = JSON.parse(XML_HTTP_REQUEST.responseText);
           if (XML_HTTP_RESPONSE.exists) {
-            errorModalBody.innerHTML = 'This rule number alread exists, please choose a unique rule number.';
+            errorModalBody.innerHTML = 'This rule number already exists, please choose a unique rule number.';
             $('#errorModal').modal("show");
           }
           else {

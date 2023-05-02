@@ -52,6 +52,10 @@ def index(request):
             new_action_index = request.GET['new_action_index']
             FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=1000).update(
                 action=new_action[int(new_action_index)])
+            message = 'Table policy changed successfully!'
+            messages.success(request, message)
+            request.session['alert-message'] = message
+            return redirect('home')
             update_ip_tables(ip_family, traffic_direction)
 
         context = {
@@ -67,9 +71,6 @@ def index(request):
             ]
         }
 
-        if 'success_message' in request.GET:
-            success_message = request.GET['success_message']
-            messages.success(request, success_message)
         return render(request, 'firewall/firewall.html', context)
     elif request.method == 'POST':
         pass # TODO add iptables control here
@@ -97,9 +98,11 @@ def add_rule(request):
         form = FirewallRuleForm(request.POST)
         if form.is_valid():
             form.save()
-            success_message = "Rule added successfully!"
             update_ip_tables(ip_family, traffic_direction)
-            return redirect(reverse('home') + "?success_message=" + success_message)
+            message = 'Rule added successfully!'
+            messages.success(request, message)
+            request.session['alert-message'] = message
+            return redirect('home')
 
     return render(request, 'firewall/addrule.html', context)
 
@@ -114,9 +117,11 @@ def update_rule(request, pk):
         form = FirewallRuleForm(request.POST, instance=rule)
         if form.is_valid():
             form.save()
-            success_message = "Rule updated successfully!"
             update_ip_tables(ip_family, traffic_direction)
-            return redirect(reverse('home') + "?success_message=" + success_message)
+            message = 'Rule modified successfully!'
+            messages.success(request, message)
+            request.session['alert-message'] = message
+            return redirect('home')
 
     context = {'form':form, 'update_or_submit':update_or_submit, 'instance':rule, 
                 'ip_family':ip_family , 'traffic_direction':traffic_direction}
@@ -124,11 +129,26 @@ def update_rule(request, pk):
 
 def remove_rule(request, pk):
     rule = FirewallRule.objects.get(id=pk)
-    update_ip_tables(rule.ip_family, rule.traffic_direction)
+    ip_family = rule.ip_family
+    traffic_direction = rule.traffic_direction
+    update_ip_tables(ip_family, traffic_direction)
     rule.delete()
-    success_message = "Rule removed successfully!"
+    message = 'Rule deleted successfully!'
+    messages.success(request, message)
+    request.session['alert-message'] = message
+    return redirect('home')
 
-    return redirect(reverse('home') + "?success_message=" + success_message)
+
+
+
+
+
+
+
+
+
+
+
 
 """
 def index_RESTful(request):
