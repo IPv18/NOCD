@@ -1,5 +1,5 @@
 import subprocess as sp
-
+import json 
 from pyroute2 import IPRoute
 from pyroute2.netlink.exceptions import NetlinkError
 from utils.utils import get_interfaces
@@ -309,17 +309,23 @@ def tc_filter_policer(tc_id, interface, rate, burst, _match=None,
         except sp.CalledProcessError as e:
             print(e)
 
-        n_transport = 17 if _match["transport"] == "udp" else 6
-
-        ip_src = _match["ip_src"] if _match["ip_src"] else "0.0.0.0/0"
-        ip_dest = _match["ip_dest"] if _match["ip_dest"] else "0.0.0.0/0"
-        port_src = _match["sport"] if _match["sport"] else "0 0x0000"
-        port_dest = _match["dport"] if _match["dport"] else "0 0x0000"
-
-        port_src = port_src if "0x" in port_src else f"{port_src}  0xffff"
-        port_dest = port_dest if "0x" in port_dest else f"{port_dest} 0xffff"
         try:
             if _match:
+                n_transport = 17 if _match["transport"] == "udp" else 6
+
+                ip_src = _match["ip_src"] if _match["ip_src"] \
+                    else "0.0.0.0/0"
+                ip_dest = _match["ip_dest"] if _match["ip_dest"] \
+                    else "0.0.0.0/0"
+                port_src = _match["sport"] if _match["sport"] \
+                    else "0 0x0000"
+                port_dest = _match["dport"] if _match["dport"] \
+                    else "0 0x0000"
+
+                port_src = port_src if "0x" in port_src \
+                    else f"{port_src}  0xffff"
+                port_dest = port_dest if "0x" in port_dest \
+                    else f"{port_dest} 0xffff"
                 sp.run(
                     f"sudo tc filter add dev ifb4nocd parent 1: \
                         prio {int(tc_id, 16)} \
@@ -371,7 +377,7 @@ def enable_policy(tc_policy, reverse=False):
         )
 
         if tc_policy.config.get("programs"):
-            for program in tc_policy.config["programs"]:
+            for program in json.loads(tc_policy.config["programs"]):
                 classify_program(
                     program=program,
                     qdisc_handle=qdisc_handle,
@@ -391,7 +397,7 @@ def enable_policy(tc_policy, reverse=False):
     # Inbound policies will be policed on the ingress qdisc
     else:
         if tc_policy.config.get("programs"):
-            for program in tc_policy.config["programs"]:
+            for program in json.loads(tc_policy.config["programs"]):
                 connmark_program(
                     program=program,
                     tc_id=tc_id,
