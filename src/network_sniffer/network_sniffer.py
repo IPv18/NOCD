@@ -27,7 +27,7 @@ from utils.ss_helper import SsHelper
 from utils.tcpdump_helper import TCPDumpHelper
 from utils.utils import get_interfaces
 
-SS_DAEMON_INTERVAL = os.environ.get("UPDATE_INTERVAL", 0.5)
+SS_DAEMON_INTERVAL = os.environ.get("UPDATE_INTERVAL", 1)
 
 def store_pkt_info(writer):
     '''
@@ -74,7 +74,7 @@ def sniff_traffic(interface):
         csv_writer.writerow(csv_header)
 
     csv_file = open(csv_path, "a", newline='',
-                    encoding="utf-8" ,buffering=1)  # TODO - Fix buffering
+                    encoding="utf-8", buffering=1)  # TODO - Fix buffering
     csv_writer = csv.writer(csv_file)
 
     tcpdump_helper = TCPDumpHelper(
@@ -97,7 +97,6 @@ def update_ss_buffer_daemon():
 def main():
 
     interfaces = get_interfaces()
-    interfaces = ["wlp0s20f3"]
     
     threads = [
         threading.Thread(target=sniff_traffic, 
@@ -108,8 +107,6 @@ def main():
     for thread in threads:
         thread.start()
 
-    for thread in threads:
-        thread.join()
 
 
 if __name__ == "__main__":
