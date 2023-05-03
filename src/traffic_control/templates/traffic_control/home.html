@@ -1,0 +1,166 @@
+{% extends "main.html" %}
+{% load static %}
+{% block header %}{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h2>
+        <i class="py-5 fa fa-solid fa-gauge-high"></i>  Network Traffic Control
+    </h2>
+    <div class="py-5  ">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#msg">
+                    <i class="fa-solid fa-info-circle"></i>
+                    Overview
+                </a>
+            </li>
+            <li class="nav-item m-auto">
+                <a class="nav-link" data-bs-toggle="tab" href="#pro">
+                    <i class="fa-solid fa-grip"></i>
+                Program Policies</a>
+            </li>
+            <li class="nav-item   ">
+                <a class="nav-link" data-bs-toggle="tab" href="#set">
+                    <i class="fa-solid fa-network-wired"></i>
+                IP Policies</a>
+            </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content m-4 justify-content-between ">
+            <div class="tab-pane  fade show active  " id="msg">
+                <div class="d-flex">
+                    <div class="border-end  pe-2">
+                        <div>
+                            <label for="interface-selector" class="d-inline-block">Interface:</label>
+                            <select class="" id="interface-selector"></select>
+                        </div>
+                        <div class="checkbox m-3  " onclick="live = !live">
+                            <input type="checkbox" checked data-toggle="toggle" 
+                            data-on="
+                            <div class='ps-3'>
+                                <i class='fa-solid fa-play'></i>
+                                <br>
+                                Live
+                            </div>" 
+                            data-off="<i class='fa-solid fa-clock-rotate-left'></i>
+                            <br>
+                            Historical">
+                        </div>
+                    </div>
+                    <table id="overview-table" class="display ps-2">
+                        <thead>
+                            <tr>
+                                <th>timestamp</th>
+                                <th>program</th>
+                                <th>protocol</th>
+                                <th>direction</th>
+                                <th>ip_src</th>
+                                <th>port_src</th>
+                                <th>ip_dest</th>
+                                <th>port_dest</th>
+                                <th>length</th>
+                                <th>pkt_count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+            <div class="tab-pane   fade " id="pro">
+                <div >
+                    <button type="button" class="btn btn-success gap-2 w-100" data-bs-toggle="modal" data-bs-target="#program-modal" data-bs-action="add"> 
+                        <i class="fa-solid fa-plus"></i> <br>  Program Policy 
+                    </button>
+                    <table id="program-table" class="display" style="width:100%" >
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>name</th>
+                                <th>programs</th>
+                                <th>rate</th>
+                                <th>burst</th>
+                                <th>prio</th>
+                                <th>direction</th>
+                                <th>interface</th>
+                                <th>enabled</th>
+                                <th>startup</th>
+                                <th>description</th>
+                                <th>created</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+            
+                </div>
+            </div>
+            <div class="tab-pane  fade" id="set">
+                <table id="ip-table" class="display">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>direction</th>
+                            <th>transport</th>
+                            <th>ip_src</th>
+                            <th>sport</th>
+                            <th>ip_dest</th>
+                            <th>dport</th>
+                            <th>rate</th>
+                            <th>burst</th>
+                            <th>prio</th>
+                            <th>interface</th>
+                            <th>enabled</th>
+                            <th>startup</th>
+                            <th>created</th>
+                            <th>description</th>
+                            <th>-</th>
+                            <th>-</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Add/ Edit Modal -->
+    
+    <div class="modal fade" id="program-modal" tabindex="-1" aria-labelledby="program-modalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="program-modalLabel">New message</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label">Recipient:</label>
+                <input type="text" class="form-control" id="recipient-name">
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">Message:</label>
+                <textarea class="form-control" id="message-text"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Send message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--/ Bootstrap Add/ Edit Modal -->
+
+</div>
+<script src="{% static 'traffic_control/app.js' %}"></script>
+{% endblock %}
