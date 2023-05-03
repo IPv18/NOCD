@@ -18,16 +18,17 @@ def get_interfaces():
     Returns a list of the local network interfaces, excluding the loopback interface.
     '''
     output = subprocess.check_output(
-        ["ip link show | awk -F': ' '{print $2}'"],
+        ["ip link show up | grep -v '@' | awk -F': ' '{print $2}'"],
         shell=True
     )
 
-    interfaces = output.decode("utf-8").split("\n\n")
-
-
-    return [
-        interface for interface in interfaces if interface and interface != "lo"
+    interfaces = [
+        interface for interface in output.decode("utf-8").split("\n\n")
+        if interface and interface != "lo" and "\n" not in interface
+        and " " not in interface
     ]
+
+    return interfaces
 
 
 def get_local_ips():

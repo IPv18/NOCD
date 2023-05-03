@@ -9,6 +9,7 @@ import subprocess
 from dataclasses import dataclass
 from utils.ss_helper import PacketRecord
 from utils.utils import get_local_macs
+from utils.ss_helper import SsHelper
 
 @dataclass
 class TCPDumpHelper:
@@ -80,8 +81,8 @@ class TCPDumpHelper:
         This method is called by start() method if no output_handler is provided.
         """
 
-        for line in iter(pkt_reader, b''):
-            print(line.decode('utf-8').rstrip())
+        for pkt in pkt_reader:
+            print(pkt)
 
 
     def tcpdump_parser(self, output):
@@ -99,14 +100,17 @@ class TCPDumpHelper:
             if network_proto == "IPv4" or network_proto == "IPv6":
                 if cols[1] not in get_local_macs() and cols[3][:-1] not in get_local_macs():
                     continue
-                yield PacketRecord(
-                    timestamp   = int(cols[0].split(".")[0]),
-                    mac_src     = cols[1],
-                    mac_dest    = cols[3][:-1],
-                    ip_src      = ".".join(cols[9].split(".")[:-1]),
-                    port_src    = cols[9].split(".")[-1],
-                    ip_dest     = ".".join(cols[11].split(".")[:-1]),
-                    port_dest   = cols[11].split(".")[-1][:-1],
-                    protocol    = "udp" if cols[12] == "UDP," else "tcp",
-                    length      = int(cols[8][:-1]) if "(" not in cols[-1] else int(cols[-1][1:-2])
+                pkt = PacketRecord(
+                    timestamp=int(cols[0].split(".")[0]),
+                    mac_src=cols[1],
+                    mac_dest=cols[3][:-1],
+                    ip_src=".".join(cols[9].split(".")[:-1]),
+                    port_src=cols[9].split(".")[-1],
+                    ip_dest=".".join(cols[11].split(".")[:-1]),
+                    port_dest=cols[11].split(".")[-1][:-1],
+                    protocol="udp" if cols[12] == "UDP," else "tcp",
+                    length=int(cols[8][:-1]) if "(" not in cols[-1] else int(cols[-1][1:-2])
                 )
+                SsHelper.update_packet_record(pkt)
+
+                yield pkt
