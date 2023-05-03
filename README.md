@@ -1,5 +1,5 @@
 # NOCD
-
+[![Django CI](https://github.com/IPv18/NOCD/actions/workflows/django.yml/badge.svg)](https://github.com/IPv18/NOCD/actions/workflows/django.yml)
 ## Setup
 
 ### Virtual Environment
