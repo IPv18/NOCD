@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',
     'firewall.apps.FirewallConfig',
     'notification.apps.NotificationConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
