@@ -91,7 +91,6 @@ def update_ss_buffer_daemon():
     '''
     SsHelper.update_buffer()
     threading.Timer(SS_DAEMON_INTERVAL, update_ss_buffer_daemon).start()
-    print("Updated buffer")
 
 
 def main():
