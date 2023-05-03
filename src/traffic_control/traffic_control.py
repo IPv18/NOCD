@@ -5,6 +5,50 @@ from pyroute2.netlink.exceptions import NetlinkError
 from utils.utils import get_interfaces
 
 
+
+# TODO: Add a Config class to encapsulate the config dict.
+def pack_config(**kwargs):
+    '''
+    Returns a tc policy config.
+    '''
+    return {
+        "class": {
+            "rate": kwargs.get('rate', None),
+            "burst": kwargs.get('burst', None),
+            "prio": kwargs.get('prio', None)
+        },
+        "match": {
+            "transport": kwargs.get('transport', None),
+            "ip_src": kwargs.get('ip_src', None),
+            "ip_dest": kwargs.get('ip_dest', None),
+            "sport": kwargs.get('sport', None),
+            "dport": kwargs.get('dport', None),
+        },
+        "interface": kwargs.get('interface', None),
+        "direction": kwargs.get('direction', None),
+        "programs": kwargs.get('programs', None)
+    }
+
+
+def unpack_config(config):
+    '''
+    Returns a flat dict with the config for a tc policy.
+    '''
+    return {
+        "rate": config.get('class', {}).get('rate', None),
+        "burst": config.get('class', {}).get('burst', None),
+        "prio": config.get('class', {}).get('prio', None),
+        "interface": config.get('interface', None),
+        "direction": config.get('direction', None),
+        "programs": config.get('programs', None),
+        "transport": config.get('match', {}).get('transport', None),
+        "ip_src": config.get('match', {}).get('ip_src', None),
+        "ip_dest": config.get('match', {}).get('ip_dest', None),
+        "sport": config.get('match', {}).get('sport', None),
+        "dport": config.get('match', {}).get('dport', None),
+    }
+
+
 def get_program_pids(program):
     pids = []
     try:
@@ -162,7 +206,7 @@ def add_net_cls(net_cls, qdisc_handle, classid, interface, reverse=False):
             ip.tc(
                 command="add-class", kind="htb", index=interface_index,
                 handle=f"{qdisc_handle}:{classid}",
-                rate=net_cls["rate"], burst=net_cls["burst"], 
+                rate=net_cls["rate"], burst=net_cls["burst"],
                 prio=net_cls["prio"]
                 )
         except NetlinkError as netlink_error:
