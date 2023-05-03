@@ -5,6 +5,21 @@ from pyroute2.netlink.exceptions import NetlinkError
 from utils.utils import get_interfaces
 
 
+def format_net_cls(net_cls):
+    if "k" in net_cls["burst"]:
+        net_cls["burst"] = int(net_cls["burst"].replace("k", "")) * 1000 
+    elif "mb" in net_cls["burst"]:
+        net_cls["burst"] = int(net_cls["burst"].replace("mb", "")) * 1000000
+    # kbit, mbit, gbit to kbyte, mbyte, gbyte
+    if "kbit" in net_cls["rate"]:
+        net_cls["rate"] = int(net_cls["rate"].replace("kbit", "")) * 128
+    elif "mbit" in net_cls["rate"]:
+        net_cls["rate"] = int(net_cls["rate"].replace("mbit", "")) * 131072
+    elif "gbit" in net_cls["rate"]:
+        net_cls["rate"] = int(net_cls["rate"].replace("gbit", "")) * 134217728
+    if isinstance(net_cls["prio"], str):
+        net_cls["prio"] = int(net_cls["prio"])
+
 
 # TODO: Add a Config class to encapsulate the config dict.
 def pack_config(**kwargs):
@@ -340,6 +355,11 @@ def enable_policy(tc_policy, reverse=False):
     tc_id = hex(tc_policy.id + 1000)[2:]
     # Outbound policies will be shaped on the egress qdisc using net_cls
     if tc_policy.config["direction"] == "outbound":
+        # PS: the VerY SmArT pyroute2 tc developers decided to use
+        # different unit than the one used by the tc command line tool
+        # so we have to convert the rate and burst
+        # command line tool unit (bit), pyroute2 uses byte.
+        format_net_cls(tc_policy.config["class"])
         qdisc_handle = "1"
         # Create a new class on the interface's root qdisc
         add_net_cls(
