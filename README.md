@@ -1,5 +1,20 @@
 # NOCD
 [![Django CI](https://github.com/IPv18/NOCD/actions/workflows/django.yml/badge.svg)](https://github.com/IPv18/NOCD/actions/workflows/django.yml)
+
+## About
+NOCD is a micro NOC (Network Operations Center) that aims to help people with little to no experience in networking to create and manage their own network policies.
+The app provides easy to use tools to create and manage network policies, as well as a dashboard to monitor the network traffic and statistics.
+
+The app is built using Python, Django and rest_framework.
+Users can interact with the app through a web interface, or through the API.
+
+Main features include creating and managing:
+- [traffic control policies](/src/traffic_control/README.md)
+- firewall rules
+- statistics & data visualization
+- Alerts & notifications
+
+
 ## Setup
 
 ### Virtual Environment
