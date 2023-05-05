@@ -1,17 +1,30 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-import json
 from django.http import JsonResponse
 from django.urls import reverse
 from django.core import serializers
 from firewall.models import FirewallRule
 from .forms import FirewallRuleForm
-import subprocess
+import subprocess, ipaddress, json
 
 # django ALL=(ALL) NOPASSWD:/sbin/iptables need to be added to the /etc/sudoers file 
 # def iptables_command(command):
 #    full_command = f'sudo /sbin/iptables {command}'
 #    subprocess.run(full_command.split(), check=True)
+
+def check_address(address):
+    if address == '':
+        return address
+    
+    try:
+        ip = ipaddress.ip_interface(address)
+        if '/' in address:
+            return ip.network
+        else:
+            return address
+    except ValueError:
+        return ''
+
 
 def update_ip_tables(ip_family, traffic_direction):
     iptables_family = 'iptables' if ip_family == 'IPv4' else 'ip6tables'
@@ -55,8 +68,9 @@ def index(request):
             message = 'Table policy changed successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
+            #update_ip_tables(ip_family, traffic_direction)
             return redirect('home')
-            update_ip_tables(ip_family, traffic_direction)
+            
 
         context = {
             "tables": [
@@ -97,8 +111,21 @@ def add_rule(request):
     if request.method == 'POST':
         form = FirewallRuleForm(request.POST)
         if form.is_valid():
+            # Get the cleaned data from the form
+            cleaned_data = form.cleaned_data
+
+            # Process the source and destination IP addresses if they are not empty
+            if cleaned_data.get('source_address'):
+                cleaned_data['source_address'] = check_address(cleaned_data['source_address'])
+            if cleaned_data.get('destination_address'):
+                cleaned_data['destination_address'] = check_address(cleaned_data['destination_address'])
+
+            print(cleaned_data['source_address'])
+            print(cleaned_data['destination_address'])
+
             form.save()
-            update_ip_tables(ip_family, traffic_direction)
+
+            #update_ip_tables(ip_family, traffic_direction)
             message = 'Rule added successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
@@ -116,8 +143,20 @@ def update_rule(request, pk):
     if request.method == 'POST':
         form = FirewallRuleForm(request.POST, instance=rule)
         if form.is_valid():
+            # Get the cleaned data from the form
+            cleaned_data = form.cleaned_data
+
+            # Process the source and destination IP addresses if they are not empty
+            if cleaned_data.get('source_address'):
+
+                cleaned_data['source_address'] = check_address(cleaned_data['source_address'])
+            if cleaned_data.get('destination_address'):
+                cleaned_data['destination_address'] = check_address(cleaned_data['destination_address'])
+                
+            print(cleaned_data['source_address'])
+            print(cleaned_data['destination_address'])
             form.save()
-            update_ip_tables(ip_family, traffic_direction)
+            #update_ip_tables(ip_family, traffic_direction)
             message = 'Rule modified successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
@@ -131,7 +170,7 @@ def remove_rule(request, pk):
     rule = FirewallRule.objects.get(id=pk)
     ip_family = rule.ip_family
     traffic_direction = rule.traffic_direction
-    update_ip_tables(ip_family, traffic_direction)
+    #update_ip_tables(ip_family, traffic_direction)
     rule.delete()
     message = 'Rule deleted successfully!'
     messages.success(request, message)
