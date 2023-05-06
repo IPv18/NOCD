@@ -111,20 +111,22 @@ def add_rule(request):
     if request.method == 'POST':
         form = FirewallRuleForm(request.POST)
         if form.is_valid():
-            # Get the cleaned data from the form
-            cleaned_data = form.cleaned_data
-
-            # Process the source and destination IP addresses if they are not empty
+            cleaned_data = form.cleaned_data 
+            ip_family = cleaned_data['ip_family']
+            traffic_direction = cleaned_data['traffic_direction']
+            rule_priority = cleaned_data['rule_priority']
+            src_adr = dst_adr = ''
             if cleaned_data.get('source_address'):
-                cleaned_data['source_address'] = check_address(cleaned_data['source_address'])
+                src_adr = check_address(cleaned_data['source_address'])
             if cleaned_data.get('destination_address'):
-                cleaned_data['destination_address'] = check_address(cleaned_data['destination_address'])
-
-            print(cleaned_data['source_address'])
-            print(cleaned_data['destination_address'])
-
+                dst_adr = check_address(cleaned_data['destination_address'])
             form.save()
-
+            if src_adr != '':
+                FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
+                source_address = src_adr)
+            if dst_adr != '':
+                FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
+                destination_address = dst_adr)
             #update_ip_tables(ip_family, traffic_direction)
             message = 'Rule added successfully!'
             messages.success(request, message)
@@ -143,19 +145,22 @@ def update_rule(request, pk):
     if request.method == 'POST':
         form = FirewallRuleForm(request.POST, instance=rule)
         if form.is_valid():
-            # Get the cleaned data from the form
-            cleaned_data = form.cleaned_data
-
-            # Process the source and destination IP addresses if they are not empty
+            cleaned_data = form.cleaned_data 
+            ip_family = cleaned_data['ip_family']
+            traffic_direction = cleaned_data['traffic_direction']
+            rule_priority = cleaned_data['rule_priority']
+            src_adr = dst_adr = ''
             if cleaned_data.get('source_address'):
-
-                cleaned_data['source_address'] = check_address(cleaned_data['source_address'])
+                src_adr = check_address(cleaned_data['source_address'])
             if cleaned_data.get('destination_address'):
-                cleaned_data['destination_address'] = check_address(cleaned_data['destination_address'])
-                
-            print(cleaned_data['source_address'])
-            print(cleaned_data['destination_address'])
+                dst_adr = check_address(cleaned_data['destination_address'])
             form.save()
+            if src_adr != '':
+                FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
+                source_address = src_adr)
+            if dst_adr != '':
+                FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
+                destination_address = dst_adr)
             #update_ip_tables(ip_family, traffic_direction)
             message = 'Rule modified successfully!'
             messages.success(request, message)
