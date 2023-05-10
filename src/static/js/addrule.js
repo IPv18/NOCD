@@ -1,30 +1,32 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const URL_PARAMS = new URLSearchParams(window.location.search);
-  const IP_FAMILY_PARAM = URL_PARAMS.get("ip_family");
-  const TRAFFIC_DIRECTION_PARAM = URL_PARAMS.get("traffic_direction");
+  const scriptElements = document.getElementsByClassName("addrule-script");
+  const scriptElement = scriptElements[0];
+  const update_or_submit = scriptElement.dataset.updateOrSubmit;
+  const ip_family_value = scriptElement.dataset.ipFamily;
+  const traffic_direction_value = scriptElement.dataset.trafficDirection;
+  const rule_id = scriptElement.dataset.ruleId;
+  console.log(update_or_submit, ip_family_value, traffic_direction_value, rule_id);
 
-  const FORM = document.getElementById("rule_form");
-  const RULE_NUM = document.getElementById("id_rule_priority");
-  const DESCRIPTION = document.getElementById("id_description");
-  const TYPE_SELECT = document.getElementById("id_type");
-  const PROTOCOL_SELECT = document.getElementById("id_protocol");
-  const TRAFFIC_DIRECTION = document.getElementById("id_traffic_direction");
-  const IP_FAMILY = document.getElementById("id_ip_family");
-  const SOURCE_PORT = document.getElementById("id_source_port");
-  const DESTINATION_PORT = document.getElementById("id_destination_port");
-  const SOURCE_ADDRESS = document.getElementById("id_source_address");
-  const DESTINATION_ADDRESS = document.getElementById("id_destination_address");
+  const form_id = "rule_form" + rule_id
 
+  const FORM = document.getElementById(form_id);
+  const RULE_NUM = FORM.querySelector("#id_rule_priority");
+  const DESCRIPTION = FORM.querySelector("#id_description");
+  const TRAFFIC_DIRECTION = FORM.querySelector("#id_traffic_direction");
+  const IP_FAMILY = FORM.querySelector("#id_ip_family");
+  const TYPE_SELECT = FORM.querySelector("#id_type");
+  const PROTOCOL_SELECT = FORM.querySelector("#id_protocol");
+  const SOURCE_ADDRESS = FORM.querySelector("#id_source_address");
+  const SOURCE_PORT = FORM.querySelector("#id_source_port");
+  const DESTINATION_ADDRESS = FORM.querySelector("#id_destination_address");
+  const DESTINATION_PORT = FORM.querySelector("#id_destination_port");
+  const ACTION = FORM.querySelector("#id_action");
   const SUBMIT_BUTTON = FORM.querySelector('input[type="submit"]');
-  const UPDATE_OR_SUBMIT = SUBMIT_BUTTON.getAttribute('update-or-submit');
-  const PATTERN = SOURCE_ADDRESS.getAttribute('pattern');
 
+  const PATTERN = SOURCE_ADDRESS.getAttribute('pattern');
+  
   const UDP_TYPE = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
   const TCP_TYPE = ["CUSTOM TCP", "ALL TCP"];
-
-  if (UPDATE_OR_SUBMIT == "UPDATE")
-    original_rule_priority = RULE_NUM.value;
-
   const PORT_MAPPING = {
     "SSH 22": 22,
     "TELNET 23": 23,
@@ -44,17 +46,38 @@ document.addEventListener("DOMContentLoaded", function () {
     "NFS 2049": 2049,
   };
 
-  if (IP_FAMILY_PARAM !== null && TRAFFIC_DIRECTION_PARAM !== null) 
+  TRAFFIC_DIRECTION.value = traffic_direction_value;
+  IP_FAMILY.value =  ip_family_value;
+  TRAFFIC_DIRECTION.disabled = true;
+  IP_FAMILY.disabled = true;
+
+  if (update_or_submit == "UPDATE")
   {
-    TRAFFIC_DIRECTION.value = TRAFFIC_DIRECTION_PARAM;
-    IP_FAMILY.value = IP_FAMILY_PARAM;
-    TRAFFIC_DIRECTION.disabled = true;
-    IP_FAMILY.disabled = true;
-  } 
-  else 
+    const xhr = new XMLHttpRequest();
+    const url = '/firewall/rule/${rule_id}/';
+    xhr.open('GET', url);
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    xhr.setRequestHeader('X-CSRFToken', csrftoken);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+          const responseData = JSON.parse(xhr.responseText);
+          const rule = responseData.instance;
+          RULE_NUM.value = rule['rule_priority'];
+          DESCRIPTION.value = rule['description'];
+          TYPE_SELECT.value = rule['type'];
+          PROTOCOL_SELECT.value = rule['protocol'];
+          SOURCE_ADDRESS.value = rule['source_address'];
+          DESTINATION_ADDRESS.value = rule['destination_address'];
+          SOURCE_PORT.value = rule['source_port'];
+          DESTINATION_PORT.value = rule['destination_port'];
+          ACTION.value = rule['action'];
+    };
+    xhr.send();
+  }
+
+  if (update_or_submit == "UPDATE")
   {
-    TRAFFIC_DIRECTION.disabled = true;
-    IP_FAMILY.disabled = true;
+    original_rule_priority = RULE_NUM.value;
     if (TYPE_SELECT.value == "ALL UDP" || TYPE_SELECT.value == "ALL TCP" || TYPE_SELECT.value == "CUSTOM ICMP" || TYPE_SELECT.value === "ALL ICMP") 
       SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true; 
     else 
@@ -63,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
       else if (TRAFFIC_DIRECTION.value == "Outbound" && TYPE_SELECT.value != "CUSTOM UDP" && TYPE_SELECT.value != "CUSTOM TCP")
         DESTINATION_PORT.disabled = true;
   }
-
   TYPE_SELECT.addEventListener("change", (event) => {
     const SELECTED_TYPE = event.target.value;
 
@@ -133,7 +155,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     TYPE_SELECT.value = TypeValue;
   });
-
   SUBMIT_BUTTON.addEventListener("click", (event) => {
     if (!RULE_NUM.value || !DESCRIPTION.value) {
       errorModalBody.innerHTML = 'Both rule number and description are required.';
@@ -142,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     else {
-      if (UPDATE_OR_SUBMIT == "UPDATE") {
+      if (update_or_submit == "UPDATE") {
         if (original_rule_priority == RULE_NUM.value) {
           SOURCE_PORT.disabled = false;
           DESTINATION_PORT.disabled = false;
@@ -156,25 +177,22 @@ document.addEventListener("DOMContentLoaded", function () {
       const XML_HTTP_REQUEST = new XMLHttpRequest();
       XML_HTTP_REQUEST.open('GET', `/firewall/check_rule_uniqueness/?rule_priority=${RULE_NUM.value}&traffic_direction=${TRAFFIC_DIRECTION.value}&ip_family=${IP_FAMILY.value}`);
       XML_HTTP_REQUEST.onload = () => {
-        if (XML_HTTP_REQUEST.status === 200) {
-          const XML_HTTP_RESPONSE = JSON.parse(XML_HTTP_REQUEST.responseText);
-          if (XML_HTTP_RESPONSE.exists) {
-            errorModalBody.innerHTML = 'This rule number already exists, please choose a unique rule number.';
-            $('#errorModal').modal("show");
-          }
-          else {
-            SOURCE_PORT.disabled = false;
-            DESTINATION_PORT.disabled = false;
-            SOURCE_ADDRESS.disabled = false;
-            DESTINATION_ADDRESS.disabled = false;
-            TRAFFIC_DIRECTION.disabled = false;
-            IP_FAMILY.disabled = false;
-            FORM.submit();
-          }
-        } else {
-          errorModalBody.innerHTML = 'An error occurred while checking the rule uniqueness.';
+        const XML_HTTP_RESPONSE = JSON.parse(XML_HTTP_REQUEST.responseText);
+        if (XML_HTTP_RESPONSE.exists) 
+        {
+          errorModalBody.innerHTML = 'This rule number already exists, please choose a unique rule number.';
           $('#errorModal').modal("show");
         }
+        else 
+        {
+          SOURCE_PORT.disabled = false;
+          DESTINATION_PORT.disabled = false;
+          SOURCE_ADDRESS.disabled = false;
+          DESTINATION_ADDRESS.disabled = false;
+          TRAFFIC_DIRECTION.disabled = false;
+          IP_FAMILY.disabled = false;
+          FORM.submit();
+          }
       };
       XML_HTTP_REQUEST.send();
       event.preventDefault(); 

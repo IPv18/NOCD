@@ -4,25 +4,18 @@
 
 {% block header %}
 
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Firewall</title>
-    <meta='viewport' conent='width=device-width, initial-scale=1'>
-    <link rel="stylesheet" href='{% static "styles/style.css" %}'>
-    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-          crossorigin="anonymous">
     <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
-
+    <link rel="stylesheet" type="text/css" href='{% static "styles/addrule.css" %}' />
+    <script src="{% static 'js/firewall.js' %}"></script>
+    
 {% endblock header %}
 <!-- ------------------------------break------------------------------ -->
 {% block content %}
     
     {% if messages %}
         {% for message in messages %}
-            <div id="alert-message" class="alert alert-success" role="alert">
+            <div id="alert-message" class="alert alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-success{% endif %}" role="alert">
                 {{ message }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -61,7 +54,6 @@
                aria-controls="pills-IPv6-Inbound"
                aria-selected="false">IPv6 Inbound</a>
         </li>
-
         <li class="nav-tab">
             <a class="nav-link"
                id="pills-IPv6-Outbound-tab"
@@ -80,21 +72,24 @@
                  role="tabpanel"
                 aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
             <!-- ------------------------------break------------------------------ -->
-                <button type="button"
-                        onclick="location.href='{% url "addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
-                    Add Rule
+                <!-- Button trigger modal -->
+                <button type="button" 
+                        class="btn btn-primary" 
+                        data-toggle="modal" 
+                        data-target="#exampleModalLong{{ forloop.counter }}"
+                        data-ip-family="{{ table.0.ip_family }}"
+                        data-traffic-direction="{{ table.0.traffic_direction }}"
+                        data-rule-id="{{ forloop.counter }}"
+                        data-update-or-submit="SUBMIT">
+                    Add rule
                 </button>
-                {% if table.last.action == 'ACCEPT' %}
-                    <button type="button"
-                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=0'">
-                        Switch to Least Privilege
-                    </button>
-                {% else %}
-                    <button type="button"
-                            onclick="location.href='{% url "home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=1'">
-                        Switch to Zero Trust
-                    </button>
-                {% endif %}
+                <!-- Modal -->
+                {% include "firewall/scrolling-long.html" with update_or_submit="SUBMIT" ip_family=table.0.ip_family traffic_direction=table.0.traffic_direction %}
+                <button type="button" 
+                        class="switch-policy-btn"
+                        data-rule-id="{{ table.0.id }}">
+                    Switch table policy
+                </button>
                  <!-- ------------------------------break------------------------------ -->
                 <table>
                     <tr>
@@ -117,15 +112,5 @@
         {% endfor %}
     </div>
     <hr>
-    <!-- ------------------------------break------------------------------ -->
-    <script src="{% static 'js/firewall.js' %}"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
+    
 {% endblock content %}

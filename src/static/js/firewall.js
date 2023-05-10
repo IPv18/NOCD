@@ -18,4 +18,27 @@ document.addEventListener("DOMContentLoaded", function () {
         alertMessage.innerHTML = sessionMessage;
         sessionStorage.removeItem('alert-message');
     }
+    
+
+    function SwitchTablePolicy(rule_id) {
+        var xhr = new XMLHttpRequest();
+        var url = '/firewall/rule/' + rule_id + '/';
+        xhr.open('PATCH', url);
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        xhr.onload = function() {
+            location.reload();
+        };
+        xhr.send();
+    }
+
+    const switchPolicyBtns = document.querySelectorAll('.switch-policy-btn');
+    if (switchPolicyBtns) {
+        switchPolicyBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const rule_id = this.getAttribute('data-rule-id');
+                SwitchTablePolicy(rule_id);
+            });
+        });
+    }
 });

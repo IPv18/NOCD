@@ -1,105 +1,152 @@
 {% load static %}
 
-{% block header %}
+<form id="rule_form{{ rule_id }}" action="{% url 'firewall:home' %}" method="POST">
+    {% csrf_token %} 
+    <p>
+        <label for="id_rule_priority"> 
+                Rule number <span style="color: red">*</span>:
+        </label>
+        <input  id="id_rule_priority" 
+                type="number" 
+                name="rule_priority" 
+                min="1" 
+                max="999" 
+                required>
+    </p>
+    <p>
+        <label for="id_description">
+            Description <span style="color: red">*</span>: 
+        </label>
+        <input  id="id_description" 
+                type="text" 
+                name="description"
+                maxlength="255" 
+                required>
+    </p>
+    <p>
+        <label for="id_traffic_direction">
+            Traffic direction: 
+        </label>
+        <select name="traffic_direction" id="id_traffic_direction">
+            <option value="Inbound" selected="">Inbound</option>
+            <option value="Outbound">Outbound</option>
+        </select>
+    </p>
+    <p>
+        <label for="id_ip_family">
+            IP family: 
+        </label>
+        <select name="ip_family" id="id_ip_family">
+            <option value="IPv4" selected="">IPv4</option>
+            <option value="IPv6">IPv6</option>
+        </select>
+    </p>
+    <p>
+        <label for="id_type">
+            Type: 
+        </label>
+        <select name="type" id="id_type">
+            <option value="">---------</option>
+            <option value="CUSTOM TCP" selected="">CUSTOM TCP</option>
+            <option value="CUSTOM UDP">CUSTOM UDP</option>
+            <option value="CUSTOM ICMP">CUSTOM ICMP</option>
+            <option value="ALL TCP">ALL TCP</option>
+            <option value="ALL UDP">ALL UDP</option>
+            <option value="ALL ICMP">ALL ICMP</option>
+            <option value="SSH 22">SSH 22</option>
+            <option value="TELNET 23">TELNET 23</option>
+            <option value="SMTP 25">SMTP 25</option>
+            <option value="NAMESERVER 42">NAMESERVER 42</option>
+            <option value="DNS UDP 53">DNS UDP 53</option>
+            <option value="DNS TCP 53">DNS TCP 53</option>
+            <option value="HTTP 80">HTTP 80</option>
+            <option value="POP3 110">POP3 110</option>
+            <option value="IMAP 143">IMAP 143</option>
+            <option value="LDAP 389">LDAP 389</option>
+            <option value="HTTPS 443">HTTPS 443</option>
+            <option value="SMB 445">SMB 445</option>
+            <option value="SMTPS 465">SMTPS 465</option>
+            <option value="IMAPS 993">IMAPS 993</option>
+            <option value="POP3S 995">POP3S 995</option>
+            <option value="NFS 2049">NFS 2049</option>
+        </select>
+    </p>
+    <p>
+        <label for="id_protocol">
+            Protocol: 
+        </label>
+        <select name="protocol" id="id_protocol">
+            <option value="">---------</option>
+            <option value="TCP" selected="">TCP</option>
+            <option value="UDP">UDP</option>
+            <option value="ICMP">ICMP</option>
+        </select>
+    </p>
+    <p>
+        <label for="id_source_address">
+            {{ ip_family }} Source address: 
+        </label>
+        <input  id="id_source_address" 
+                type="text"
+                {% if ip_family == 'IPv4' %}
+                    pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/([1-9]|[12][0-9]|3[01]))?$"
+                {% else %}
+                    pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}(\/([1-9]|[1-5][0-9]|6[0-4]))?$"
+                {% endif %} 
+                name="source_address">
+    </p>
+    <p>
+        <label for="id_source_port">
+            Source port: 
+        </label>
+        <input  id="id_source_port" 
+                type="text" 
+                name="source_port"
+                pattern="^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))(:(((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))))?$">
+    </p>
+    <p>
+        <label for="id_destination_address">
+            {{ ip_family }} Destination address: 
+        </label>
+        <input  id="id_destination_address" 
+        type="text"
+        {% if ip_family == 'IPv4' %}
+            pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/([1-9]|[12][0-9]|3[01]))?$"
+        {% else %}
+            pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}(\/([1-9]|[1-5][0-9]|6[0-4]))?$"
+        {% endif %} 
+        name="destination_address">
+    </p>
+    <p>
+        <label for="id_destination_port">
+            Destination port: 
+        </label>
+        <input  id="id_destination_port" 
+                type="text" 
+                name="destination_port"
+                pattern="^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))(:(((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))))?$">
+    </p>
+    <p>
+        <label for="id_action">
+            Action: 
+        </label>
+        <select name="action" id="id_action">
+            <option value="ACCEPT">ACCEPT</option>
+            <option value="DROP" selected="">DROP</option>
+            <option value="LOG">LOG</option>
+        </select>
+    </p>
+    <br />
+    <input  type="submit"
+            update-or-submit="{{ update_or_submit }}"
+            value="{{ update_or_submit }}" >
+</form>
+<script src="{% static 'js/addrule.js' %}" 
+        class="addrule-script"
+        data-update-or-submit="{{ update_or_submit }}" 
+        data-ip-family="{{ ip_family }}" 
+        data-traffic-direction="{{ traffic_direction }}" 
+        data-rule-id="{{ rule_id }}"></script>
+{% include "firewall/error.html" %}
 
-    <link rel="stylesheet" type="text/css" href='{% static "styles/addrule.css" %}' />
-    <script src="{% static 'js/addrule.js' %}"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
-          crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" 
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" 
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" 
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" 
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" 
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
-            crossorigin="anonymous"></script>
 
-{% endblock %}
-
-{% block content %} 
-
-    <h1>Rule Form</h1>
-    <form id="rule_form" action="" method="POST">
-        {% csrf_token %} 
-        {% for field in form %}
-            <p>
-                {% if field.name == "rule_priority" %} 
-                    <label>
-                        Rule num <span style="color: red">*</span>:
-                    </label>
-                    <input  id="id_{{ field.name }}" 
-                            type="number" 
-                            name="{{ field.name }}" 
-                            {% if update_or_submit == 'UPDATE' %}
-                                value="{{ instance.rule_priority }}" 
-                            {% endif %}
-                            min="1" 
-                            max="999" 
-                            required>
-                {% elif field.name == "description" %}
-                    <label for="id_{{ field.name }}">
-                        Description <span style="color: red">*</span>:
-                    </label>
-                    <input  id="id_{{ field.name }}" 
-                            type="text" 
-                            name="description" 
-                            {% if update_or_submit == 'UPDATE' %}
-                                value="{{ instance.description }}" 
-                            {% endif %}
-                            maxlength="255" 
-                            required>
-                {% elif field.name == "source_port" or field.name == "destination_port" %} 
-                    {{ field.label_tag }}
-                    <input  id="id_{{ field.name }}" 
-                            type="text" 
-                            name="{{ field.name }}" 
-                            {% if update_or_submit == 'UPDATE' %}
-                                {% if instance.source_port is not None or instance.destination_port is not None %}
-                                    {% if field.name == "source_port" and instance.source_port is not None %}
-                                        value="{{ instance.source_port }}"
-                                    {% elif field.name == "destination_port" and instance.destination_port is not None%}
-                                        value="{{ instance.destination_port }}"
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %} 
-                            pattern="^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))(:(((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))))?$">                                    
-                {% elif field.name == "source_address" or field.name == "destination_address" %}
-                    <label for="id_{{ field.name }}">
-                        {{ ip_family }} {{ field.label_tag }}
-                    </label>
-                    <input  id="id_{{ field.name }}" 
-                            type="text" 
-                            {% if ip_family == 'IPv4' %}
-                                pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/([1-9]|[12][0-9]|3[01]))?$"
-                            {% else %}
-                                pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}(\/([1-9]|[1-5][0-9]|6[0-4]))?$"
-                            {% endif %}
-                            {% if update_or_submit == 'UPDATE'  %}
-                                {% if instance.source_address is not None or instance.destination_address is not None  %}
-                                    {% if field.name == "source_address" and instance.source_address is not None %}
-                                        value="{{ instance.source_address }}"
-                                    {% elif field.name == "destination_address" and instance.destination_address is not None %}
-                                        value="{{ instance.destination_address }}"
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %}
-                            name="{{ field.name }}">
-                {% else %} 
-                    {{ field.label_tag }} {{ field }}
-                {% endif %}
-            </p>
-        {% endfor %}
-        <br />
-        <input  type="submit"
-                update-or-submit="{{ update_or_submit }}"
-                value="{{ update_or_submit }}">
-        <button type="button" onclick="location.href='{% url "home" %}'">
-            Cancel
-        </button>
-    </form>
-    {% include 'firewall/error.html' %}
-
-{% endblock %}

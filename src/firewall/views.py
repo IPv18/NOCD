@@ -55,7 +55,7 @@ def update_ip_tables(ip_family, traffic_direction):
                 cmd  += f' -j {rule["action"]} --log-prefix \"{rule["description"]}\"'
             subprocess.run(cmd.split(), check=True)
             
-    
+"""
 def index(request):
     if request.method == 'GET':
         if 'ip_family' in request.GET and 'traffic_direction' in request.GET and 'new_action_index' in request.GET:
@@ -181,132 +181,131 @@ def remove_rule(request, pk):
     messages.success(request, message)
     request.session['alert-message'] = message
     return redirect('home')
-
-
-
-
-
-
-
-
-
-
-
-
-
 """
+
+
+
+
+
+
+
+
+
+
+
+
+
 def index_RESTful(request):
     if request.method == 'GET':
-        return render(request, 'firewall/firewall.html')
-    
-def rule_RESTful(request):
-    if request.method == 'GET':
-        # check rule uniqueness
-        if 'ip_family' in request.GET and 'traffic_direction' in request.GET and 'rule_priority' in request.GET:
-            rule_priority = request.GET.get('rule_priority')
-            traffic_direction = request.GET.get('traffic_direction')
-            ip_family = request.GET.get('ip_family')
-            try:
-                FirewallRule.objects.get(
-                    rule_priority=rule_priority, traffic_direction=traffic_direction, ip_family=ip_family)
-                exists = True
-            except FirewallRule.DoesNotExist:
-                exists = False
-            return JsonResponse({'exists': exists})
-        # asks for rule form
-        elif 'ip_family' in request.GET and 'traffic_direction' in request.GET:
-            form = FirewallRuleForm()
-            ip_family = request.GET['ip_family']
-            traffic_direction = request.GET['traffic_direction']
-            context = {'form':form, 'ip_family':ip_family, 'traffic_direction':traffic_direction}
-            return JsonResponse(context)
-        # asks for tables content
-        else:
-            context = {
-                "tables": [
-                    FirewallRule.objects.filter(
-                        ip_family='IPv4', traffic_direction='Inbound').order_by('rule_priority'),
-                    FirewallRule.objects.filter(
-                        ip_family='IPv4', traffic_direction='Outbound').order_by('rule_priority'),
-                    FirewallRule.objects.filter(
-                        ip_family='IPv6', traffic_direction='Inbound').order_by('rule_priority'),
-                    FirewallRule.objects.filter(
-                        ip_family='IPv6', traffic_direction='Outbound').order_by('rule_priority'),
-                ]
-            }
-            serialized_tables = []
-            for table in context['tables']:
-                serialized_table = serializers.serialize('json', table)
-                serialized_tables.append(serialized_table)
-            return JsonResponse(serialized_tables, safe=False)
-
-    # flips the action of last rule of each table between DROP and ACCEPT
-    elif request.method == 'PATCH':
-        ip_family = request.GET['ip_family']
-        traffic_direction = request.GET['traffic_direction']
-        rule = FirewallRule.objects.get(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=1000)
-        if rule.action == 'ACCEPT':
-            rule.action = 'DROP'
-        else:
-            rule.action = 'ACCEPT'
-        rule.save()
-        return JsonResponse({'success': True, 'message': 'Rule action updated successfully'})
-        # return JsonResponse({'success': False, 'message': 'Rule not found'}, status=404) is it possible to fail?
-
-    # rule addition
+        context = {
+            "tables": [
+                FirewallRule.objects.filter(
+                    ip_family='IPv4', traffic_direction='Inbound').order_by('rule_priority'),
+                FirewallRule.objects.filter(
+                    ip_family='IPv4', traffic_direction='Outbound').order_by('rule_priority'),
+                FirewallRule.objects.filter(
+                    ip_family='IPv6', traffic_direction='Inbound').order_by('rule_priority'),
+                FirewallRule.objects.filter(
+                    ip_family='IPv6', traffic_direction='Outbound').order_by('rule_priority'),
+            ]
+        }
+        return render(request, 'firewall/firewall.html', context)
     elif request.method == 'POST':
-        if request.method == 'POST':
-            form = FirewallRuleForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return JsonResponse({'success': True, 'message': 'Rule added successfully!'})
+        form = FirewallRuleForm(request.POST)
+        print(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data 
+            ip_family = cleaned_data['ip_family']
+            traffic_direction = cleaned_data['traffic_direction']
+            rule_priority = cleaned_data['rule_priority']
+            src_adr = dst_adr = ''
+            if cleaned_data.get('source_address'):
+                src_adr = check_address(cleaned_data['source_address'])
+            if cleaned_data.get('destination_address'):
+                dst_adr = check_address(cleaned_data['destination_address'])
+
+            # Check if the rule already exists in the database
+            rule_exists = FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).exists()
+
+            # If the rule already exists, update its fields with the submitted data
+            if rule_exists:
+                firewall_rule = FirewallRule.objects.get(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority)
+                for field in form.fields:
+                    if field in ['source_address', 'destination_address']:
+                        continue  # We handle these fields separately
+                    setattr(firewall_rule, field, cleaned_data[field])
+                if src_adr != '':
+                    firewall_rule.source_address = src_adr
+                if dst_adr != '':
+                    firewall_rule.destination_address = dst_adr
+                firewall_rule.save()
+                message = 'Rule updated successfully!'
             else:
-                return JsonResponse({'success': False, 'message': 'An error has occurred while adding rule!'}, status=400)
-            
+                # If the rule does not already exist, create a new FirewallRule instance and save it to the database
+                firewall_rule = form.save(commit=False)
+                firewall_rule.source_address = src_adr
+                firewall_rule.destination_address = dst_adr
+                firewall_rule.save()
+                message = 'Rule added successfully!'
+
+            #update_ip_tables(ip_family, traffic_direction)
+            messages.success(request, message)
+            request.session['alert-message'] = message
+            return JsonResponse({'success': True}, status=200)
+        else:
+            print(form.errors)
+            return JsonResponse({'success': False})
+
+def check_rule_uniqueness(request):
+    rule_priority = request.GET.get('rule_priority')
+    traffic_direction = request.GET.get('traffic_direction')
+    ip_family = request.GET.get('ip_family')
+    try:
+        FirewallRule.objects.get(
+            rule_priority=rule_priority, traffic_direction=traffic_direction, ip_family=ip_family)
+        exists = True
+    except FirewallRule.DoesNotExist:
+        exists = False
+    return JsonResponse({'exists': exists}, status=200)
+
 def rule_handler_RESTFUL(request, pk):
     rule = FirewallRule.objects.get(id=pk)
     if request.method == 'GET':
-        form = FirewallRuleForm(instance=rule)
-        data = json.dumps(form.cleaned_data)
-        return JsonResponse(data, safe=False)
-    #############################################
-        if request.method == 'PATCH':
-            field_name = request.POST.get('field_name')
-            field_value = request.POST.get('field_value')
-            if field_name and field_value:
-                setattr(rule, field_name, field_value)
-                rule.save()
-                return JsonResponse(rule.to_dict())
+        return JsonResponse({'instance': rule.to_dict()})
+    
+    elif request.method == 'PATCH':
+        ip_family = rule.ip_family
+        traffic_direction = rule.traffic_direction
+        last_rule = FirewallRule.objects.get(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=1000)
+        try: 
+            if last_rule.action == 'ACCEPT':
+                last_rule.action = 'DROP'
             else:
-                return JsonResponse({'error': 'Invalid PATCH request'}, status=400)
-
-        # update two or more fields
-        elif request.method == 'PUT':
-            rule_data = request.POST.dict()
-            del rule_data['id'] # exclude the primary key from the update
-            for key, value in rule_data.items():
-                setattr(rule, key, value)
-            try:
-                rule.full_clean()
-            except ValidationError as e:
-                return JsonResponse({'error': e.message_dict}, status=400)
-            else:
-                rule.save()
-                return JsonResponse(rule.to_dict())
-    #############################################
-    if request.method == 'POST':
-        form = FirewallRuleForm(request.POST, instance=rule)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'status': 'success', 'rule': rule.to_dict()})
-        else:
-            return JsonResponse({'status': 'error', 'errors': form.errors})
-
+                last_rule.action = 'ACCEPT'
+            last_rule.save()
+            message = 'Table policy changed successfully!'
+            messages.success(request, message)
+            request.session['alert-message'] = message
+            #update_ip_tables(ip_family, traffic_direction)
+            return JsonResponse({'success': True}, status=200)
+        except:
+            message = 'Error has occured during the proccess of changing the table policy!'
+            messages.error(request, message, extra_tags='danger')
+            request.session['alert-message'] = message
+            return JsonResponse({'success': False})
+        
     elif request.method == 'DELETE':
-        rule.delete()
-        return JsonResponse({'status': 'success', 'message': 'Rule deleted.'})
+        ip_family = rule.ip_family
+        traffic_direction = rule.traffic_direction
+        #update_ip_tables(ip_family, traffic_direction)
+        try:
+            rule.delete()
+        except:
+            return JsonResponse({'success': False})
+        message = 'Rule deleted successfully!'
+        messages.success(request, message)
+        request.session['alert-message'] = message
+        return JsonResponse({'status': 'success'}, status=200)
 
     # Return an error message for unsupported request methods
     return JsonResponse({'status': 'error', 'message': 'Unsupported request method.'})
-
-"""

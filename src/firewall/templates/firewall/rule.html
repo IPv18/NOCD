@@ -49,17 +49,25 @@
     {% if rule.rule_priority != 1000 %}
         <!-- Edit -->
         <td>
-            <button type="button"
-                    class="btn btn-primary"
-                    onclick="location.href='{% url 'updaterule' rule.id %}'">
+            <!-- Button trigger modal -->
+            <button type="button" 
+                    class="btn btn-primary" 
+                    data-toggle="modal" 
+                    data-target="#exampleModalLong{{ rule.id }}"
+                    data-ip-family="{{ rule.ip_family }}"
+                    data-traffic-direction="{{ rule.traffic_direction }}"
+                    data-rule-id="{{ rule.id }}"
+                    data-update-or-submit="UPDATE">
                 Edit
             </button>
+            <!-- Modal -->
+            {% include "firewall/scrolling-long.html" with update_or_submit="UPDATE" ip_family=rule.ip_family traffic_direction=rule.traffic_direction rule_id=rule.id %}
         </td>
         <!-- Remove -->
         <td>
             <!-- Button trigger modal -->
             <button type="button"
-                    class="btn btn-primary"
+                    class="btn btn-danger"
                     data-toggle="modal"
                     data-target="#exampleModal{{ rule.id }}">
                 Remove
