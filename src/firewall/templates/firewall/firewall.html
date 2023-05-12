@@ -8,6 +8,7 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Firewall</title>
     <meta='viewport' conent='width=device-width, initial-scale=1'>
+
     <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
 
 {% endblock header %}
@@ -63,14 +64,14 @@
                aria-controls="pills-IPv6-Outbound"
                aria-selected="false">IPv6 Outbound</a>
         </li>
-    </ul>
+    </ul> 
     <!-- ------------------------------break------------------------------ -->
     <div class="tab-content" id="pills-tabContent">
         {% for table in tables %}
             <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-            id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}"
-            role="tabpanel"
-            aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
+                 id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}"
+                 role="tabpanel"
+                aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
             <!-- ------------------------------break------------------------------ -->
                 <button type="button"
                         onclick="location.href='{% url "firewall:addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">

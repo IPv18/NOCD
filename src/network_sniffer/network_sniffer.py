@@ -31,7 +31,7 @@ SS_DAEMON_INTERVAL = os.environ.get("UPDATE_INTERVAL", 1)
 
 def store_pkt_info(writer):
     '''
-    A wraper function, returns a function that stores packet information in a csv file
+    A wrapper function, returns a function that stores packet information in a csv file
     '''
     def extract_pkt_info(pkt_reader):
         '''
@@ -45,8 +45,8 @@ def store_pkt_info(writer):
 
         for pkt in pkt_reader:
             new_interval = pkt.timestamp // interval_length
+            pkt_key = pkt.stream_key()
             if interval == new_interval:
-                pkt_key = pkt.stream_key()
                 pkts_on_interval[pkt_key]["length"] += pkt.length
                 pkts_on_interval[pkt_key]["pkt_count"] += 1
             else:
@@ -56,7 +56,10 @@ def store_pkt_info(writer):
                         timestamp, *pkt_key ,pkt_sum["length"], pkt_sum["pkt_count"]
                     ])
                 interval = new_interval
+                # Start a new interval
                 pkts_on_interval.clear()
+                pkts_on_interval[pkt_key]["length"] += pkt.length
+                pkts_on_interval[pkt_key]["pkt_count"] += 1
 
     return extract_pkt_info
 
@@ -69,9 +72,9 @@ def sniff_traffic(interface):
             "ip_src", "port_src", "ip_dest", "port_dest", 
             "length", "pkt_count"
         ]
-        csv_file = open(csv_path, "w", encoding="utf-8")
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(csv_header)
+        with open(csv_path, "w", encoding="utf-8") as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow(csv_header)
 
     csv_file = open(csv_path, "a", newline='',
                     encoding="utf-8", buffering=1)  # TODO - Fix buffering
