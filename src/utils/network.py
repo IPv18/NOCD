@@ -12,6 +12,7 @@ Classes:
 """
 
 from dataclasses import dataclass
+#from ss_helper import SsHelper
 
 
 @dataclass(slots=True)
@@ -33,7 +34,6 @@ class PacketRecord(IPLink):
     A class that represents information for a network traffic
     record between two hosts and ports on the network
     '''
-    
     timestamp: int = None
     length: int = None
     mac_src: str = None
@@ -45,13 +45,11 @@ class PacketRecord(IPLink):
         self.protocol = self.protocol.lower() if self.protocol else None
         self.update_info()
 
-
     def __iter__(self) -> iter:
         '''
         Returns an iterator of key value pairs for all the attributes in the record.
         '''
         return iter({attr: getattr(self, attr) for attr in self.__slots__}.items())
-
 
     def __str__(self) -> str:
         '''
@@ -67,7 +65,6 @@ class PacketRecord(IPLink):
             MAC      : {self.mac_src} --> {self.mac_dest}
             """
 
-
     def stream_key(self) -> tuple:
         '''
         Returns a tuple representation of the packet stream key.
@@ -75,27 +72,23 @@ class PacketRecord(IPLink):
         Can be used for collecting network traffic statistics
         for packets that belong to the same stream.
         '''
-        return(
+        return (
             self.program, self.protocol, self.direction,
             self.ip_src, self.port_src, self.ip_dest, self.port_dest
         )
-
 
     def values(self) -> iter:
         '''
         Returns an iterator of the values of the socket info object.
         '''
-        
+
         return iter(getattr(self, attr) for attr in self.__slots__)
-
-
 
     def update_info(self) -> None:
         '''
         Updates the network traffic record with the latest info from the system.
         '''
-        
-
+        #SsHelper.update_packet_record(self)
 
     def copy(self, other) -> None:
         '''
@@ -143,5 +136,8 @@ class SocketRecord(IPLink):
         Two record hashes can be equal given their 
         ("ip_src", "port_src", "protocol", "program") are equal.
         '''
-
         return hash((self.ip_src, self.port_src, self.protocol))
+
+if __name__ == "__main__":
+    socket = PacketRecord( ip_src="2001:0db8:85a3:0000:0000:8a2e:0370:7334", port_src=1234, ip_dest="2.2.2.2", port_dest=5678, protocol="tcp", program="firefox" )
+    print(socket)

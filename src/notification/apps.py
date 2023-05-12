@@ -1,5 +1,6 @@
 from os import environ
 from django.apps import AppConfig
+from django.conf import settings
 from notification import topic
 
 
@@ -8,11 +9,14 @@ class NotificationConfig(AppConfig):
     name = 'notification'
 
     def ready(self):
-        from notification import jobs
-        if environ.get('RUN_MAIN', None) != 'true':
-            self.add_topics()
-            if environ.get('DEBUG') == True:
-                jobs.start_scheduler()
+        try:
+            from notification import jobs
+            if environ.get('RUN_MAIN', None) != 'true':
+                self.add_topics()
+                if settings.DEBUG:
+                    jobs.start_scheduler()
+        except Exception as e:
+            print(e)
 
     def add_topics(self):
         topic.add_topic('info', type='info', message='info message')
