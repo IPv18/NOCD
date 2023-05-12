@@ -196,13 +196,17 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function validateIPAddress(input) {
+    if (input.value === '' || input.value === null) {
+      return;
+    }
+
     const REGEX = new RegExp(
       //Normal IPv6 REGEX : "^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"
       //Compressed IPv6 REGEX : "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
       //IPv4 REGEX : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$" 
       PATTERN
     );
-    if (!REGEX.test(input.value)) {
+    if (!REGEX.test(input.value) || input.value != '') {
       input.value = null;
       if (IP_FAMILY.value == "IPv6")
         errorModalBody.innerHTML = 'Please enter a valid host/network normal IPv6 address.';
@@ -213,10 +217,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validatePort(input) {
+    if (input.value === '' || input.value === null) {
+      return;
+    }
+
     const REGEX = new RegExp(
       "^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))(:(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4})))?$"
     );
-  
+
     if (!REGEX.test(input.value)) {
       input.value = "";
       errorModalBody.innerHTML = "Please enter a valid port number (or range).<br>Possible inputs:<br><br>&emsp;-->[0-65536]<br>&emsp;-->[0-65536]:[0-65536]";
