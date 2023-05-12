@@ -32,7 +32,7 @@ def add_notification(request):
     notification = NotificationInfo(message=message, type=type, date=date)
     notification.save()
     messages.success(request, 'Notification added.')
-    return redirect('notifications')
+    return redirect('notification:notifications')
 
 
 @require_POST
@@ -40,14 +40,14 @@ def delete_notification(request, id):
     notification = NotificationInfo.objects.get(id=id)
     notification.delete()
     messages.success(request, 'Notification deleted.')
-    return redirect('notifications')
+    return redirect('notification:notifications')
 
 
 @require_POST
 def clear_notifications(request):
     NotificationInfo.objects.all().delete()
     messages.success(request, 'All notifications cleared.')
-    return redirect('notifications')
+    return redirect('notification:notifications')
 
 
 @require_POST
@@ -56,4 +56,4 @@ def toggle_read_notification(request, id):
     notification.read = not notification.read
     notification.save()
     messages.success(request, 'Notification read toggled.')
-    return redirect('notifications')
+    return redirect('notification:notifications')
