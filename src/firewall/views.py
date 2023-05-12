@@ -7,11 +7,6 @@ from firewall.models import FirewallRule
 from .forms import FirewallRuleForm
 import subprocess, ipaddress, json
 
-# django ALL=(ALL) NOPASSWD:/sbin/iptables need to be added to the /etc/sudoers file 
-# def iptables_command(command):
-#    full_command = f'sudo /sbin/iptables {command}'
-#    subprocess.run(full_command.split(), check=True)
-
 def check_address(address):
     if address == '':
         return address
@@ -25,14 +20,13 @@ def check_address(address):
     except ValueError:
         return ''
 
-
 def update_ip_tables(ip_family, traffic_direction):
     iptables_family = 'iptables' if ip_family == 'IPv4' else 'ip6tables'
     iptables_direction = 'INPUT' if traffic_direction == 'Inbound' else 'OUTPUT'
-    table = FirewallRule.objects.filter(
-                    ip_family=ip_family, traffic_direction=traffic_direction).order_by('rule_priority')
     cmd = f'sudo {iptables_family} --flush {iptables_direction}'
     subprocess.run(cmd.split(), check=True)
+    table = FirewallRule.objects.filter(
+                    ip_family=ip_family, traffic_direction=traffic_direction).order_by('rule_priority')
     rule_dicts = [rule.to_dict() for rule in table]
     for rule in rule_dicts:
         if rule['rule_priority'] == 1000:
@@ -54,7 +48,6 @@ def update_ip_tables(ip_family, traffic_direction):
             if rule['action'] == 'LOG':
                 cmd  += f' -j {rule["action"]} --log-prefix \"{rule["description"]}\"'
             subprocess.run(cmd.split(), check=True)
-            
     
 def index(request):
     if request.method == 'GET':
@@ -68,7 +61,7 @@ def index(request):
             message = 'Table policy changed successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             return redirect('home')
             
 
@@ -86,8 +79,6 @@ def index(request):
         }
 
         return render(request, 'firewall/firewall.html', context)
-    elif request.method == 'POST':
-        pass # TODO add iptables control here
     
 def check_rule_uniqueness(request):
     rule_priority = request.GET.get('rule_priority')
@@ -127,7 +118,7 @@ def add_rule(request):
             if dst_adr != '':
                 FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
                 destination_address = dst_adr)
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             message = 'Rule added successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
@@ -161,7 +152,7 @@ def update_rule(request, pk):
             if dst_adr != '':
                 FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
                 destination_address = dst_adr)
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             message = 'Rule modified successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
@@ -175,8 +166,8 @@ def remove_rule(request, pk):
     rule = FirewallRule.objects.get(id=pk)
     ip_family = rule.ip_family
     traffic_direction = rule.traffic_direction
-    #update_ip_tables(ip_family, traffic_direction)
     rule.delete()
+    update_ip_tables(ip_family, traffic_direction)
     message = 'Rule deleted successfully!'
     messages.success(request, message)
     request.session['alert-message'] = message

@@ -214,28 +214,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function validatePort(input) {
     const REGEX = new RegExp(
-      "^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))(:(((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))))?$"
+      "^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))(:(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4})))?$"
     );
+  
     if (!REGEX.test(input.value)) {
       input.value = "";
-      errorModalBody.innerHTML = "Please enter a valid port number(or range).<br>Possible inputs:-<br><br>&emsp;-->[0-65536]<br>&emsp;-->[0-65536]:[0-65536]";
+      errorModalBody.innerHTML = "Please enter a valid port number (or range).<br>Possible inputs:<br><br>&emsp;-->[0-65536]<br>&emsp;-->[0-65536]:[0-65536]";
       $('#errorModal').modal("show");
     } else {
       const parts = input.value.split(":");
       if (parts.length == 2 && parseInt(parts[1]) <= parseInt(parts[0])) {
         input.value = "";
-        errorModalBody.innerHTML = "Please enter a valid port range where the second port number is larger than the first port number";
+        errorModalBody.innerHTML = "Please enter a valid port range where the second port number is larger than the first port number.";
         $('#errorModal').modal("show");
       }
     }
-}
+  }
+  
+  
 
 
-  SOURCE_PORT.addEventListener("input", function () {
+  SOURCE_PORT.addEventListener("blur", function () {
     validatePort(SOURCE_PORT);
   });
 
-  DESTINATION_PORT.addEventListener("input", function () {
+  DESTINATION_PORT.addEventListener("blur", function () {
     validatePort(DESTINATION_PORT);
   });
 
