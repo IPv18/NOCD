@@ -3,34 +3,73 @@
 <html>
 
 <head>
-    <!-- Bootstrap JS and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
+	<title>
+        NOCD - {% block title %}{% endblock %}
+    </title>
+
+	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+
+    <!-- Bootstrap JS and jQuery -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.slim.js" integrity="sha512-G1QAKkF7DrLYdKiz55LTK3Tlo8Vet2JnjQHuJh+LnU0zimJkMZ7yKZ/+lQ/0m94NC1EisSVS1b35jugu3wLdQg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
+   
+    <!-- Fonts and icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-    <link rel='stylesheet' href='{% static "styles/main.css" %}'>
+    <!-- Specific Page CSS & JS goes HERE  -->
+    <style>
+        body {
+          background-color: #1A2035 !important;
+        }
+      
+        .bg-dark {
+          background-color: #1A2035 !important;
+        }
 
-    {% block header %}
-    {% endblock header %}
+        .bg-secondary {
+          background-color: #202940 !important;
+        }
+
+        .text-primary {
+            color: #f8f9fa !important;
+        }
+
+        .table-hover tbody tr:hover {
+            color: #adadad;
+        }
+      </style>
+
+    {% block header %}{% endblock header %}
+
+
+
 </head>
 
 <body>
-    <div class="wrapper">
-        {% include "navbar.html" %}
-        <div class="content">
-            <div class="container">
-                {% block content %}
-                {% endblock content %}
-            </div>
+    <div class="container p-0 vh-100 mw-100 bg-dark">
+
+        {% include 'navbar.html' %}
+        
+        <div class="container-fluid p-0">
+
+            {% block content %}
+            {% endblock content %}
+
         </div>
-        <div class="footer">
-            {% include "footer.html" %}
-        </div>
+        
+        {% include 'footer.html' %}
     </div>
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}{% endblock javascripts %}
+    
 </body>
 
 </html>
