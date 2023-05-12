@@ -7,8 +7,11 @@ class TrafficControlConfig(AppConfig):
 
     def ready(self):
         # Bootstrap the traffic control system
-        from .models import TCPolicy
-        # Disable all policies that are not startup policies
-        TCPolicy.objects.filter(startup=False).update(enabled=False)
-        startup_policies = TCPolicy.objects.filter(startup=True)
-        bootstrap_tc(startup_policies)
+        try:
+            from .models import TCPolicy
+            # Disable all policies that are not startup policies
+            TCPolicy.objects.filter(startup=False).update(enabled=False)
+            startup_policies = TCPolicy.objects.filter(startup=True)
+            bootstrap_tc(startup_policies)
+        except Exception as e:
+            print(e)
