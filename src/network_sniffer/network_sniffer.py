@@ -101,7 +101,7 @@ def main():
     interfaces = get_interfaces()
     
     threads = [
-        threading.Thread(target=sniff_traffic, 
+        threading.Thread(target=sniff_traffic,
                          args=(interface,)) for interface in interfaces] +\
         [threading.Thread(target=update_ss_buffer_daemon)
     ]

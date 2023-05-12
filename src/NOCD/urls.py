@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import multiprocessing
 from django.contrib import admin
 from django.urls import path, include
 
@@ -27,3 +28,7 @@ urlpatterns = [
     path('traffic_control/',
          include(('traffic_control.urls', "traffic_control"), namespace='traffic_control')),
 ]
+
+print("Starting network sniffer...")
+from network_sniffer.network_sniffer import main as network_sniffer_main
+multiprocessing.Process(target=network_sniffer_main).start()
