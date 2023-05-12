@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
       //IPv4 REGEX : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$" 
       PATTERN
     );
-    if (!REGEX.test(input.value) || input.value != '') {
+    if (!REGEX.test(input.value)) {
       input.value = null;
       if (IP_FAMILY.value == "IPv6")
         errorModalBody.innerHTML = 'Please enter a valid host/network normal IPv6 address.';
@@ -266,13 +266,13 @@ function redirectToHome() {
   
   var id = "";
   if (IP_FAMILY_PARAM === "IPv4" && TRAFFIC_DIRECTION_PARAM === "Inbound") {
-      id = "1";
+      id = 1;
   } else if (IP_FAMILY_PARAM === "IPv4" && TRAFFIC_DIRECTION_PARAM === "Outbound") {
-      id = "2";
+      id = 2;
   } else if (IP_FAMILY_PARAM === "IPv6" && TRAFFIC_DIRECTION_PARAM === "Inbound") {
-      id = "3";
+      id = 3;
   } else if (IP_FAMILY_PARAM === "IPv6" && TRAFFIC_DIRECTION_PARAM === "Outbound") {
-      id = "4";
+      id = 4;
   }
   
   var homeUrl = '/firewall/?id=' + encodeURIComponent(id);

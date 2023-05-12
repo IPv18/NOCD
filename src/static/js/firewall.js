@@ -6,11 +6,9 @@ function switchTablePolicy(rule_id, csrfToken) {
     xhr.setRequestHeader('X-CSRFToken', csrfToken);
     xhr.onload = function() {
         var response = JSON.parse(xhr.responseText);
-        if (xhr.status == 200 && response.success) {
-            var id = response.id;
-            var homeUrl = '/firewall/?id=' + id;
-            window.location.href = homeUrl;
-        }
+        var id = response.id;
+        var homeUrl = '/firewall/?id=' + id;
+        window.location.href = homeUrl;
     }
     xhr.send(JSON.stringify({}));
 }

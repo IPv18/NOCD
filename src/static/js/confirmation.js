@@ -5,11 +5,9 @@ function deleteRule(rule_id, csrf_token) {
     xhr.setRequestHeader('X-CSRFToken', csrf_token);
     xhr.onload = function() {
         var response = JSON.parse(xhr.responseText);
-        if (xhr.status == 200 && response.success) {
-            var id = response.id;
-            var homeUrl = '/firewall/?id=' + id;
-            window.location.href = homeUrl;
-        }
-    };
+        var id = response.id;
+        var homeUrl = '/firewall/?id=' + id;
+        window.location.href = homeUrl;
+    }
     xhr.send();
 }
