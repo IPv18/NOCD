@@ -250,3 +250,23 @@ document.addEventListener("DOMContentLoaded", function () {
     validateIPAddress(DESTINATION_ADDRESS, IP_FAMILY);
   });
 });
+
+function redirectToHome() {
+  const URL_PARAMS = new URLSearchParams(window.location.search);
+  const IP_FAMILY_PARAM = URL_PARAMS.get("ip_family");
+  const TRAFFIC_DIRECTION_PARAM = URL_PARAMS.get("traffic_direction");
+  
+  var id = "";
+  if (IP_FAMILY_PARAM === "IPv4" && TRAFFIC_DIRECTION_PARAM === "Inbound") {
+      id = "1";
+  } else if (IP_FAMILY_PARAM === "IPv4" && TRAFFIC_DIRECTION_PARAM === "Outbound") {
+      id = "2";
+  } else if (IP_FAMILY_PARAM === "IPv6" && TRAFFIC_DIRECTION_PARAM === "Inbound") {
+      id = "3";
+  } else if (IP_FAMILY_PARAM === "IPv6" && TRAFFIC_DIRECTION_PARAM === "Outbound") {
+      id = "4";
+  }
+  
+  var homeUrl = '/firewall/?id=' + encodeURIComponent(id);
+  window.location.href = homeUrl;
+}

@@ -1,3 +1,5 @@
+{% load static %}
+
 <div class="modal fade"
      id="exampleModal{{ rule.id }}"
      tabindex="-1"
@@ -14,11 +16,10 @@
             </div>
             <div class="modal-body">{{ question }}</div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Canel</button>
-                <button type="button"
-                        class="btn btn-primary"
-                        onclick="location.href='{% url 'removerule' rule.id %}'">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="deleteRule('{{ rule.id }}', '{{ csrf_token }}')">Yes</button>
             </div>
         </div>
     </div>
 </div>
+<script src="{% static 'js/confirmation.js' %}"></script>

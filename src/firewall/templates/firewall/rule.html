@@ -51,7 +51,7 @@
         <td>
             <button type="button"
                     class="btn btn-primary"
-                    onclick="location.href='{% url 'updaterule' rule.id %}'">
+                    onclick="location.href='{% url 'rule_handler' rule.id %}'">
                 Edit
             </button>
         </td>
@@ -59,7 +59,7 @@
         <td>
             <!-- Button trigger modal -->
             <button type="button"
-                    class="btn btn-primary"
+                    class="btn btn-danger"
                     data-toggle="modal"
                     data-target="#exampleModal{{ rule.id }}">
                 Remove
