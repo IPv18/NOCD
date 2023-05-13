@@ -80,20 +80,19 @@ def home(request):
             "id": id_value
         }
         return render(request, 'firewall/firewall.html', context)
-
-
-    
+  
 def check_rule_uniqueness(request):
-    rule_priority = request.GET.get('rule_priority')
-    traffic_direction = request.GET.get('traffic_direction')
-    ip_family = request.GET.get('ip_family')
-    try:
-        FirewallRule.objects.get(
-            rule_priority=rule_priority, traffic_direction=traffic_direction, ip_family=ip_family)
-        exists = True
-    except FirewallRule.DoesNotExist:
-        exists = False
-    return JsonResponse({'exists': exists})
+    if request.method == 'GET':
+        rule_priority = request.GET.get('rule_priority')
+        traffic_direction = request.GET.get('traffic_direction')
+        ip_family = request.GET.get('ip_family')
+        try:
+            FirewallRule.objects.get(
+                rule_priority=rule_priority, traffic_direction=traffic_direction, ip_family=ip_family)
+            exists = True
+        except FirewallRule.DoesNotExist:
+            exists = False
+        return JsonResponse({'exists': exists})
 
 def rule(request):
     if request.method  == 'GET':
@@ -124,7 +123,7 @@ def rule(request):
             if dst_adr != '':
                 FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
                 destination_address = dst_adr)
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             message = 'Rule added successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
@@ -161,7 +160,7 @@ def rule_handler(request, pk):
             if dst_adr != '':
                 FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
                 destination_address = dst_adr)
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             message = 'Rule modified successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
@@ -174,7 +173,7 @@ def rule_handler(request, pk):
         try: 
             if last_rule.action == 'ACCEPT':
                 if ip_family == 'IPv4':
-                    if not FirewallRule.objects.filter(ip_family='IPv4', traffic_direction='Inbound', destination_address='127.0.0.0/8').exists() or not FirewallRule.objects.filter(ip_family='IPv4', traffic_direction='Outbound', source_address='127.0.0.0/8').exists():
+                    if not FirewallRule.objects.filter(ip_family='IPv4', traffic_direction='Inbound', destination_address='127.0.0.0/8', action='ACCEPT').exists() or not FirewallRule.objects.filter(ip_family='IPv4', traffic_direction='Outbound', source_address='127.0.0.0/8', action='ACCEPT').exists():
                         message = 'Error has occured, cannot change table policy until there are Inbound/Outbound rules allowing traffic from and to 127.0.0.0/8.'
                         messages.warning(request, message, extra_tags='warning')
                         request.session['alert-message'] = message
@@ -186,7 +185,7 @@ def rule_handler(request, pk):
             message = 'Table policy changed successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             return JsonResponse({'success': True, 'id':int(get_id(last_rule.ip_family, last_rule.traffic_direction))}, status=200)
         except:
             message = 'Error has occured during the proccess of changing the table policy!'
@@ -198,8 +197,9 @@ def rule_handler(request, pk):
         ip_family = rule.ip_family
         traffic_direction = rule.traffic_direction
         rule.delete()
-        #update_ip_tables(ip_family, traffic_direction)
+        update_ip_tables(ip_family, traffic_direction)
         message = 'Rule deleted successfully!'
         messages.success(request, message)
         request.session['alert-message'] = message
         return JsonResponse({'success': True, 'id':int(get_id(ip_family, traffic_direction))}, status=200)
+    
