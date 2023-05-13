@@ -127,7 +127,8 @@ def rule(request):
             message = 'Rule added successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
-            return redirect(reverse('home') + f'?id={int(get_id(ip_family, traffic_direction))}')
+            return redirect(reverse('firewall:home') + f'?id={int(get_id(ip_family, traffic_direction))}')
+
 
 def rule_handler(request, pk):
     rule = FirewallRule.objects.get(id=pk)
@@ -164,7 +165,7 @@ def rule_handler(request, pk):
             message = 'Rule modified successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
-            return redirect(reverse('home') + f'?id={int(get_id(ip_family, traffic_direction))}')
+            return redirect(reverse('firewall:home') + f'?id={int(get_id(ip_family, traffic_direction))}')
     
     elif request.method == 'PATCH':
         ip_family = rule.ip_family
@@ -202,4 +203,3 @@ def rule_handler(request, pk):
         messages.success(request, message)
         request.session['alert-message'] = message
         return JsonResponse({'success': True, 'id':int(get_id(ip_family, traffic_direction))}, status=200)
-    

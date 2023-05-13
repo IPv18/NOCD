@@ -5,6 +5,7 @@
 {% block header %}
 
     <title>Firewall</title>
+
     <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
     <script src="{% static 'js/firewall.js' %}"></script>
 
@@ -75,7 +76,7 @@
             <!-- ------------------------------break------------------------------ -->
                 <button type="button"
                         class="btn btn-success"
-                        onclick="location.href='{% url "rule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
+                        onclick="location.href='{% url "firewall:rule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
                     Add Rule
                 </button>
                 <button type="button"
@@ -84,6 +85,8 @@
                     Switch table policy
                 </button>
             <!-- ------------------------------break------------------------------ -->
+
+
                 <table>
                     <tr>
                         <th>Rule #</th>

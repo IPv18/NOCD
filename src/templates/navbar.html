@@ -1,28 +1,33 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-	<i class="bi bi-graph-up logo"></i>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+	<i class="bi bi-graph-up logo mr-2"></i>
 	<a class="navbar-brand" href="#"> NOCD </a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
 		aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
 	<div class="collapse navbar-collapse" id="navbarNav">
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="nav-link" href="/"> Home </a>
+		<ul class="navbar-nav me-auto">
+			<li class="m-1">
+				<a class=" btn  btn-outline-info {% if request.path == "/" %} text-black  btn-outline-info active{% endif %}" href="/"> Home </a>
 			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#"> About </a>
+			<li class="m-1">
+				<a class=" btn  btn-outline-info {% if "/About" in request.path %} text-black  active{% endif %}" href="#"> About </a>
 			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="/firewall"> Firewall </a>
+			<li class="m-1">
+				<a class=" btn  btn-outline-info {% if "/firewall" in request.path %} text-black  active{% endif %}" href="/firewall"> Firewall </a>
+			</li>
+			<li class="m-1">
+				<a class=" btn  btn-outline-info {% if "/traffic_control" in request.path %} text-black  active {% endif %}" href="/traffic_control"> Traffic Control </a>
 			</li>
 		</ul>
 		<ul class="navbar-nav">
 			<!-- pill icon -->
-			<li class="pill">
+			<li class="nav-item dropdown pill">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+			<li class="pill mr-2">
 				<a href="#" class="nav-link">
 					<span class="position-relative">
-						<i class="bi bi-bell" style="fill: red; font-size: 1.3em;"></i>
+						<i class="bi bi-bell" style="fill: red; font-size: 1.75em;"></i>
 						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
 							style="right: -4px; top: -8px; font-size: xx-small;">
 							1
@@ -30,13 +35,19 @@
 					</span>
 
 				</a>
+				<div class="dropdown-menu dropdown-menu-right bg-dark" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item text-light" href="#"> Register </a>
+					<a class="dropdown-item text-light" href="#"> Login </a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item text-light" href="#"> Logout </a>
+				</div>
 			</li>
 
 			<!-- personal icon -->
-			<li class="dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false">
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 					<i class="bi bi-person-circle" style="font-size: 1.3em;"></i>
+
 				</a>
 				<div class="dropdown-menu dropdown-menu-right bg-dark" aria-labelledby="navbarDropdown">
 					<a class="dropdown-item text-light" href="#"> Register </a>

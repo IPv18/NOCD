@@ -51,9 +51,10 @@
         <td>
             <button type="button"
                     class="btn btn-primary"
-                    onclick="location.href='{% url 'rule_handler' rule.id %}?ip_family={{ rule.ip_family }}&traffic_direction={{ rule.traffic_direction }} '">
+                    onclick="location.href='{% url 'firewall:rule_handler' rule.id %}?ip_family={{ rule.ip_family }}&traffic_direction={{ rule.traffic_direction }} '">
                 Edit
             </button>
+
         </td>
         <!-- Remove -->
         <td>
