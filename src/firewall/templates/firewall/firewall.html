@@ -4,25 +4,25 @@
 
 {% block header %}
 
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Firewall</title>
-    <meta='viewport' conent='width=device-width, initial-scale=1'>
 
     <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
+    <script src="{% static 'js/firewall.js' %}"></script>
 
 {% endblock header %}
 <!-- ------------------------------break------------------------------ -->
 {% block content %}
-
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            <strong>{{ message }}</strong>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">×</span>
-            </button>
-        </div>
-    {% endfor %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div id="alert-message" class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}success{% endif %}" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
     <!-- ------------------------------break------------------------------ -->
     <h1>Firewall Home Page</h1>
     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -35,6 +35,7 @@
                aria-controls="pills-IPv4-Inbound"
                aria-selected="true">IPv4 Inbound</a>
         </li>
+        
         <li class="nav-tab">
             <a class="nav-link"
                id="pills-IPv4-Outbound-tab"
@@ -71,24 +72,21 @@
             <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
                  id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}"
                  role="tabpanel"
-                aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
+                 aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
             <!-- ------------------------------break------------------------------ -->
                 <button type="button"
-                        onclick="location.href='{% url "firewall:addrule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
+                        class="btn btn-success"
+                        onclick="location.href='{% url "firewall:rule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}'">
                     Add Rule
                 </button>
-                {% if table.last.action == 'ACCEPT' %}
-                    <button type="button"
-                            onclick="location.href='{% url "firewall:home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=0'">
-                        Switch to Least Privilege
-                    </button>
-                {% else %}
-                    <button type="button"
-                            onclick="location.href='{% url "firewall:home" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{ table.0.traffic_direction }}&new_action_index=1'">
-                        Switch to Zero Trust
-                    </button>
-                {% endif %}
-                 <!-- ------------------------------break------------------------------ -->
+                <button type="button"
+                        class="switch-policy-btn"
+                        onclick="switchTablePolicy('{{ table.0.id }}', '{{ csrf_token }}')">
+                    Switch table policy
+                </button>
+            <!-- ------------------------------break------------------------------ -->
+
+
                 <table>
                     <tr>
                         <th>Rule #</th>
@@ -110,14 +108,5 @@
         {% endfor %}
     </div>
     <hr>
-    <!-- ------------------------------break------------------------------ -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
-{% endblock content%}
+
+{% endblock content %}
