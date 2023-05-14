@@ -87,7 +87,28 @@
     <div class="col-md-8">
       <div class="card h-100 bg-secondary shadow">
         <div class="card-header">
-          <div class="card-title">Line Chart1</div>
+          <div class="d-flex flex-row">
+            <div class="col-10">
+              <div class="card-title">Line Chart1</div>
+            </div>
+            <div class="col-2 d-flex justify-content-between">
+              
+                  <button id="toStart" class="jump btn btn-primary"> 
+                    <i class="fa fa-step-backward" aria-hidden="true"></i> 
+                  </button>
+                  <button id="jumpBackward" class="jump btn btn-primary"> 
+                    <i class="fa fa-backward" aria-hidden="true"></i>
+                  </button>
+
+                  <button id="jumpForward" class="jump btn btn-primary"> 
+                    <i class="fa fa-forward" aria-hidden="true"></i>
+                  </button>
+                  <button id="toEnd" class="jump btn btn-primary"> 
+                    <i class="fa fa-step-forward" aria-hidden="true"></i>
+                  </button>              
+
+            </div>
+          </div>
         </div>
         <div class="card-body flex-row">
           <div class="flex-row h-100">
