@@ -1,65 +1,145 @@
 {% extends "main.html" %}
 {% load static %}
 {% block header %}{% endblock %}
-{% block content %}
-<div class="text-center">
-   <h2>
-      <i class="py-5 fa fa-solid fa-gauge-high"></i>  Network Traffic Control
-   </h2>
-   <div class="py-5  ">
-      <!-- Nav tabs -->
-      <ul class="nav nav-tabs">
-         <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#msg">
-            <i class="fa-solid fa-info-circle"></i>
-            Overview
-            </a>
-         </li>
-         <li class="nav-item m-auto">
-            <a class="nav-link" data-bs-toggle="tab" href="#pro" onclick="program_table_sort()">
-            <i class="fa-solid fa-grip"></i>
-            Program Policies</a>
-         </li>
-         <li class="nav-item   ">
-            <a class="nav-link" data-bs-toggle="tab" href="#set" onclick="ip_table_sort()">
-            <i class="fa-solid fa-network-wired"></i>
-            IP Policies</a>
-         </li>
-      </ul>
-      <!-- Tab panes -->
-      <div class="tab-content m-4 justify-content-between ">
-         <div class="tab-pane  fade show active  " id="msg">
-            <div class="d-flex">
-               <div class="border-end  pe-2">
-                  <div>
-                     <label for="overview-interface-selector" class="d-inline-block">Interface:</label>
-                     <select class="" id="overview-interface-selector"></select>
+{% block body %}
+
+   <style>
+      .active {
+         background-color: #202940 !important;
+      }
+
+      #overview-table {
+         background-color: #202940 !important;
+      }
+   </style>
+
+
+   <div class="text-center text-primary bg-secondary">
+      <h2>
+         <i class="py-5 fa fa-solid fa-gauge-high"></i>  Network Traffic Control
+      </h2>
+      <div class="py-5">
+         <!-- Nav tabs -->
+         <ul class="nav nav-tabs">
+            <li class="nav-item">
+               <a class="nav-link active" data-bs-toggle="tab" href="#msg">
+               <i class="fa-solid fa-info-circle"></i>
+               Overview
+               </a>
+            </li>
+            <li class="nav-item m-auto">
+               <a class="nav-link" data-bs-toggle="tab" href="#pro" onclick="program_table_sort()">
+               <i class="fa-solid fa-grip"></i>
+               Program Policies</a>
+            </li>
+            <li class="nav-item   ">
+               <a class="nav-link" data-bs-toggle="tab" href="#set" onclick="ip_table_sort()">
+               <i class="fa-solid fa-network-wired"></i>
+               IP Policies</a>
+            </li>
+         </ul>
+         <!-- Tab panes -->
+         <div class="tab-content m-4 justify-content-between">
+            <div class="tab-pane fade show active" id="msg">
+               <div class="d-flex">
+                  <div class="border-end pe-2">
+                     <div>
+                        <label for="overview-interface-selector" class="d-inline-block">Interface:</label>
+                        <select class="form-select bg-secondary" id="overview-interface-selector"></select>
+                     </div>
+                     <div class="checkbox m-3" onclick="live = !live">
+                        <input type="checkbox" checked data-toggle="toggle" data-on="
+                           <div class='ps-3'>
+                           <i class='fa-solid fa-play'></i>
+                           <br>
+                           Live
+                           </div>
+                           " data-off="<i class='fa-solid fa-clock-rotate-left'></i>
+                           <br>
+                           Historical">
+                     </div>
                   </div>
-                  <div class="checkbox m-3  " onclick="live = !live">
-                     <input type="checkbox" checked data-toggle="toggle" data-on="
-                        <div class='ps-3'>
-                        <i class='fa-solid fa-play'></i>
-                        <br>
-                        Live
-                        </div>
-                        " data-off="<i class='fa-solid fa-clock-rotate-left'></i>
-                        <br>
-                        Historical">
+                  <div class="row m-2">
+                     <table id="overview-table" class="display ps-2" style="min-width: calc(100vw - 250px);">
+                        <thead>
+                           <tr>
+                              <th>timestamp</th>
+                              <th>program</th>
+                              <th>protocol</th>
+                              <th>direction</th>
+                              <th>ip_src</th>
+                              <th>port_src</th>
+                              <th>ip_dest</th>
+                              <th>port_dest</th>
+                              <th>length</th>
+                              <th>pkt_count</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                     </table>
                   </div>
                </div>
-               <table id="overview-table" class="display ps-2">
+            </div>
+            <div class="tab-pane fade" id="pro">
+               <div>
+                  <button type="button"
+                     class="btn btn-success gap-2 w-100"
+                     data-bs-toggle="modal"
+                     data-bs-target="#program-modal"
+                     data-bs-action="add">
+                  <i class="fa-solid fa-plus"></i>
+                  <br>
+                  Program Policy
+                  </button>
+                  <div class="row mt-2">
+                     <table id="program-table" class="display" style="width:100%">
+                        <thead>
+                           <tr>
+                              <th>id</th>
+                              <th>name</th>
+                              <th>programs</th>
+                              <th>rate</th>
+                              <th>burst</th>
+                              <th>prio</th>
+                              <th>direction</th>
+                              <th>interface</th>
+                              <th>enabled</th>
+                              <th>startup</th>
+                              <th>created</th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="tab-pane  fade" id="set">
+               <table id="ip-table" class="display">
                   <thead>
                      <tr>
-                        <th>timestamp</th>
-                        <th>program</th>
-                        <th>protocol</th>
-                        <th>direction</th>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>transport</th>
                         <th>ip_src</th>
-                        <th>port_src</th>
+                        <th>sport</th>
                         <th>ip_dest</th>
-                        <th>port_dest</th>
-                        <th>length</th>
-                        <th>pkt_count</th>
+                        <th>dport</th>
+                        <th>rate</th>
+                        <th>burst</th>
+                        <th>prio</th>
+                        <th>direction</th>
+                        <th>interface</th>
+                        <th>enabled</th>
+                        <th>startup</th>
+                        <th>created</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                      </tr>
                   </thead>
                   <tbody>
@@ -67,390 +147,324 @@
                </table>
             </div>
          </div>
-         <div class="tab-pane   fade " id="pro">
-            <div>
-               <button type="button"
-                  class="btn btn-success gap-2 w-100"
-                  data-bs-toggle="modal"
-                  data-bs-target="#program-modal"
-                  data-bs-action="add">
-               <i class="fa-solid fa-plus"></i>
-               <br>
-               Program Policy
-               </button>
-               <div>
-                  <table id="program-table" class="display" style="width:100%">
-                     <thead>
-                        <tr>
-                           <th>id</th>
-                           <th>name</th>
-                           <th>programs</th>
-                           <th>rate</th>
-                           <th>burst</th>
-                           <th>prio</th>
-                           <th>direction</th>
-                           <th>interface</th>
-                           <th>enabled</th>
-                           <th>startup</th>
-                           <th>created</th>
-                           <th></th>
-                           <th></th>
-                           <th></th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                     </tbody>
-                  </table>
-               </div>
-            </div>
-         </div>
-         <div class="tab-pane  fade" id="set">
-            <table id="ip-table" class="display">
-               <thead>
-                  <tr>
-                     <th>id</th>
-                     <th>name</th>
-                     <th>transport</th>
-                     <th>ip_src</th>
-                     <th>sport</th>
-                     <th>ip_dest</th>
-                     <th>dport</th>
-                     <th>rate</th>
-                     <th>burst</th>
-                     <th>prio</th>
-                     <th>direction</th>
-                     <th>interface</th>
-                     <th>enabled</th>
-                     <th>startup</th>
-                     <th>created</th>
-                     <th></th>
-                     <th></th>
-                     <th></th>
-                  </tr>
-               </thead>
-               <tbody>
-               </tbody>
-            </table>
-         </div>
       </div>
    </div>
-</div>
-</div>
-<!-- Bootstrap Description Modal -->
-<div class="modal fade" id="info-modal" tabindex="-1" aria-labelledby="info-modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-       <div class="modal-content">
-          <div class="modal-header">
-             <h5 class="modal-title" id="info-modalLabel">Description</h5>
-             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body" id="info-modal-body">
-             asdasdsad
-          </div>
-          <div class="modal-footer">
-             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-       </div>
-    </div>
- </div>
- <!--/ Bootstrap Description Modal -->
-
-<!-- Bootstrap Add/ Edit program policy Modal -->
-<div class="modal fade"
-   id="program-modal"
-   tabindex="-1"
-   aria-labelledby="program-modal-label"
-   aria-hidden="true">
-<div class="modal-dialog modal-lg">
-   <div class="modal-content">
-      <div class="modal-header">
-         <h5 class="modal-title" id="program-modal-label">Program Policy</h5>
-         <button type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-         <form id="program-policy-form"
-            method="post"
-            action="/traffic_control/program_policy/"
-            novalidate>
-            <input type="hidden" name="id" id="program-policy-id">
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="program-policy-name" class="form-label">Name</label>
-               </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="program-policy-name" name="name">
-               </div>
+   </div>
+   <!-- Bootstrap Description Modal -->
+   <div class="modal fade" id="info-modal" tabindex="-1" aria-labelledby="info-modalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="info-modalLabel">Description</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="program-policy-description" class="form-label">Description</label>
-               </div>
-               <div class="col-8">
-                  <textarea class="form-control" id="program-policy-description" name="description"></textarea>
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="modal-interface-selector" class="form-label d-inline-block">Interface:</label>
-               </div>
-               <div class="col-8">
-                  <select class="form-select"  name="interface" id="modal-interface-selector"></select>
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="programs" class="form-label">Programs</label>
-               </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="programs" name="programs" value='["chrome","firefox"]' required>
-                  <div class="invalid-feedback">Please select at least one program.</div>
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="direction" class="form-label">Direction</label>
-               </div>
-               <div class="col-8">
-                  <select class="form-select" id="program-policy-direction" name="direction" required>
-                     <option value="inbound">Inbound</option>
-                     <option value="outbound">Outbound</option>
-                  </select>
-                  <div class="invalid-feedback">Please select a direction.</div>
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="program-policy-rate" class="form-label">Rate</label>
-               </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="program-policy-rate" name="rate">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="program-policy-burst" class="form-label">Burst</label>
-               </div>
-               <div class="col-8">
-                  <input type="text"
-                     class="form-control"
-                     id="program-policy-burst"
-                     name="burst">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="program-policy-prio" class="form-label">Priority</label>
-               </div>
-               <div class="col-8">
-                  <input type="number" class="form-control" id="program-policy-prio" name="prio">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="program-policy-enabled" class="form-label">Apply policy now?</label>
-               </div>
-               <div class="col-8">
-                  <input class="form-check-input" name="enabled" type="checkbox" value="True" id="program-policy-enabled">
-                  <label class="form-check-label">
-                  Enabled
-                  </label>
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="program-policy-startup" class="form-label">AND Apply on app startup?</label>
-               </div>
-               <div class="col-8">
-                  <input class="form-check-input" name="startup" type="checkbox" value="True" id="program-policy-startup">
-                  <label class="form-check-label" >
-                  Startup
-                  </label>                            
-               </div>
+            <div class="modal-body" id="info-modal-body">
+               asdasdsad
             </div>
             <div class="modal-footer">
                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-               <button type="submit" id="submit-button" class="btn btn-primary">Save</button>
             </div>
-         </form>
+         </div>
       </div>
    </div>
-</div>
-</div>
+   <!--/ Bootstrap Description Modal -->
 
-<!--/ Bootstrap Add/ Edit program policy Modal -->
-
-
-<!-- Bootstrap Add/ Edit ip policy Modal -->
-<div class="modal fade"
-   id="ip-modal"
-   tabindex="-1"
-   aria-labelledby="ip-modal-label"
-   aria-hidden="true">
-<div class="modal-dialog modal-lg">
-   <div class="modal-content">
-      <div class="modal-header">
-         <h5 class="modal-title" id="ip-modal-label">IP Policy</h5>
-         <button type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-         <form id="ip-policy-form"
-            method="post"
-            action="/traffic_control/ip_policy/"
-            novalidate>
-            <input type="hidden" name="id" id="ip-policy-id">
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-name" class="form-label">Name</label>
+   <!-- Bootstrap Add/ Edit program policy Modal -->
+   <div class="modal fade"
+      id="program-modal"
+      tabindex="-1"
+      aria-labelledby="program-modal-label"
+      aria-hidden="true">
+   <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="program-modal-label">Program Policy</h5>
+            <button type="button"
+               class="btn-close"
+               data-bs-dismiss="modal"
+               aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+            <form id="program-policy-form"
+               method="post"
+               action="/traffic_control/program_policy/"
+               novalidate>
+               <input type="hidden" name="id" id="program-policy-id">
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="program-policy-name" class="form-label">Name</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="program-policy-name" name="name">
+                  </div>
                </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="ip-policy-name" name="name">
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="program-policy-description" class="form-label">Description</label>
+                  </div>
+                  <div class="col-8">
+                     <textarea class="form-control" id="program-policy-description" name="description"></textarea>
+                  </div>
                </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-description" class="form-label">Description</label>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="modal-interface-selector" class="form-label d-inline-block">Interface:</label>
+                  </div>
+                  <div class="col-8">
+                     <select class="form-select"  name="interface" id="modal-interface-selector"></select>
+                  </div>
                </div>
-               <div class="col-8">
-                  <textarea class="form-control" id="ip-policy-description" name="description"></textarea>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="programs" class="form-label">Programs</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="programs" name="programs" value='["chrome","firefox"]' required>
+                     <div class="invalid-feedback">Please select at least one program.</div>
+                  </div>
                </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="modal-interface-selector" class="form-label d-inline-block">Interface:</label>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="direction" class="form-label">Direction</label>
+                  </div>
+                  <div class="col-8">
+                     <select class="form-select" id="program-policy-direction" name="direction" required>
+                        <option value="inbound">Inbound</option>
+                        <option value="outbound">Outbound</option>
+                     </select>
+                     <div class="invalid-feedback">Please select a direction.</div>
+                  </div>
                </div>
-               <div class="col-8">
-                  <select class="form-select"  name="interface" id="modal-interface-selector"></select>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="program-policy-rate" class="form-label">Rate</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="program-policy-rate" name="rate">
+                  </div>
                </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-transport" class="form-label">transport</label>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="program-policy-burst" class="form-label">Burst</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text"
+                        class="form-control"
+                        id="program-policy-burst"
+                        name="burst">
+                  </div>
                </div>
-               <div class="col-8 d-flex">
-                  <div class="form-check m-2">
-                     <input class="form-check-input" type="radio" name="transport" id="ip-policy-transport" value="tcp">
-                     <label class="form-check-label" for="transport1">
-                       TCP
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="program-policy-prio" class="form-label">Priority</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="number" class="form-control" id="program-policy-prio" name="prio">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="program-policy-enabled" class="form-label">Apply policy now?</label>
+                  </div>
+                  <div class="col-8">
+                     <input class="form-check-input" name="enabled" type="checkbox" value="True" id="program-policy-enabled">
+                     <label class="form-check-label">
+                     Enabled
                      </label>
-                   </div>
-                   <div class="form-check m-2">
-                     <input class="form-check-input" type="radio" name="transport" id="ip-policy-transport" checked value="udp">
-                     <label class="form-check-label" for="transport2">
-                       UDP
-                     </label>
-                   </div>               
-            </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-ip_src" class="form-label">ip_src</label>
+                  </div>
                </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="ip-policy-ip_src" name="ip_src">
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="program-policy-startup" class="form-label">AND Apply on app startup?</label>
+                  </div>
+                  <div class="col-8">
+                     <input class="form-check-input" name="startup" type="checkbox" value="True" id="program-policy-startup">
+                     <label class="form-check-label" >
+                     Startup
+                     </label>                            
+                  </div>
                </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-sport" class="form-label">sport</label>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" id="submit-button" class="btn btn-primary">Save</button>
                </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="ip-policy-sport" name="sport">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-ip_dest" class="form-label">ip_dest</label>
-               </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="ip-policy-ip_dest" name="ip_dest">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-dport" class="form-label">dport</label>
-               </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="ip-policy-dport" name="dport">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="direction" class="form-label">Direction</label>
-               </div>
-               <div class="col-8">
-                  <select class="form-select" id="ip-policy-direction" name="direction" required>
-                     <option value="inbound">Inbound</option>
-                     <option value="outbound">Outbound</option>
-                  </select>
-                  <div class="invalid-feedback">Please select a direction.</div>
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-rate" class="form-label">Rate</label>
-               </div>
-               <div class="col-8">
-                  <input type="text" class="form-control" id="ip-policy-rate" name="rate">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-burst" class="form-label">Burst</label>
-               </div>
-               <div class="col-8">
-                  <input type="text"
-                     class="form-control"
-                     id="ip-policy-burst"
-                     name="burst">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-prio" class="form-label">Priority</label>
-               </div>
-               <div class="col-8">
-                  <input type="number" class="form-control" id="ip-policy-prio" name="prio">
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-enabled" class="form-label">Apply policy now?</label>
-               </div>
-               <div class="col-8">
-                  <input class="form-check-input" name="enabled" type="checkbox" value="True" id="ip-policy-enabled">
-                  <label class="form-check-label">
-                  Enabled
-                  </label>
-               </div>
-            </div>
-            <div class="row m-2">
-               <div class="col-4">
-                  <label for="ip-policy-startup" class="form-label">AND Apply on app startup?</label>
-               </div>
-               <div class="col-8">
-                  <input class="form-check-input" name="startup" type="checkbox" value="True" id="ip-policy-startup">
-                  <label class="form-check-label" >
-                  Startup
-                  </label>                            
-               </div>
-            </div>
-            <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-               <button type="submit" id="submit-button" class="btn btn-primary">Save</button>
-            </div>
-         </form>
+            </form>
+         </div>
       </div>
    </div>
-</div>
+   </div>
+
+   <!--/ Bootstrap Add/ Edit program policy Modal -->
 
 
-<!--/ Bootstrap Add/ Edit ip policy Modal -->
+   <!-- Bootstrap Add/ Edit ip policy Modal -->
+   <div class="modal fade"
+      id="ip-modal"
+      tabindex="-1"
+      aria-labelledby="ip-modal-label"
+      aria-hidden="true">
+   <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="ip-modal-label">IP Policy</h5>
+            <button type="button"
+               class="btn-close"
+               data-bs-dismiss="modal"
+               aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+            <form id="ip-policy-form"
+               method="post"
+               action="/traffic_control/ip_policy/"
+               novalidate>
+               <input type="hidden" name="id" id="ip-policy-id">
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-name" class="form-label">Name</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="ip-policy-name" name="name">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-description" class="form-label">Description</label>
+                  </div>
+                  <div class="col-8">
+                     <textarea class="form-control" id="ip-policy-description" name="description"></textarea>
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="modal-interface-selector" class="form-label d-inline-block">Interface:</label>
+                  </div>
+                  <div class="col-8">
+                     <select class="form-select"  name="interface" id="modal-interface-selector"></select>
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-transport" class="form-label">transport</label>
+                  </div>
+                  <div class="col-8 d-flex">
+                     <div class="form-check m-2">
+                        <input class="form-check-input" type="radio" name="transport" id="ip-policy-transport" value="tcp">
+                        <label class="form-check-label" for="transport1">
+                        TCP
+                        </label>
+                     </div>
+                     <div class="form-check m-2">
+                        <input class="form-check-input" type="radio" name="transport" id="ip-policy-transport" checked value="udp">
+                        <label class="form-check-label" for="transport2">
+                        UDP
+                        </label>
+                     </div>               
+               </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-ip_src" class="form-label">ip_src</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="ip-policy-ip_src" name="ip_src">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-sport" class="form-label">sport</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="ip-policy-sport" name="sport">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-ip_dest" class="form-label">ip_dest</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="ip-policy-ip_dest" name="ip_dest">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-dport" class="form-label">dport</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="ip-policy-dport" name="dport">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="direction" class="form-label">Direction</label>
+                  </div>
+                  <div class="col-8">
+                     <select class="form-select" id="ip-policy-direction" name="direction" required>
+                        <option value="inbound">Inbound</option>
+                        <option value="outbound">Outbound</option>
+                     </select>
+                     <div class="invalid-feedback">Please select a direction.</div>
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-rate" class="form-label">Rate</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text" class="form-control" id="ip-policy-rate" name="rate">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-burst" class="form-label">Burst</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="text"
+                        class="form-control"
+                        id="ip-policy-burst"
+                        name="burst">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-prio" class="form-label">Priority</label>
+                  </div>
+                  <div class="col-8">
+                     <input type="number" class="form-control" id="ip-policy-prio" name="prio">
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-enabled" class="form-label">Apply policy now?</label>
+                  </div>
+                  <div class="col-8">
+                     <input class="form-check-input" name="enabled" type="checkbox" value="True" id="ip-policy-enabled">
+                     <label class="form-check-label">
+                     Enabled
+                     </label>
+                  </div>
+               </div>
+               <div class="row m-2">
+                  <div class="col-4">
+                     <label for="ip-policy-startup" class="form-label">AND Apply on app startup?</label>
+                  </div>
+                  <div class="col-8">
+                     <input class="form-check-input" name="startup" type="checkbox" value="True" id="ip-policy-startup">
+                     <label class="form-check-label" >
+                     Startup
+                     </label>                            
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" id="submit-button" class="btn btn-primary">Save</button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
 
-<script src="{% static 'traffic_control/app.js' %}"></script>
-{% endblock %}
+   <!--/ Bootstrap Add/ Edit ip policy Modal -->
+
+   <script src="{% static 'traffic_control/app.js' %}"></script>
+
+{% endblock body %}

@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-	<i class="bi bi-graph-up logo mr-2"></i>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm p-2">
+	<i class="bi bi-graph-up logo m-2"></i>
 	<a class="navbar-brand" href="#"> NOCD </a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
 		aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -8,48 +8,42 @@
 	<div class="collapse navbar-collapse" id="navbarNav">
 		<ul class="navbar-nav me-auto">
 			<li class="m-1">
-				<a class=" btn  btn-outline-info {% if request.path == "/" %} text-black  btn-outline-info active{% endif %}" href="/"> Home </a>
+				<a class="btn btn-secondary text-primary {% if request.path == "/" %} text-black active{% endif %}" href="/"> Home </a>
 			</li>
 			<li class="m-1">
-				<a class=" btn  btn-outline-info {% if "/About" in request.path %} text-black  active{% endif %}" href="#"> About </a>
+				<a class="btn btn-secondary text-primary {% if "/About" in request.path %} text-black  active{% endif %}" href="#"> About </a>
 			</li>
 			<li class="m-1">
-				<a class=" btn  btn-outline-info {% if "/firewall" in request.path %} text-black  active{% endif %}" href="/firewall"> Firewall </a>
-			</li>
-			<li class="m-1">
-				<a class=" btn  btn-outline-info {% if "/traffic_control" in request.path %} text-black  active {% endif %}" href="/traffic_control"> Traffic Control </a>
+				<a class="btn btn-secondary text-primary {% if "/firewall" in request.path %} text-black  active{% endif %}" href="/firewall"> Firewall </a>
 			</li>
 		</ul>
-		<ul class="navbar-nav">
+		<ul class="navbar-nav" style="margin-right: 10px;">
 			<!-- pill icon -->
-			<li class="nav-item dropdown pill">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-			<li class="pill mr-2">
+			<li class="pill m-0">
 				<a href="#" class="nav-link">
 					<span class="position-relative">
-						<i class="bi bi-bell" style="fill: red; font-size: 1.75em;"></i>
-						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-							style="right: -4px; top: -8px; font-size: xx-small;">
-							1
+						<i class="bi bi-bell" style="fill: red; font-size: 1.5em;"></i>
+						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger flex-1 w-100"
+							style="right: -4px; top: -8px; font-size: xx-small;;">
+							+99
 						</span>
 					</span>
-
+			
 				</a>
-				<div class="dropdown-menu dropdown-menu-right bg-dark" aria-labelledby="navbarDropdown">
+				<div class="dropdown-menu dropdown-menu-left bg-dark" aria-labelledby="navbarDropdown">
 					<a class="dropdown-item text-light" href="#"> Register </a>
 					<a class="dropdown-item text-light" href="#"> Login </a>
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item text-light" href="#"> Logout </a>
 				</div>
 			</li>
-
 			<!-- personal icon -->
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 					<i class="bi bi-person-circle" style="font-size: 1.3em;"></i>
 
 				</a>
-				<div class="dropdown-menu dropdown-menu-right bg-dark" aria-labelledby="navbarDropdown">
+				<div class="dropdown-menu dropdown-menu-left bg-dark" aria-labelledby="navbarDropdown" style="position: absolute; left:-100px; z-index: 1000;">
 					<a class="dropdown-item text-light" href="#"> Register </a>
 					<a class="dropdown-item text-light" href="#"> Login </a>
 					<div class="dropdown-divider"></div>
@@ -59,3 +53,6 @@
 		</ul>
 	</div>
 </nav>
+
+
+

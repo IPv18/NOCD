@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
-<html>
+<html data-bs-theme="dark">
 
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -15,8 +15,13 @@
 
     <!-- Specific Page CSS & JS goes HERE  -->
     <style>
+
         body {
           background-color: #1A2035 !important;
+        }
+
+        .navbar-nav > li {
+            margin-left: 10px !important;
         }
       
         .bg-dark {
@@ -27,16 +32,24 @@
           background-color: #202940 !important;
         }
 
+        .btn-secondary {
+            background-color: #202940 !important;
+            min-width: 100px;
+            transition: opacity 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            opacity: 0.4;
+        }
+
         .text-primary {
-            color: #f8f9fa !important;
+            color: #ADB5BD !important;
         }
 
         .table-hover tbody tr:hover {
             color: #adadad;
         }
       </style>
-
-
 
     <link rel='stylesheet' href='{% static "styles/main.css" %}'>
     <link rel="stylesheet" 
@@ -46,17 +59,20 @@
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
+    
     {% block header %}
+      
     {% endblock header %}
 
 </head>
 
 <body>
-    <div class="container p-0 min-vh-100 min-vw-100 bg-dark">
+    {% block body %}
+    <div class="container p-0 m-0 min-vh-100 min-vw-100 bg-dark">
 
         {% include 'navbar.html' %}
         
-        <div class="container p-0">
+        <div class="container min-vh-100 min-vw-100" style="padding: 10px 10% 0 10%;">
 
             {% block content %}
             {% endblock content %}
@@ -68,7 +84,7 @@
 
     <!-- Specific Page JS goes HERE  -->
     {% block javascripts %}{% endblock javascripts %}
-    
+    {% endblock body %}
 </body>
 
 </html>

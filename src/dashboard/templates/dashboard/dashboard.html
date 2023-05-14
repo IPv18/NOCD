@@ -11,7 +11,7 @@
 
 {% block content %}
 
-<div class="container-fluid mt-2 text-primary bg-dark">
+<div class="bg-dark">
   <!-- Card -->
   <h4 class="page-title"> Statistics </h4>
   <!-- Card With Icon States Color -->
@@ -102,16 +102,14 @@
 
   <br>
 
-  <div class="row">
+  <div class="row text-primary">
     <div class="col">
       <div class="card card-stats card-round bg-secondary shadow">
         <div class="card-body">
           <div class="row">
-            <div class="col">
+            <iframe src="traffic_control" frameborder="0" style="height: 1000px;" scrolling="no">
 
-              {% include 'dashboard/table.html' %}
-              
-            </div>
+            </iframe>
           </div>
         </div>
       </div>
@@ -121,7 +119,7 @@
   <br>
 
   <div class="row justify-content-center">
-    <div class="col-md-10">
+    <div class="col-md-12">
       <div class="card card-stats card-round bg-secondary shadow">
         <div class="card-body">
           <div class="row">
