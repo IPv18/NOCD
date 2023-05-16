@@ -1,103 +1,106 @@
+{% extends 'main.html' %}
 {% load static %}
+
+{% block title %} Add Rule {% endblock %}
 
 {% block header %}
 
     <link rel="stylesheet" type="text/css" href='{% static "styles/addrule.css" %}' />
     <script src="{% static 'js/addrule.js' %}"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
-          crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" 
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" 
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" 
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" 
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" 
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
-            crossorigin="anonymous"></script>
 
 {% endblock header %}
 
-{% block content %} 
+{% block body %} 
 
-    <h1>Rule Form</h1>
-    <form id="rule_form" action="" method="POST">
-        {% csrf_token %} 
-        {% for field in form %}
-            <p>
-                {% if field.name == "rule_priority" %} 
-                    <label>
-                        Rule num <span style="color: red">*</span>:
-                    </label>
-                    <input  id="id_{{ field.name }}" 
-                            type="number" 
-                            name="{{ field.name }}" 
-                            {% if update_or_submit == 'UPDATE' %}
-                                value="{{ instance.rule_priority }}" 
-                            {% endif %}
-                            min="1" 
-                            max="999" 
-                            required>
-                {% elif field.name == "description" %}
-                    <label for="id_{{ field.name }}">
-                        Description <span style="color: red">*</span>:
-                    </label>
-                    <input  id="id_{{ field.name }}" 
-                            type="text" 
-                            name="description" 
-                            {% if update_or_submit == 'UPDATE' %}
-                                value="{{ instance.description }}" 
-                            {% endif %}
-                            maxlength="255" 
-                            required>
-                {% elif field.name == "source_port" or field.name == "destination_port" %} 
-                    {{ field.label_tag }}
-                    <input  id="id_{{ field.name }}" 
-                            type="text" 
-                            name="{{ field.name }}" 
-                            {% if update_or_submit == 'UPDATE' %}
-                                {% if instance.source_port is not None or instance.destination_port is not None %}
-                                    {% if field.name == "source_port" and instance.source_port is not None %}
-                                        value="{{ instance.source_port }}"
-                                    {% elif field.name == "destination_port" and instance.destination_port is not None%}
-                                        value="{{ instance.destination_port }}"
+<div class="row text-primary" style="width: calc(100% + 10px);">
+    <div class="col p-0 m-0">
+      <div class="card card-stats card-round bg-dark shadow min-vh-100">
+        <div class="card-body">
+          <div class="row">
+            <div class="col p-0 m-0">
+            <h1>Rule Form</h1>
+            <form id="rule_form" action="" method="POST" class="bg-secondary">
+                {% csrf_token %} 
+                {% for field in form %}
+                    <p>
+                        {% if field.name == "rule_priority" %} 
+                            <label>
+                                Rule num <span style="color: red">*</span>:
+                            </label>
+                            <input  id="id_{{ field.name }}" 
+                                    type="number" 
+                                    name="{{ field.name }}" 
+                                    {% if update_or_submit == 'UPDATE' %}
+                                        value="{{ instance.rule_priority }}" 
                                     {% endif %}
-                                {% endif %}
-                            {% endif %} 
-                            pattern="^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))(:(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4})))?$">                           
-                {% elif field.name == "source_address" or field.name == "destination_address" %}
-                    <label for="id_{{ field.name }}">
-                        {{ ip_family }} {{ field.label_tag }}
-                    </label>
-                    <input  id="id_{{ field.name }}" 
-                            type="text" 
-                            {% if ip_family == 'IPv4' %}
-                                pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/([1-9]|[12][0-9]|3[01]))?$"
-                            {% else %}
-                                pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}(\/([1-9]|[1-5][0-9]|6[0-4]))?$"
-                            {% endif %}
-                            {% if update_or_submit == 'UPDATE'  %}
-                                {% if instance.source_address is not None or instance.destination_address is not None  %}
-                                    {% if field.name == "source_address" and instance.source_address is not None %}
-                                        value="{{ instance.source_address }}"
-                                    {% elif field.name == "destination_address" and instance.destination_address is not None %}
-                                        value="{{ instance.destination_address }}"
+                                    min="1" 
+                                    max="999" 
+                                    required>
+                        {% elif field.name == "description" %}
+                            <label for="id_{{ field.name }}">
+                                Description <span style="color: red">*</span>:
+                            </label>
+                            <input  id="id_{{ field.name }}" 
+                                    type="text" 
+                                    name="description" 
+                                    {% if update_or_submit == 'UPDATE' %}
+                                        value="{{ instance.description }}" 
                                     {% endif %}
-                                {% endif %}
-                            {% endif %}
-                            name="{{ field.name }}">
-                {% else %} 
-                    {{ field.label_tag }} {{ field }}
-                {% endif %}
-            </p>
-        {% endfor %}
-        <br />
-        <input  type="submit"
-                update-or-submit="{{ update_or_submit }}"
-                value="{{ update_or_submit }}">
-                <button type="button" onclick="redirectToHome()">Cancel</button>
-    </form>
+                                    maxlength="255" 
+                                    required>
+                        {% elif field.name == "source_port" or field.name == "destination_port" %} 
+                            {{ field.label_tag }}
+                            <input  id="id_{{ field.name }}" 
+                                    type="text" 
+                                    name="{{ field.name }}" 
+                                    {% if update_or_submit == 'UPDATE' %}
+                                        {% if instance.source_port is not None or instance.destination_port is not None %}
+                                            {% if field.name == "source_port" and instance.source_port is not None %}
+                                                value="{{ instance.source_port }}"
+                                            {% elif field.name == "destination_port" and instance.destination_port is not None%}
+                                                value="{{ instance.destination_port }}"
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %} 
+                                    pattern="^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))(:(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4})))?$">                           
+                        {% elif field.name == "source_address" or field.name == "destination_address" %}
+                            <label for="id_{{ field.name }}">
+                                {{ ip_family }} {{ field.label_tag }}
+                            </label>
+                            <input  id="id_{{ field.name }}" 
+                                    type="text" 
+                                    {% if ip_family == 'IPv4' %}
+                                        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/([1-9]|[12][0-9]|3[01]))?$"
+                                    {% else %}
+                                        pattern="^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}(\/([1-9]|[1-5][0-9]|6[0-4]))?$"
+                                    {% endif %}
+                                    {% if update_or_submit == 'UPDATE'  %}
+                                        {% if instance.source_address is not None or instance.destination_address is not None  %}
+                                            {% if field.name == "source_address" and instance.source_address is not None %}
+                                                value="{{ instance.source_address }}"
+                                            {% elif field.name == "destination_address" and instance.destination_address is not None %}
+                                                value="{{ instance.destination_address }}"
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                    name="{{ field.name }}">
+                        {% else %} 
+                            {{ field.label_tag }} {{ field }}
+                        {% endif %}
+                    </p>
+                {% endfor %}
+                <br />
+                <input  type="submit"
+                        update-or-submit="{{ update_or_submit }}"
+                        value="{{ update_or_submit }}">
+                        <button type="button" onclick="redirectToHome()">Cancel</button>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
     {% include 'firewall/error.html' %}
 
 {% endblock %}
