@@ -51,15 +51,20 @@
         <td>
             <button type="button"
                     class="btn btn-primary"
-                    onclick="location.href='{% url 'updaterule' rule.id %}'">Edit</button>
+                    onclick="location.href='{% url 'firewall:rule_handler' rule.id %}?ip_family={{ rule.ip_family }}&traffic_direction={{ rule.traffic_direction }} '">
+                Edit
+            </button>
+
         </td>
         <!-- Remove -->
         <td>
             <!-- Button trigger modal -->
             <button type="button"
-                    class="btn btn-primary"
-                    data-toggle="modal"
-                    data-target="#exampleModal{{ rule.id }}">Remove</button>
+                    class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal{{ rule.id }}">
+                Remove
+            </button>
             <!-- Modal -->
             {% include "firewall/confirmation.html" with question="Are you sure you want to delete this rule?" %}
         </td>
