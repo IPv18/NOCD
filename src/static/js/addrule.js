@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
       SOURCE_ADDRESS.disabled = DESTINATION_ADDRESS.disabled = false;
     }
   });
+
   PROTOCOL_SELECT.addEventListener("change", (event) => {
     const SELECTED_TYPE = event.target.value;
     if (SELECTED_TYPE == "UDP") {
@@ -136,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   SUBMIT_BUTTON.addEventListener("click", (event) => {
     if (!RULE_NUM.value || !DESCRIPTION.value) {
-      errorModalBody.innerHTML = 'Both rule number and description are required.';
+      errorModalBody.innerHTML = 'Both Rule ID and description are required.';
       $('#errorModal').modal("show");
       event.preventDefault();
       return;
@@ -159,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (XML_HTTP_REQUEST.status === 200) {
           const XML_HTTP_RESPONSE = JSON.parse(XML_HTTP_REQUEST.responseText);
           if (XML_HTTP_RESPONSE.exists) {
-            errorModalBody.innerHTML = 'This rule number already exists, please choose a unique rule number.';
+            errorModalBody.innerHTML = 'This Rule ID already exists, please choose a unique rule number.';
             $('#errorModal').modal("show");
           }
           else {
@@ -182,19 +183,25 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // input constraints
-
   var rule_priority_field = document.querySelector('input[name="rule_priority"]');
-  rule_priority_field.addEventListener("input", function () {
-    if (
+  rule_priority_field.addEventListener("blur", function () {
+    var rulePriorityValue = rule_priority_field.value.trim();
+    var numericRegex = /^\d+$/; // Regular expression to match numeric values
+    
+    if (!numericRegex.test(rulePriorityValue)) {
+      rule_priority_field.value = "";
+      errorModalBody.innerHTML = 'Please enter a numeric value for Rule ID.';
+      $('#errorModal').modal("show");
+    } else if (
       rule_priority_field.validity.rangeOverflow ||
       rule_priority_field.validity.rangeUnderflow
     ) {
       rule_priority_field.value = "";
-      errorModalBody.innerHTML = 'The value must be between 1 and 999';
+      errorModalBody.innerHTML = 'The Rule ID must be between 1 and 999.';
       $('#errorModal').modal("show");
     }
   });
-
+  
   function validateIPAddress(input) {
     if (input.value === '' || input.value === null) {
       return;
@@ -239,9 +246,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   
-  
-
-
   SOURCE_PORT.addEventListener("blur", function () {
     validatePort(SOURCE_PORT);
   });

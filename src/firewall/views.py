@@ -129,7 +129,6 @@ def rule(request):
             request.session['alert-message'] = message
             return redirect(reverse('firewall:home') + f'?id={int(get_id(ip_family, traffic_direction))}')
 
-
 def rule_handler(request, pk):
     rule = FirewallRule.objects.get(id=pk)
     if request.method == 'GET':

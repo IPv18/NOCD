@@ -6,115 +6,109 @@
 
 {% block header %}
 
-<link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
-<script src="{% static 'js/firewall.js' %}"></script>
+    <link rel='stylesheet' href='{% static "styles/firewall.css" %}'>
+    <script src="{% static 'js/firewall.js' %}"></script>
 
 {% endblock header %}
 <!-- ------------------------------break------------------------------ -->
 {% block content %}
 
-{% if messages %}
-{% for message in messages %}
-<div id="alert-message" class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}success{% endif %}"
-    role="alert">
-    {{ message }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-{% endfor %}
-{% endif %}
-<!-- ------------------------------break------------------------------ -->
-
-<div class="row text-center">
-    <div class="col">
-        <h2>
-            Firewall
-        </h2>
-    </div>
-</div>
-
-<div class="row justify-content-center">
-    <div class="col-md-12">
-        <div class="card card-stats card-round bg-secondary shadow">
-            <div class="card-header d-flex justify-content-between">
-                <ul class="nav nav-pills" id="pills-tab" role="tablist">
-                    <li class="nav-tab">
-                        <a class="nav-link active" id="pills-IPv4-Inbound-tab" data-bs-toggle="pill"
-                            href="#pills-IPv4-Inbound" role="tab" aria-controls="pills-IPv4-Inbound"
-                            aria-selected="true">IPv4 Inbound</a>
-                    </li>
-
-                    <li class="nav-tab">
-                        <a class="nav-link" id="pills-IPv4-Outbound-tab" data-bs-toggle="pill"
-                            href="#pills-IPv4-Outbound" role="tab" aria-controls="pills-IPv4-Outbound"
-                            aria-selected="false">IPv4 Outbound</a>
-                    </li>
-
-                    <li class="nav-tab">
-                        <a class="nav-link" id="pills-IPv6-Inbound-tab" data-bs-toggle="pill"
-                            href="#pills-IPv6-Inbound" role="tab" aria-controls="pills-IPv6-Inbound"
-                            aria-selected="false">IPv6 Inbound</a>
-                    </li>
-
-                    <li class="nav-tab">
-                        <a class="nav-link" id="pills-IPv6-Outbound-tab" data-bs-toggle="pill"
-                            href="#pills-IPv6-Outbound" role="tab" aria-controls="pills-IPv6-Outbound"
-                            aria-selected="false">IPv6 Outbound</a>
-                    </li>
-                </ul>
+    {% if messages %}
+        {% for message in messages %}
+            <div id="alert-message" class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}success{% endif %} alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                {{ message }}
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <!-- ------------------------------break------------------------------ -->
-                        <div class="tab-content" id="pills-tabContent">
-                            {% for table in tables %}
-                            <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-                                id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}" role="tabpanel"
-                                aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
-                                <!-- ------------------------------break------------------------------ -->
-                                <div class="row d-flex justify-content-end">
+        {% endfor %}
+    {% endif %}
+    <!-- ------------------------------break------------------------------ -->
+    <div class="row text-center">
+        <div class="col">
+            <h2>
+                Firewall
+            </h2>
+        </div>
+    </div>
 
-                                        <button type="button" class="btn btn-success" onclick="location.href='{% url "firewall:rule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{table.0.traffic_direction }}'" style="width: 130px; margin-right: 7px;">
-                                            Add Rule
-                                        </button>
-                                    
-                                        <button type="button" class="btn btn-secondary switch-policy-btn"
-                                            onclick="switchTablePolicy('{{ table.0.id }}', '{{ csrf_token }}')" style="width: 230px;">
-                                            Switch table policy
-                                        </button>
-                                    
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card card-stats card-round bg-secondary shadow">
+                <div class="card-header d-flex justify-content-between">
+                    <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-tab">
+                            <a class="nav-link active" id="pills-IPv4-Inbound-tab" data-bs-toggle="pill"
+                                href="#pills-IPv4-Inbound" role="tab" aria-controls="pills-IPv4-Inbound"
+                                aria-selected="true">IPv4 Inbound</a>
+                        </li>
+
+                        <li class="nav-tab">
+                            <a class="nav-link" id="pills-IPv4-Outbound-tab" data-bs-toggle="pill"
+                                href="#pills-IPv4-Outbound" role="tab" aria-controls="pills-IPv4-Outbound"
+                                aria-selected="false">IPv4 Outbound</a>
+                        </li>
+
+                        <li class="nav-tab">
+                            <a class="nav-link" id="pills-IPv6-Inbound-tab" data-bs-toggle="pill"
+                                href="#pills-IPv6-Inbound" role="tab" aria-controls="pills-IPv6-Inbound"
+                                aria-selected="false">IPv6 Inbound</a>
+                        </li>
+
+                        <li class="nav-tab">
+                            <a class="nav-link" id="pills-IPv6-Outbound-tab" data-bs-toggle="pill"
+                                href="#pills-IPv6-Outbound" role="tab" aria-controls="pills-IPv6-Outbound"
+                                aria-selected="false">IPv6 Outbound</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <!-- ------------------------------break------------------------------ -->
+                            <div class="tab-content" id="pills-tabContent">
+                                {% for table in tables %}
+                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                    id="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}" role="tabpanel"
+                                    aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
+                                    <!-- ------------------------------break------------------------------ -->
+                                    <div class="row d-flex justify-content-end">
+
+                                            <button type="button" class="btn btn-success" onclick="location.href='{% url "firewall:rule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{table.0.traffic_direction }}'" style="width: 130px; margin-right: 7px;">
+                                                Add Rule
+                                            </button>
+                                        
+                                            <button type="button" class="btn btn-secondary switch-policy-btn"
+                                                onclick="switchTablePolicy('{{ table.0.id }}', '{{ csrf_token }}')" style="width: 230px;">
+                                                Switch table policy
+                                            </button>
+                                        
+                                    </div>
+                                    <!-- ------------------------------break------------------------------ -->
+                                    <table class="border-top">
+                                        <tr>
+                                            <th>Rule #</th>
+                                            <th>Description</th>
+                                            <th>Protocol</th>
+                                            <th>Source IP</th>
+                                            <th>Source port</th>
+                                            <th>Dest. IP</th>
+                                            <th>Dest. port</th>
+                                            <th>Action</th>
+                                            <th>Edit</th>
+                                            <th>Remove</th>
+                                        </tr>
+                                        {% for rule in table %}
+                                        {% include "firewall/rule.html" %}
+                                        {% endfor %}
+                                    </table>
                                 </div>
-                                <!-- ------------------------------break------------------------------ -->
-
-
-                                <table class="border-top">
-                                    <tr>
-                                        <th>Rule #</th>
-                                        <th>Description</th>
-                                        <th>Protocol</th>
-                                        <th>Source IP</th>
-                                        <th>Source port</th>
-                                        <th>Dest. IP</th>
-                                        <th>Dest. port</th>
-                                        <th>Action</th>
-                                        <th>Edit</th>
-                                        <th>Remove</th>
-                                    </tr>
-                                    {% for rule in table %}
-                                    {% include "firewall/rule.html" %}
-                                    {% endfor %}
-                                </table>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<hr>
+    <hr>
 
 {% endblock content %}

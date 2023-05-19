@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (ID === "1") {
         document.getElementById('pills-IPv4-Inbound-tab').click();
     }
-    tabElement.click();
 
     // Get the alert message element
     var alertMessage = document.getElementById('alert-message');

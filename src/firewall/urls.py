@@ -11,3 +11,4 @@ urlpatterns = [
 ]                                                                                       # POST  --> save form(modified_rule) & redirect(firewall.html)
                                                                                         # PATCH --> jsonresponse({'success':True/False})/switch policy
                                                                                         # DELETE--> jsonresponse({'success':True/False})/delete rule
+                                                                                        
