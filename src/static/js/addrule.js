@@ -185,20 +185,30 @@ document.addEventListener("DOMContentLoaded", function () {
   // input constraints
   var rule_priority_field = document.querySelector('input[name="rule_priority"]');
   rule_priority_field.addEventListener("blur", function () {
+
+    if (rule_priority_field.value == "" || rule_priority_field.value == null) {
+      // If input value is null or empty, skip further validation
+      return;
+    }
+
+    if (rule_priority_field.validity.rangeOverflow || rule_priority_field.validity.rangeUnderflow) {
+      rule_priority_field.value = "";
+      errorModalBody.innerHTML = 'The Rule ID must be between 1 and 999.';
+      $('#errorModal').modal("show");
+    }
+
+  });
+
+  rule_priority_field.addEventListener("input", function () {
     var rulePriorityValue = rule_priority_field.value.trim();
     var numericRegex = /^\d+$/; // Regular expression to match numeric values
-    
+  
     if (!numericRegex.test(rulePriorityValue)) {
       rule_priority_field.value = "";
       errorModalBody.innerHTML = 'Please enter a numeric value for Rule ID.';
       $('#errorModal').modal("show");
-    } else if (
-      rule_priority_field.validity.rangeOverflow ||
-      rule_priority_field.validity.rangeUnderflow
-    ) {
-      rule_priority_field.value = "";
-      errorModalBody.innerHTML = 'The Rule ID must be between 1 and 999.';
-      $('#errorModal').modal("show");
+    } else {
+      rule_priority_field.setCustomValidity(""); // Clear any previous validation message
     }
   });
   

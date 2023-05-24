@@ -124,7 +124,7 @@ def rule(request):
                 FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
                 destination_address = dst_adr)
             update_ip_tables(ip_family, traffic_direction)
-            message = 'Rule added successfully!'
+            message = 'Rule has been added successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
             return redirect(reverse('firewall:home') + f'?id={int(get_id(ip_family, traffic_direction))}')
@@ -161,7 +161,7 @@ def rule_handler(request, pk):
                 FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
                 destination_address = dst_adr)
             update_ip_tables(ip_family, traffic_direction)
-            message = 'Rule modified successfully!'
+            message = 'Rule has been modified successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
             return redirect(reverse('firewall:home') + f'?id={int(get_id(ip_family, traffic_direction))}')
@@ -182,7 +182,7 @@ def rule_handler(request, pk):
             else:
                 last_rule.action = 'ACCEPT'
             last_rule.save()
-            message = 'Table policy changed successfully!'
+            message = 'Table policy has been changed successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
             update_ip_tables(ip_family, traffic_direction)
@@ -198,7 +198,7 @@ def rule_handler(request, pk):
         traffic_direction = rule.traffic_direction
         rule.delete()
         update_ip_tables(ip_family, traffic_direction)
-        message = 'Rule deleted successfully!'
+        message = 'Rule has been removed successfully!'
         messages.success(request, message)
         request.session['alert-message'] = message
         return JsonResponse({'success': True, 'id':int(get_id(ip_family, traffic_direction))}, status=200)

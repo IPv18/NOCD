@@ -32,7 +32,7 @@ class FirewallRule(models.Model):
     ]
     
     rule_priority = models.IntegerField()
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=230)
     traffic_direction = models.CharField(max_length=30, choices=direction_choices, default='Inbound')
     ip_family = models.CharField(max_length=30, choices=ip_family_choices, default='IPv4')
     type = models.CharField(max_length=50, choices=type_choices, default="CUSTOM TCP", null=True, blank=True)

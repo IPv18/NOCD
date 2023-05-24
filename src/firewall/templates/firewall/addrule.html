@@ -37,17 +37,10 @@
                                                     max="999" 
                                                     required>
                                         {% elif field.name == "description" %}
-                                            <label for="id_{{ field.name }}">
-                                                Description <span style="color: red">*</span>:
-                                            </label>
-                                            <input  id="id_{{ field.name }}" 
-                                                    type="text" 
-                                                    name="description" 
-                                                    {% if update_or_submit == 'UPDATE' %}
-                                                        value="{{ instance.description }}" 
-                                                    {% endif %}
-                                                    maxlength="255" 
-                                                    required>
+                                        <p>
+                                            <label label for="id_{{ field.name }}">Description <span style="color: red">*</span>:</label>
+                                        </p>
+                                            <textarea id="id_{{ field.name }}" name="description" rows="5" cols="40" maxlength="230" required>{% if update_or_submit == 'UPDATE' %}{{ instance.description }}{% endif %}</textarea>                                                                     
                                         {% elif field.name == "source_port" or field.name == "destination_port" %} 
                                             {{ field.label_tag }}
                                             <input  id="id_{{ field.name }}" 

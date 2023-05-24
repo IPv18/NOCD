@@ -23,7 +23,6 @@ h1 {
   }
   
   form input,
-  form textarea,
   form select {
     color: #949aa0;
     border-radius: 10px;
@@ -32,6 +31,13 @@ h1 {
     padding: 5px;
     margin-left: 5px;
     height: 30px;
+  }
+
+  form textarea {
+    color: #949aa0;
+    border-radius: 10px;
+    background-color: #202940;
+    border: 1px solid #ccc;
   }
 
   form input[type="submit"],
