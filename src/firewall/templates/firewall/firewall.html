@@ -71,16 +71,13 @@
                                     aria-labelledby="pills-{{ table.0.ip_family }}-{{ table.0.traffic_direction }}-tab">
                                     <!-- ------------------------------break------------------------------ -->
                                     <div class="row d-flex justify-content-end">
-
                                             <button type="button" class="btn btn-success" onclick="location.href='{% url "firewall:rule" %}?ip_family={{ table.0.ip_family }}&traffic_direction={{table.0.traffic_direction }}'" style="width: 130px; margin-right: 7px;">
                                                 Add Rule
                                             </button>
-                                        
                                             <button type="button" class="btn btn-secondary switch-policy-btn"
                                                 onclick="switchTablePolicy('{{ table.0.id }}', '{{ csrf_token }}')" style="width: 230px;">
                                                 Switch table policy
                                             </button>
-                                        
                                     </div>
                                     <!-- ------------------------------break------------------------------ -->
                                     <table class="border-top">

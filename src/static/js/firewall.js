@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // If the alert message element exists, add an event listener to the close button
     if (alertMessage) {
-        var closeButton = alertMessage.querySelector('.close');
+        var closeButton = alertMessage.querySelector('.btn-close');
         closeButton.addEventListener('click', function() {
             // When the close button is clicked, remove the alert message from the session storage
             sessionStorage.removeItem('alert-message');

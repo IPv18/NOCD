@@ -1,67 +1,66 @@
 
 h1 {
-    text-align: center;
-    font-size: 2em;
-    margin-top: 20px;
-  }
+  text-align: center;
+  font-size: 2em;
+  margin-top: 20px;
+}
 
-  form {
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  }
+form {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
 
-  form p {
-    margin: 10px 0;
-  }
-  
-  form input[type="submit"]:hover,
-  form button:hover {
-    background-color: #3e8e41;
-  }
-  
-  form input,
-  form select {
-    color: #949aa0;
-    border-radius: 10px;
-    background-color: #202940;
-    border: 1px solid #ccc;
-    padding: 5px;
-    margin-left: 5px;
-    height: 30px;
-  }
+form p {
+  margin: 10px 0;
+}
 
-  form textarea {
-    color: #949aa0;
-    border-radius: 10px;
-    background-color: #202940;
-    border: 1px solid #ccc;
-  }
+form input[type="submit"]:hover,
+form button:hover {
+  background-color: #3e8e41;
+}
 
-  form input[type="submit"],
-  form button {
-    display: flex;
-    margin: 20px auto;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #3e8e41;
-    font-size: 1.2em;
-    cursor: pointer;
-    height: 50px;
-    align-self: center;
-    color: aliceblue;
-  }
+form input,
+form select {
+  color: #949aa0;
+  border-radius: 10px;
+  background-color: #202940;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin-left: 5px;
+  height: 30px;
+}
+
+form textarea {
+  color: #949aa0;
+  border-radius: 10px;
+  background-color: #202940;
+  border: 1px solid #ccc;
+}
+
+form input[type="submit"],
+form button {
+  display: flex;
+  margin: 20px auto;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #3e8e41;
+  font-size: 1.2em;
+  cursor: pointer;
+  height: 50px;
+  align-self: center;
+  color: aliceblue;
+}
 
 
-  a {
-    text-decoration: none;
-    color: #4CAF50;
-  }
+a {
+  text-decoration: none;
+  color: #4CAF50;
+}
 
-  a:hover {
-    text-decoration: underline;
-  }
- 
+a:hover {
+  text-decoration: underline;
+}
