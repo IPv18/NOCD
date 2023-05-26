@@ -133,7 +133,7 @@ def rule(request):
             if dst_adr != '':
                 FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
                 destination_address = dst_adr)
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             message = 'Rule has been added successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
@@ -170,7 +170,7 @@ def rule_handler(request, pk):
             if dst_adr != '':
                 FirewallRule.objects.filter(ip_family=ip_family, traffic_direction=traffic_direction, rule_priority=rule_priority).update(
                 destination_address = dst_adr)
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             message = 'Rule has been modified successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
@@ -195,7 +195,7 @@ def rule_handler(request, pk):
             message = 'Table policy has been changed successfully!'
             messages.success(request, message)
             request.session['alert-message'] = message
-            #update_ip_tables(ip_family, traffic_direction)
+            update_ip_tables(ip_family, traffic_direction)
             return JsonResponse({'success': True, 'id':int(get_id(last_rule.ip_family, last_rule.traffic_direction))}, status=200)
         except:
             message = 'Error has occured during the proccess of changing the table policy!'
@@ -207,7 +207,7 @@ def rule_handler(request, pk):
         ip_family = rule.ip_family
         traffic_direction = rule.traffic_direction
         rule.delete()
-        #update_ip_tables(ip_family, traffic_direction)
+        update_ip_tables(ip_family, traffic_direction)
         message = 'Rule has been removed successfully!'
         messages.success(request, message)
         request.session['alert-message'] = message
