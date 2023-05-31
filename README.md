@@ -12,7 +12,7 @@ Main features include creating and managing:
 - [traffic control policies](/src/traffic_control/README.md)
 - firewall rules
 - statistics & data visualization
-- Alerts & notifications
+- alerts & notifications
 
 
 ## Setup
