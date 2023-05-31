@@ -1,5 +1,7 @@
 from notification import topic
-from notification.topics import add_topics
+from notification import topics
+
+from firewall import log_analyzer
 
 
 def send_notification(type, message):
@@ -9,17 +11,16 @@ def send_notification(type, message):
 
 
 def send_last_log():
-    from firewall.log_analyzer import read_last_line
     from notification.models import NotificationInfo
-    notification_info = NotificationInfo(type='log', message=read_last_line())
+    notification_info = NotificationInfo(
+        type='log', message=log_analyzer.read_last_line())
     notification_info.save()
 
 
 def subscribe_topics():
+    topics.add_topics()
+
     # Notification subscriptions
     topic.subscribe('info', send_notification)
     topic.subscribe('warning', send_notification)
     topic.subscribe('log', send_last_log)
-
-
-add_topics()

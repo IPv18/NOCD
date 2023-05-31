@@ -70,11 +70,11 @@
 
 <body>
     {% block body %}
-    <div class="container p-0 m-0 min-vh-100 min-vw-100">
+    <div class="container p-0 m-0 min-vh-100 bg-dark" style="min-width: 100%">
 
         {% include 'navbar.html' %}
-
-        <div class="container min-vh-100 min-vw-100" style="padding: 10px 10% 0 10%;">
+        
+        <div class="container min-vh-100" style="padding: 10px 10% 0 10%;">
 
             {% block content %}
             {% endblock content %}
