@@ -60,6 +60,11 @@ def update_ip_tables(ip_family, traffic_direction):
             if rule['action'] == 'LOG':
                 cmd  += f' -j {rule["action"]} --log-prefix \"{rule["description"]}\"'
             subprocess.run(cmd.split(), check=True)
+            
+            if rule['action'] == 'LOG':
+                from notification import topic
+                topic.send('log')
+
   
 def home(request):
     if request.method == 'GET':
