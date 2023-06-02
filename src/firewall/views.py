@@ -57,7 +57,8 @@ def update_ip_tables(ip_family, traffic_direction):
                 cmd += f' --dport {rule["destination_port"]}'
             cmd  += f' -j {rule["action"]}'
             if rule['action'] == 'LOG':
-                cmd  += f' --log-prefix \"{rule["description"]}\"'
+                log_prefix = rule["description"][:29].replace(" ", "_")
+                cmd += f' --log-prefix {log_prefix}'
             subprocess.run(cmd.split(), check=True)
   
 def home(request):
