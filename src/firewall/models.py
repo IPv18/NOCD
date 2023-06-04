@@ -32,13 +32,15 @@ class FirewallRule(models.Model):
     ]
     
     rule_priority = models.IntegerField()
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=230)
     traffic_direction = models.CharField(max_length=30, choices=direction_choices, default='Inbound')
     ip_family = models.CharField(max_length=30, choices=ip_family_choices, default='IPv4')
     type = models.CharField(max_length=50, choices=type_choices, default="CUSTOM TCP", null=True, blank=True)
     protocol = models.CharField(max_length=10, choices=protocol_choices, default="TCP", null=True, blank=True)
+    source_domain = models.CharField(max_length=50, null=True, blank=True)
     source_address = models.CharField(max_length=45, null=True, blank=True)
     source_port = models.CharField(max_length=15, null=True, blank=True)
+    destination_domain = models.CharField(max_length=50, null=True, blank=True)
     destination_address = models.CharField(max_length=45, null=True, blank=True)
     destination_port = models.CharField(max_length=15, null=True, blank=True)
     action = models.CharField(max_length=15, choices=action_choices, default='DROP')

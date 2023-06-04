@@ -14,17 +14,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const DESTINATION_PORT = document.getElementById("id_destination_port");
   const SOURCE_ADDRESS = document.getElementById("id_source_address");
   const DESTINATION_ADDRESS = document.getElementById("id_destination_address");
-
+  const SOURCE_IP_RADIO = document.getElementById('id_source_domain_ip');
+  const SOURCE_DOMAIN_RADIO = document.getElementById('id_source_domain_domain');
+  const SOURCE_DOMAIN = document.getElementById('id_source_domain');
+  const DESTINATION_IP_RADIO = document.getElementById('id_destination_domain_ip');
+  const DESTINATION_DOMAIN_RADIO = document.getElementById('id_destination_domain_domain');
+  const DESTINATION_DOMAIN = document.getElementById('id_destination_domain');
+  
   const SUBMIT_BUTTON = FORM.querySelector('input[type="submit"]');
   const UPDATE_OR_SUBMIT = SUBMIT_BUTTON.getAttribute('update-or-submit');
   const PATTERN = SOURCE_ADDRESS.getAttribute('pattern');
 
   const UDP_TYPE = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
   const TCP_TYPE = ["CUSTOM TCP", "ALL TCP"];
-
-  if (UPDATE_OR_SUBMIT == "UPDATE")
-    original_rule_priority = RULE_NUM.value;
-
   const PORT_MAPPING = {
     "SSH 22": 22,
     "TELNET 23": 23,
@@ -43,7 +45,83 @@ document.addEventListener("DOMContentLoaded", function () {
     "POP3S 995": 995,
     "NFS 2049": 2049,
   };
+ 
+  function validateDomain(domainInput, addressInput) {
+    const domain = domainInput.value.trim();
+    if (domain == '') {
+      return;
+    }
 
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `/firewall/check_domain_validity/?ip_family=${IP_FAMILY_PARAM}&domain=${domain}`);
+    xhr.onload = function() {
+        const data = JSON.parse(xhr.responseText);
+        const ipAddress = data.response;
+        if (ipAddress) 
+        {
+          addressInput.value = ipAddress;
+        } 
+        else 
+        {
+          domainInput.value = "";
+          addressInput.value = "";
+          errorModalBody.innerHTML = "Invalid domain, couldn't map the given domain to an IP address";
+          $('#errorModal').modal("show");
+        }
+    };
+    xhr.send();
+  }
+
+  function validateIPAddress(input) {
+    if (input.value === '' || input.value === null) {
+      return;
+    }
+
+    const REGEX = new RegExp(
+      //Normal IPv6 REGEX : "^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$" 
+      //Compressed IPv6 REGEX : "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+      //IPv4 REGEX : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$" 
+      PATTERN
+    );
+    if (!REGEX.test(input.value)) {
+      input.value = null;
+      if (IP_FAMILY.value == "IPv6")
+        errorModalBody.innerHTML = 'Please enter a valid host/network normal IPv6 address.';
+      else
+        errorModalBody.innerHTML = 'Please enter a valid host/network IPv4 address.<br>Possible inputs:-<br><br>&emsp;-->[0-255].[0-255].[0-255].[0-255]<br>&emsp;-->[0-255].[0-255].[0-255].[0-255]/[1-31]';
+      $('#errorModal').modal("show");
+    }
+  }
+
+  function validatePort(input) {
+    if (input.value === '' || input.value === null) {
+      return;
+    }
+
+    const REGEX = new RegExp(
+      "^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))(:(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4})))?$"
+    );
+
+    if (!REGEX.test(input.value)) {
+      input.value = "";
+      errorModalBody.innerHTML = "Please enter a valid port number (or range).<br>Possible inputs:<br><br>&emsp;-->[0-65536]<br>&emsp;-->[0-65536]:[0-65536]";
+      $('#errorModal').modal("show");
+    } else {
+      const parts = input.value.split(":");
+      if (parts.length == 2 && parseInt(parts[1]) <= parseInt(parts[0])) {
+        input.value = "";
+        errorModalBody.innerHTML = "Please enter a valid port range where the second port number is larger than the first port number.";
+        $('#errorModal').modal("show");
+      }
+    }
+  }
+
+  SOURCE_ADDRESS.disabled = true;
+  DESTINATION_ADDRESS.disabled = true;
+  if (UPDATE_OR_SUBMIT == "UPDATE")
+  {
+    original_rule_priority = RULE_NUM.value;
+  }
   if (IP_FAMILY_PARAM !== null && TRAFFIC_DIRECTION_PARAM !== null) 
   {
     TRAFFIC_DIRECTION.value = TRAFFIC_DIRECTION_PARAM;
@@ -63,6 +141,14 @@ document.addEventListener("DOMContentLoaded", function () {
       else if (TRAFFIC_DIRECTION.value == "Outbound" && TYPE_SELECT.value != "CUSTOM UDP" && TYPE_SELECT.value != "CUSTOM TCP")
         DESTINATION_PORT.disabled = true;
   }
+
+  SOURCE_DOMAIN.addEventListener('blur', function() {
+    validateDomain(SOURCE_DOMAIN, SOURCE_ADDRESS);
+  });
+
+  DESTINATION_DOMAIN.addEventListener('blur', function() {
+    validateDomain(DESTINATION_DOMAIN, DESTINATION_ADDRESS);
+  });
 
   TYPE_SELECT.addEventListener("change", (event) => {
     const SELECTED_TYPE = event.target.value;
@@ -108,6 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
       SOURCE_ADDRESS.disabled = DESTINATION_ADDRESS.disabled = false;
     }
   });
+
   PROTOCOL_SELECT.addEventListener("change", (event) => {
     const SELECTED_TYPE = event.target.value;
     if (SELECTED_TYPE == "UDP") {
@@ -136,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   SUBMIT_BUTTON.addEventListener("click", (event) => {
     if (!RULE_NUM.value || !DESCRIPTION.value) {
-      errorModalBody.innerHTML = 'Both rule number and description are required.';
+      errorModalBody.innerHTML = 'Both Rule ID and description are required.';
       $('#errorModal').modal("show");
       event.preventDefault();
       return;
@@ -159,7 +246,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (XML_HTTP_REQUEST.status === 200) {
           const XML_HTTP_RESPONSE = JSON.parse(XML_HTTP_REQUEST.responseText);
           if (XML_HTTP_RESPONSE.exists) {
-            errorModalBody.innerHTML = 'This rule number already exists, please choose a unique rule number.';
+            errorModalBody.innerHTML = 'This Rule ID already exists, please choose a unique rule number.';
             $('#errorModal').modal("show");
           }
           else {
@@ -181,67 +268,53 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // input constraints
+  RULE_NUM.addEventListener("blur", function () {
+    if (RULE_NUM.value == "" || RULE_NUM.value == null) {
+      // If input value is null or empty, skip further validation
+      return;
+    }
 
-  var rule_priority_field = document.querySelector('input[name="rule_priority"]');
-  rule_priority_field.addEventListener("input", function () {
-    if (
-      rule_priority_field.validity.rangeOverflow ||
-      rule_priority_field.validity.rangeUnderflow
-    ) {
-      rule_priority_field.value = "";
-      errorModalBody.innerHTML = 'The value must be between 1 and 999';
+    if (RULE_NUM.validity.rangeOverflow || RULE_NUM.validity.rangeUnderflow) {
+      RULE_NUM.value = "";
+      errorModalBody.innerHTML = 'The Rule ID must be between 1 and 999.';
       $('#errorModal').modal("show");
     }
+
   });
 
-  function validateIPAddress(input) {
-    if (input.value === '' || input.value === null) {
-      return;
-    }
-
-    const REGEX = new RegExp(
-      //Normal IPv6 REGEX : "^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"
-      //Compressed IPv6 REGEX : "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
-      //IPv4 REGEX : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$" 
-      PATTERN
-    );
-    if (!REGEX.test(input.value)) {
-      input.value = null;
-      if (IP_FAMILY.value == "IPv6")
-        errorModalBody.innerHTML = 'Please enter a valid host/network normal IPv6 address.';
-      else
-        errorModalBody.innerHTML = 'Please enter a valid host/network IPv4 address.<br>Possible inputs:-<br><br>&emsp;-->[0-255].[0-255].[0-255].[0-255]<br>&emsp;-->[0-255].[0-255].[0-255].[0-255]/[1-31]';
-      $('#errorModal').modal("show");
-    }
-  }
-
-  function validatePort(input) {
-    if (input.value === '' || input.value === null) {
-      return;
-    }
-
-    const REGEX = new RegExp(
-      "^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))(:(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4})))?$"
-    );
-
-    if (!REGEX.test(input.value)) {
-      input.value = "";
-      errorModalBody.innerHTML = "Please enter a valid port number (or range).<br>Possible inputs:<br><br>&emsp;-->[0-65536]<br>&emsp;-->[0-65536]:[0-65536]";
+  RULE_NUM.addEventListener("input", function () {
+    var rulePriorityValue = RULE_NUM.value.trim();
+    var numericRegex = /^\d+$/; // Regular expression to match numeric values
+  
+    if (!numericRegex.test(rulePriorityValue)) {
+      RULE_NUM.value = "";
+      errorModalBody.innerHTML = 'Please enter a numeric value for Rule ID.';
       $('#errorModal').modal("show");
     } else {
-      const parts = input.value.split(":");
-      if (parts.length == 2 && parseInt(parts[1]) <= parseInt(parts[0])) {
-        input.value = "";
-        errorModalBody.innerHTML = "Please enter a valid port range where the second port number is larger than the first port number.";
-        $('#errorModal').modal("show");
-      }
+      RULE_NUM.setCustomValidity(""); // Clear any previous validation message
     }
-  }
+  });
   
+  SOURCE_IP_RADIO.addEventListener('change', function() {
+    SOURCE_ADDRESS.disabled = false;
+    SOURCE_DOMAIN.disabled = true;
+  });
+
+  SOURCE_DOMAIN_RADIO.addEventListener('change', function() {
+    SOURCE_ADDRESS.disabled = true;
+    SOURCE_DOMAIN.disabled = false;
+  });
+
+  DESTINATION_IP_RADIO.addEventListener('change', function() {
+    DESTINATION_ADDRESS.disabled = false;
+    DESTINATION_DOMAIN.disabled = true;
+  });
+
+  DESTINATION_DOMAIN_RADIO.addEventListener('change', function() {
+    DESTINATION_ADDRESS.disabled = true;
+    DESTINATION_DOMAIN.disabled = false;
+  });
   
-
-
   SOURCE_PORT.addEventListener("blur", function () {
     validatePort(SOURCE_PORT);
   });
@@ -251,10 +324,12 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   SOURCE_ADDRESS.addEventListener("blur", function () {
+    SOURCE_DOMAIN.value = "";
     validateIPAddress(SOURCE_ADDRESS, IP_FAMILY);
   });
 
   DESTINATION_ADDRESS.addEventListener("blur", function () {
+    DESTINATION_DOMAIN.value = "";
     validateIPAddress(DESTINATION_ADDRESS, IP_FAMILY);
   });
 });
