@@ -4,6 +4,13 @@
 !/**/.gitkeep
 !/.github
 
+
+# Ignore migrations folder in Django apps - we don't have an actual production database
+**/migrations/*
+# But keep the initial migration file for each app
+!**/migrations/__init__.py
+!**/migrations/0001_initial.py
+
 # Ignore cache folder
 __pycache__/
 __pycache__/*
@@ -146,3 +153,6 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+# CSV files
+*.csv

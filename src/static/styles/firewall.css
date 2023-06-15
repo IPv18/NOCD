@@ -1,33 +1,10 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
-}
-
-h1 {
-    text-align: center;
-    font-size: 36px;
-    color: #444444;
-    margin-top: 50px;
-    margin-bottom: 20px;
-}
-
-h2 {
-    font-size: 24px;
-    color: #444444;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
-h3 {
-    font-size: 20px;
-    color: #333333;
-    margin-left: 20px;
-}
-
 table {
     border-collapse: collapse;
     width: 100%;
     margin-top: 30px;
+    background-color: #202940;
+    border: white;
+    border-radius: 100px;
 }
 
 th, td {
@@ -36,13 +13,13 @@ th, td {
 }
 
 th {
-    background-color: #dddddd;
+    background-color: #1A2035;
 }
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
+/*
+tr:nth-child(even){
+     background-color: #f2f2f2; 
 }
-
+*/
 a {
     color: #333333;
     text-decoration: none;

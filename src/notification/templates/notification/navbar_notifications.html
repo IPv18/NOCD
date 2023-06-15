@@ -1,0 +1,31 @@
+<span class="position-relative" id="notifications-count">
+    <i class="bi bi-bell" style="fill: red; font-size: 1.3em;"></i>
+    {% if unread_count != '' %}
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger flex-1 w-100"
+        style="right: -4px; top: -8px; font-size: xx-small;;">
+        {{ unread_count }}
+    </span>
+    {% endif %}
+</span>
+
+<div id="nav-notifications">
+    {% for notification in page_obj %}
+    <form id="read{ notification.pk }" method="POST"
+        action="{% url 'notification:read_notification' notification.pk %}">
+        {% csrf_token %}
+    </form>
+    <a class="dropdown-item text-light" href="/notifications"
+        onclick="event.preventDefault(); document.getElementById('read{ notification.pk }').submit();">
+        <span style="font-size: x-small;">{{ notification.date }}</span>
+        {% if not notification.read %}
+        <span class="badge bg-primary"><i class="fas fa-circle"></i></span>
+        {% endif %}
+        <br>
+        <span>{{ notification.message }}</span>
+    </a>
+    {% empty %}
+    <h6 class="dropdown-header">No notifications</h6>
+    {% endfor %}
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item text-light" href="/notifications">See all notifications</a>
+</div>

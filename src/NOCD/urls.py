@@ -13,12 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import multiprocessing
 from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('', include('dashboard.urls'), name="dashboard"),
-    path('admin/', admin.site.urls, name="admin"),
-    path('firewall/', include('firewall.urls'), name="firewall"),
-    path('notifications/', include('notification.urls'), name='notifications'),
+    path('admin/', admin.site.urls),
+    path('',
+         include(('dashboard.urls', "dashboard"), namespace='dashboard')),
+    path('firewall/',
+         include(('firewall.urls', "firewall"), namespace='firewall')),
+    path('notifications/',
+         include(('notification.urls', "notification"), namespace='notification')),
+    path('traffic_control/',
+         include(('traffic_control.urls', "traffic_control"), namespace='traffic_control')),
 ]
+

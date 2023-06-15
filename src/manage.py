@@ -2,6 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from time import sleep
 
 
 def main():
@@ -20,3 +21,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+    sleep(2)
+    print("\n------------------\nImportant Note Below\n------------------\n")
+    import this

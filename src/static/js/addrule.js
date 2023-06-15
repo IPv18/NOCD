@@ -1,24 +1,33 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const ip_family_param = urlParams.get("ip_family");
-  const traffic_direction_param = urlParams.get("traffic_direction");
-  
-  const form = document.getElementById("ruleform");
-  const typeSelect = document.getElementById("id_type");
-  const protocolSelect = document.getElementById("id_protocol");
-  const traffic_direction = document.getElementById("id_traffic_direction");
-  const IP_family = document.getElementById("id_IP_family");
-  const source_port = document.getElementById("id_source_port");
-  const destination_port = document.getElementById("id_destination_port");
-  const source_address = document.getElementById("id_source_address");
-  const destination_address = document.getElementById("id_destination_address");
-  
-  const pattern = source_address.getAttribute('pattern');
-  const submitBtn = form.querySelector('input[type="submit"]');
-  const udpTypes = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
-  const tcpTypes = ["CUSTOM TCP", "ALL TCP"];
+  const URL_PARAMS = new URLSearchParams(window.location.search);
+  const IP_FAMILY_PARAM = URL_PARAMS.get("ip_family");
+  const TRAFFIC_DIRECTION_PARAM = URL_PARAMS.get("traffic_direction");
 
-  const portMapping = {
+  const FORM = document.getElementById("rule_form");
+  const RULE_NUM = document.getElementById("id_rule_priority");
+  const DESCRIPTION = document.getElementById("id_description");
+  const TYPE_SELECT = document.getElementById("id_type");
+  const PROTOCOL_SELECT = document.getElementById("id_protocol");
+  const TRAFFIC_DIRECTION = document.getElementById("id_traffic_direction");
+  const IP_FAMILY = document.getElementById("id_ip_family");
+  const SOURCE_PORT = document.getElementById("id_source_port");
+  const DESTINATION_PORT = document.getElementById("id_destination_port");
+  const SOURCE_ADDRESS = document.getElementById("id_source_address");
+  const DESTINATION_ADDRESS = document.getElementById("id_destination_address");
+  const SOURCE_IP_RADIO = document.getElementById('id_source_domain_ip');
+  const SOURCE_DOMAIN_RADIO = document.getElementById('id_source_domain_domain');
+  const SOURCE_DOMAIN = document.getElementById('id_source_domain');
+  const DESTINATION_IP_RADIO = document.getElementById('id_destination_domain_ip');
+  const DESTINATION_DOMAIN_RADIO = document.getElementById('id_destination_domain_domain');
+  const DESTINATION_DOMAIN = document.getElementById('id_destination_domain');
+  
+  const SUBMIT_BUTTON = FORM.querySelector('input[type="submit"]');
+  const UPDATE_OR_SUBMIT = SUBMIT_BUTTON.getAttribute('update-or-submit');
+  const PATTERN = SOURCE_ADDRESS.getAttribute('pattern');
+
+  const UDP_TYPE = ["CUSTOM UDP", "ALL UDP", "DNS UDP 53", "NFS 2049"];
+  const TCP_TYPE = ["CUSTOM TCP", "ALL TCP"];
+  const PORT_MAPPING = {
     "SSH 22": 22,
     "TELNET 23": 23,
     "SMTP 25": 25,
@@ -36,165 +45,311 @@ document.addEventListener("DOMContentLoaded", function () {
     "POP3S 995": 995,
     "NFS 2049": 2049,
   };
-
-  if (ip_family_param !== null && traffic_direction_param !== null) {
-    traffic_direction.value = traffic_direction_param;
-    IP_family.value = ip_family_param;
-    traffic_direction.disabled = true;
-    IP_family.disabled = true;
-  } else {
-    traffic_direction.disabled = true;
-    IP_family.disabled = true;
-    if (typeSelect.value == "ALL UDP") {
-      source_port.disabled = destination_port.disabled = true;
-    } else if (typeSelect.value == "ALL TCP") {
-      source_port.disabled = destination_port.disabled = true;
-    } else if (
-      typeSelect.value == "CUSTOM ICMP" ||
-      typeSelect.value === "ALL ICMP"
-    ) {
-      source_port.disabled = destination_port.disabled = true;
-    } else {
-      if (traffic_direction.value === "Inbound") {
-        source_port.disabled = true;
-      } else {
-        destination_port.disabled = true;
-      }
+ 
+  function validateDomain(domainInput, addressInput) {
+    const domain = domainInput.value.trim();
+    if (domain == '') {
+      return;
     }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `/firewall/check_domain_validity/?ip_family=${IP_FAMILY_PARAM}&domain=${domain}`);
+    xhr.onload = function() {
+        const data = JSON.parse(xhr.responseText);
+        const ipAddress = data.response;
+        if (ipAddress) 
+        {
+          addressInput.value = ipAddress;
+        } 
+        else 
+        {
+          domainInput.value = "";
+          addressInput.value = "";
+          errorModalBody.innerHTML = "Invalid domain, couldn't map the given domain to an IP address";
+          $('#errorModal').modal("show");
+        }
+    };
+    xhr.send();
   }
 
-  typeSelect.addEventListener("change", (event) => {
-    const selectedType = event.target.value;
-
-    let protocolValue = "TCP";
-
-    if (udpTypes.includes(selectedType)) {
-      protocolValue = "UDP";
-      if (selectedType === "ALL UDP") {
-        source_port.value = "";
-        destination_port.value = "";
-      }
-      source_port.disabled = destination_port.disabled =
-        selectedType === "ALL UDP";
-      source_address.disabled = destination_address.disabled = false;
-    } else if (tcpTypes.includes(selectedType)) {
-      if (selectedType === "ALL TCP") {
-        source_port.value = "";
-        destination_port.value = "";
-      }
-      source_port.disabled = destination_port.disabled =
-        selectedType === "ALL TCP";
-      source_address.disabled = destination_address.disabled = false;
-    } else if (selectedType == "CUSTOM ICMP" || selectedType == "ALL ICMP") {
-      protocolValue = "ICMP";
-      source_port.value = destination_port.value = "";
-      source_port.disabled = destination_port.disabled = true;
-    }
-
-    protocolSelect.value = protocolValue;
-
-    if (selectedType in portMapping) {
-      const portNumber = portMapping[selectedType];
-      if (traffic_direction.value === "Inbound") {
-        source_port.value = portNumber;
-        source_port.disabled = true;
-        destination_port.disabled = false;
-      } else {
-        destination_port.value = portNumber;
-        destination_port.disabled = true;
-        source_port.disabled = false;
-      }
-      source_address.disabled = destination_address.disabled = false;
-    }
-  });
-  protocolSelect.addEventListener("change", (event) => {
-    const selectedType = event.target.value;
-    if (selectedType == "UDP") {
-      TypeValue = "CUSTOM UDP";
-      source_port.disabled = false;
-      destination_port.disabled = false;
-      source_address.disabled = false;
-      destination_address.disabled = false;
-    } else if (selectedType == "ICMP") {
-      TypeValue = "CUSTOM ICMP";
-      source_port.value = "";
-      destination_port.value = "";
-      source_port.disabled = true;
-      destination_port.disabled = true;
-      source_address.disabled = false;
-      destination_address.disabled = false;
-    } else if (selectedType == "TCP") {
-      TypeValue = "CUSTOM TCP";
-      source_port.disabled = false;
-      destination_port.disabled = false;
-      source_address.disabled = false;
-      destination_address.disabled = false;
-    }
-    typeSelect.value = TypeValue;
-  });
-  submitBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    source_port.disabled = false;
-    destination_port.disabled = false;
-    source_address.disabled = false;
-    destination_address.disabled = false;
-    traffic_direction.disabled = false;
-    IP_family.disabled = false;
-    form.submit();
-  });
-
-  // input constraints
-
-  var ruleNumField = document.querySelector('input[name="rule_num"]');
-  ruleNumField.addEventListener("input", function () {
-    if (
-      ruleNumField.validity.rangeOverflow ||
-      ruleNumField.validity.rangeUnderflow
-    ) {
-      alert("The value must be between 1 and 999");
-      ruleNumField.value = "";
-    }
-  });
-
   function validateIPAddress(input) {
-    const regex = new RegExp(
-      //Normal IPv6 Regex : "^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$"
-      //Compressed IPv6 Regex : "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
-      //IPv4 Regex : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$"
-      pattern
+    if (input.value === '' || input.value === null) {
+      return;
+    }
+
+    const REGEX = new RegExp(
+      //Normal IPv6 REGEX : "^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$" 
+      //Compressed IPv6 REGEX : "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+      //IPv4 REGEX : "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$" 
+      PATTERN
     );
-    if (!regex.test(input.value)) {
+    if (!REGEX.test(input.value)) {
       input.value = null;
-      if (pattern == "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.(?!$)|$)){4}$")
-        alert("Please enter a valid IPv4 address.");
+      if (IP_FAMILY.value == "IPv6")
+        errorModalBody.innerHTML = 'Please enter a valid host/network normal IPv6 address.';
       else
-        alert("Please enter a valid IPv6 address.");
+        errorModalBody.innerHTML = 'Please enter a valid host/network IPv4 address.<br>Possible inputs:-<br><br>&emsp;-->[0-255].[0-255].[0-255].[0-255]<br>&emsp;-->[0-255].[0-255].[0-255].[0-255]/[1-31]';
+      $('#errorModal').modal("show");
     }
   }
 
   function validatePort(input) {
-    const regex = new RegExp(
-      "^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))$"
+    if (input.value === '' || input.value === null) {
+      return;
+    }
+
+    const REGEX = new RegExp(
+      "^((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))(:(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)(?=((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4}))))?((?<=:)((6553[0-6])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-9]{1,4})))?$"
     );
-    if (!regex.test(input.value)) {
+
+    if (!REGEX.test(input.value)) {
       input.value = "";
-      alert("Please enter a valid port number");
+      errorModalBody.innerHTML = "Please enter a valid port number (or range).<br>Possible inputs:<br><br>&emsp;-->[0-65536]<br>&emsp;-->[0-65536]:[0-65536]";
+      $('#errorModal').modal("show");
+    } else {
+      const parts = input.value.split(":");
+      if (parts.length == 2 && parseInt(parts[1]) <= parseInt(parts[0])) {
+        input.value = "";
+        errorModalBody.innerHTML = "Please enter a valid port range where the second port number is larger than the first port number.";
+        $('#errorModal').modal("show");
+      }
     }
   }
 
-  source_port.addEventListener("input", function () {
-    validatePort(source_port);
+  SOURCE_ADDRESS.disabled = true;
+  DESTINATION_ADDRESS.disabled = true;
+  if (UPDATE_OR_SUBMIT == "UPDATE")
+  {
+    original_rule_priority = RULE_NUM.value;
+  }
+  if (IP_FAMILY_PARAM !== null && TRAFFIC_DIRECTION_PARAM !== null) 
+  {
+    TRAFFIC_DIRECTION.value = TRAFFIC_DIRECTION_PARAM;
+    IP_FAMILY.value = IP_FAMILY_PARAM;
+    TRAFFIC_DIRECTION.disabled = true;
+    IP_FAMILY.disabled = true;
+  } 
+  else 
+  {
+    TRAFFIC_DIRECTION.disabled = true;
+    IP_FAMILY.disabled = true;
+    if (TYPE_SELECT.value == "ALL UDP" || TYPE_SELECT.value == "ALL TCP" || TYPE_SELECT.value == "CUSTOM ICMP" || TYPE_SELECT.value === "ALL ICMP") 
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true; 
+    else 
+      if (TRAFFIC_DIRECTION.value == "Inbound" && TYPE_SELECT.value != "CUSTOM UDP" && TYPE_SELECT.value != "CUSTOM TCP") 
+        SOURCE_PORT.disabled = true;
+      else if (TRAFFIC_DIRECTION.value == "Outbound" && TYPE_SELECT.value != "CUSTOM UDP" && TYPE_SELECT.value != "CUSTOM TCP")
+        DESTINATION_PORT.disabled = true;
+  }
+
+  SOURCE_DOMAIN.addEventListener('blur', function() {
+    validateDomain(SOURCE_DOMAIN, SOURCE_ADDRESS);
   });
 
-  destination_port.addEventListener("input", function () {
-    validatePort(destination_port);
+  DESTINATION_DOMAIN.addEventListener('blur', function() {
+    validateDomain(DESTINATION_DOMAIN, DESTINATION_ADDRESS);
   });
 
-  source_address.addEventListener("blur", function () {
-    validateIPAddress(source_address);
+  TYPE_SELECT.addEventListener("change", (event) => {
+    const SELECTED_TYPE = event.target.value;
+
+    let protocolValue = "TCP";
+
+    if (UDP_TYPE.includes(SELECTED_TYPE)) {
+      protocolValue = "UDP";
+      if (SELECTED_TYPE === "ALL UDP") {
+        SOURCE_PORT.value = "";
+        DESTINATION_PORT.value = "";
+      }
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled =
+        SELECTED_TYPE === "ALL UDP";
+      SOURCE_ADDRESS.disabled = DESTINATION_ADDRESS.disabled = false;
+    } else if (TCP_TYPE.includes(SELECTED_TYPE)) {
+      if (SELECTED_TYPE === "ALL TCP") {
+        SOURCE_PORT.value = "";
+        DESTINATION_PORT.value = "";
+      }
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled =
+        SELECTED_TYPE === "ALL TCP";
+      SOURCE_ADDRESS.disabled = DESTINATION_ADDRESS.disabled = false;
+    } else if (SELECTED_TYPE == "CUSTOM ICMP" || SELECTED_TYPE == "ALL ICMP") {
+      protocolValue = "ICMP";
+      SOURCE_PORT.value = DESTINATION_PORT.value = "";
+      SOURCE_PORT.disabled = DESTINATION_PORT.disabled = true;
+    }
+
+    PROTOCOL_SELECT.value = protocolValue;
+
+    if (SELECTED_TYPE in PORT_MAPPING) {
+      const PORT_NUMBER = PORT_MAPPING[SELECTED_TYPE];
+      if (TRAFFIC_DIRECTION.value === "Inbound") {
+        SOURCE_PORT.value = PORT_NUMBER;
+        SOURCE_PORT.disabled = true;
+        DESTINATION_PORT.disabled = false;
+      } else {
+        DESTINATION_PORT.value = PORT_NUMBER;
+        DESTINATION_PORT.disabled = true;
+        SOURCE_PORT.disabled = false;
+      }
+      SOURCE_ADDRESS.disabled = DESTINATION_ADDRESS.disabled = false;
+    }
   });
 
-  destination_address.addEventListener("blur", function () {
-    validateIPAddress(destination_address);
+  PROTOCOL_SELECT.addEventListener("change", (event) => {
+    const SELECTED_TYPE = event.target.value;
+    if (SELECTED_TYPE == "UDP") {
+      TypeValue = "CUSTOM UDP";
+      SOURCE_PORT.disabled = false;
+      DESTINATION_PORT.disabled = false;
+      SOURCE_ADDRESS.disabled = false;
+      DESTINATION_ADDRESS.disabled = false;
+    } else if (SELECTED_TYPE == "ICMP") {
+      TypeValue = "CUSTOM ICMP";
+      SOURCE_PORT.value = "";
+      DESTINATION_PORT.value = "";
+      SOURCE_PORT.disabled = true;
+      DESTINATION_PORT.disabled = true;
+      SOURCE_ADDRESS.disabled = false;
+      DESTINATION_ADDRESS.disabled = false;
+    } else if (SELECTED_TYPE == "TCP") {
+      TypeValue = "CUSTOM TCP";
+      SOURCE_PORT.disabled = false;
+      DESTINATION_PORT.disabled = false;
+      SOURCE_ADDRESS.disabled = false;
+      DESTINATION_ADDRESS.disabled = false;
+    }
+    TYPE_SELECT.value = TypeValue;
+  });
+
+  SUBMIT_BUTTON.addEventListener("click", (event) => {
+    if (!RULE_NUM.value || !DESCRIPTION.value) {
+      errorModalBody.innerHTML = 'Both Rule ID and description are required.';
+      $('#errorModal').modal("show");
+      event.preventDefault();
+      return;
+    }
+    else {
+      if (UPDATE_OR_SUBMIT == "UPDATE") {
+        if (original_rule_priority == RULE_NUM.value) {
+          SOURCE_PORT.disabled = false;
+          DESTINATION_PORT.disabled = false;
+          SOURCE_ADDRESS.disabled = false;
+          DESTINATION_ADDRESS.disabled = false;
+          TRAFFIC_DIRECTION.disabled = false;
+          IP_FAMILY.disabled = false;
+          FORM.submit();
+        }
+      }
+      const XML_HTTP_REQUEST = new XMLHttpRequest();
+      XML_HTTP_REQUEST.open('GET', `/firewall/check_rule_uniqueness/?rule_priority=${RULE_NUM.value}&traffic_direction=${TRAFFIC_DIRECTION.value}&ip_family=${IP_FAMILY.value}`);
+      XML_HTTP_REQUEST.onload = () => {
+        if (XML_HTTP_REQUEST.status === 200) {
+          const XML_HTTP_RESPONSE = JSON.parse(XML_HTTP_REQUEST.responseText);
+          if (XML_HTTP_RESPONSE.exists) {
+            errorModalBody.innerHTML = 'This Rule ID already exists, please choose a unique rule number.';
+            $('#errorModal').modal("show");
+          }
+          else {
+            SOURCE_PORT.disabled = false;
+            DESTINATION_PORT.disabled = false;
+            SOURCE_ADDRESS.disabled = false;
+            DESTINATION_ADDRESS.disabled = false;
+            TRAFFIC_DIRECTION.disabled = false;
+            IP_FAMILY.disabled = false;
+            FORM.submit();
+          }
+        } else {
+          errorModalBody.innerHTML = 'An error occurred while checking the rule uniqueness.';
+          $('#errorModal').modal("show");
+        }
+      };
+      XML_HTTP_REQUEST.send();
+      event.preventDefault(); 
+    }
+  });
+
+  RULE_NUM.addEventListener("blur", function () {
+    if (RULE_NUM.value == "" || RULE_NUM.value == null) {
+      // If input value is null or empty, skip further validation
+      return;
+    }
+
+    if (RULE_NUM.validity.rangeOverflow || RULE_NUM.validity.rangeUnderflow) {
+      RULE_NUM.value = "";
+      errorModalBody.innerHTML = 'The Rule ID must be between 1 and 999.';
+      $('#errorModal').modal("show");
+    }
+
+  });
+
+  RULE_NUM.addEventListener("input", function () {
+    var rulePriorityValue = RULE_NUM.value.trim();
+    var numericRegex = /^\d+$/; // Regular expression to match numeric values
+  
+    if (!numericRegex.test(rulePriorityValue)) {
+      RULE_NUM.value = "";
+      errorModalBody.innerHTML = 'Please enter a numeric value for Rule ID.';
+      $('#errorModal').modal("show");
+    } else {
+      RULE_NUM.setCustomValidity(""); // Clear any previous validation message
+    }
+  });
+  
+  SOURCE_IP_RADIO.addEventListener('change', function() {
+    SOURCE_ADDRESS.disabled = false;
+    SOURCE_DOMAIN.disabled = true;
+  });
+
+  SOURCE_DOMAIN_RADIO.addEventListener('change', function() {
+    SOURCE_ADDRESS.disabled = true;
+    SOURCE_DOMAIN.disabled = false;
+  });
+
+  DESTINATION_IP_RADIO.addEventListener('change', function() {
+    DESTINATION_ADDRESS.disabled = false;
+    DESTINATION_DOMAIN.disabled = true;
+  });
+
+  DESTINATION_DOMAIN_RADIO.addEventListener('change', function() {
+    DESTINATION_ADDRESS.disabled = true;
+    DESTINATION_DOMAIN.disabled = false;
+  });
+  
+  SOURCE_PORT.addEventListener("blur", function () {
+    validatePort(SOURCE_PORT);
+  });
+
+  DESTINATION_PORT.addEventListener("blur", function () {
+    validatePort(DESTINATION_PORT);
+  });
+
+  SOURCE_ADDRESS.addEventListener("blur", function () {
+    SOURCE_DOMAIN.value = "";
+    validateIPAddress(SOURCE_ADDRESS, IP_FAMILY);
+  });
+
+  DESTINATION_ADDRESS.addEventListener("blur", function () {
+    DESTINATION_DOMAIN.value = "";
+    validateIPAddress(DESTINATION_ADDRESS, IP_FAMILY);
   });
 });
+
+function redirectToHome() {
+  const URL_PARAMS = new URLSearchParams(window.location.search);
+  const IP_FAMILY_PARAM = URL_PARAMS.get("ip_family");
+  const TRAFFIC_DIRECTION_PARAM = URL_PARAMS.get("traffic_direction");
+  
+  var id = "";
+  if (IP_FAMILY_PARAM === "IPv4" && TRAFFIC_DIRECTION_PARAM === "Inbound") {
+      id = 1;
+  } else if (IP_FAMILY_PARAM === "IPv4" && TRAFFIC_DIRECTION_PARAM === "Outbound") {
+      id = 2;
+  } else if (IP_FAMILY_PARAM === "IPv6" && TRAFFIC_DIRECTION_PARAM === "Inbound") {
+      id = 3;
+  } else if (IP_FAMILY_PARAM === "IPv6" && TRAFFIC_DIRECTION_PARAM === "Outbound") {
+      id = 4;
+  }
+  
+  var homeUrl = '/firewall/?id=' + encodeURIComponent(id);
+  window.location.href = homeUrl;
+}

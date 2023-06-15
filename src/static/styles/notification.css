@@ -75,6 +75,7 @@
 
 #page-numbers a,
 #page-numbers span {
+  color: #ccc;
   margin: 0 3px;
 }
 

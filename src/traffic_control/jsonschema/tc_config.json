@@ -1,0 +1,58 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "class": {
+            "type": "object",
+            "properties": {
+                "rate": {
+                    "type": ["null", "string"]
+                },
+                "brust": {
+                    "type": ["null", "string"]
+                },
+                "prio": {
+                    "type": ["null", "string"]
+                }
+            },
+            "additionalProperties": false
+        },
+        "programs": {
+            "type": ["null", "array"],
+            "items": {
+                "type": "string"
+            }
+        },
+        "interface": {
+            "type": "string"
+        },
+        "match": {
+            "type": "object",
+            
+            "properties": {
+                "transport": {
+                    "enum": ["tcp", "udp"]
+                },
+                "src_ip": {
+                    "type": ["null", "string"]
+                },
+                "dst_ip": {
+                    "type": ["null", "string"]
+                },
+                "src_port": {
+                    "type": ["null", "string"]
+                },
+                "dst_port": {
+                    "type": ["null", "string"]
+                }
+            },
+            "additionalProperties": false
+        },
+
+        "direction": {
+            "enum": ["inbound", "outbound"]
+        }
+    },
+    "required": ["class", "interface", "direction"],
+    "additionalProperties": false
+}
