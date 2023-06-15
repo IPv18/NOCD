@@ -29,7 +29,7 @@ def change_topic_args(topic, **kwargs):
     topics[topic]['topic_args'] = kwargs
 
 
-def subscribe(topic, subscriber_method):
+def subscribe(topic, subscriber_method, **kwargs):
     '''
     Add a function to topic
     '''
@@ -46,7 +46,7 @@ def subscribe(topic, subscriber_method):
     args = inspect.getfullargspec(subscriber_method).args
 
     # Skip self if found
-    if hasattr(callable, '__self__') and args[0] == "self":
+    if hasattr(callable, '__self__') and len(args) > 0 and args[0] == "self":
         args = args[1:]
 
     # Check if the arguments match with the topic arguments
@@ -55,7 +55,27 @@ def subscribe(topic, subscriber_method):
         raise Exception(
             'Method provided does not contain matching arguments')
 
-    topics[topic]['subscriber_methods'].append(subscriber_method)
+    topics[topic]['subscriber_methods'].append({
+        'method': subscriber_method,
+        'extra_args': kwargs
+    })
+
+
+def unsubscribe(topic, subscriber_method):
+    '''
+    Remove a function from topic
+    '''
+
+    if topic not in topics:
+        raise Exception('Topic does not exist')
+
+    if subscriber_method not in topics[topic]['subscriber_methods']:
+        raise Exception('Method is not subscribed to topic')
+    
+    for subscriber_method in topics[topic]['subscriber_methods']:
+        if subscriber_method['method'] == subscriber_method:
+            topics[topic]['subscriber_methods'].remove(subscriber_method)
+            break
 
 
 def send(topic):
@@ -70,7 +90,7 @@ def send(topic):
     subscriber_methods = topics[topic]['subscriber_methods']
 
     for subscriber_method in subscriber_methods:
-        subscriber_method(**topic_args)
+        subscriber_method['method'](**topic_args, **subscriber_method['extra_args'])
 
 
 def send(topic, **kwargs):
@@ -84,10 +104,10 @@ def send(topic, **kwargs):
     subscriber_methods = topics[topic]['subscriber_methods']
 
     for subscriber_method in subscriber_methods:
-        args = inspect.getfullargspec(subscriber_method).args
+        args = inspect.getfullargspec(subscriber_method['method']).args
 
         # Skip self if found
-        if hasattr(callable, '__self__') and args[0] == "self":
+        if hasattr(callable, '__self__') and len(args) > 0 and args[0] == "self":
             args = args[1:]
 
         # Check if the arguments match with the topic arguments
@@ -95,4 +115,4 @@ def send(topic, **kwargs):
             raise Exception(
                 'Method provided does not contain matching arguments')
 
-        subscriber_method(**kwargs)
+        subscriber_method['method'](**kwargs, **subscriber_method['extra_args'])

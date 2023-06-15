@@ -1,3 +1,5 @@
+{% load static %}
+
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm p-2">
 	<i class="bi bi-graph-up logo m-2"></i>
 	<a class="navbar-brand" href="#"> NOCD </a>
@@ -8,41 +10,40 @@
 	<div class="collapse navbar-collapse" id="navbarNav">
 		<ul class="navbar-nav me-auto">
 			<li class="m-1">
-				<a class="btn btn-secondary text-primary {% if request.path == "/" %} text-black active{% endif %}" href="/"> Home </a>
+				<a class="btn btn-secondary text-primary {% if request.path == " /" %} text-black active{% endif %}"
+					href="/"> Home </a>
 			</li>
 			<li class="m-1">
-				<a class="btn btn-secondary text-primary {% if "/About" in request.path %} text-black  active{% endif %}" href="#"> About </a>
+				<a class="btn btn-secondary text-primary {% if " /About" in request.path %} text-black active{% endif %}" href="#"> About </a>
 			</li>
 			<li class="m-1">
-				<a class="btn btn-secondary text-primary {% if "/firewall" in request.path %} text-black  active{% endif %}" href="/firewall"> Firewall </a>
+				<a class="btn btn-secondary text-primary {% if " /firewall" in request.path %} text-black active{% endif %}" href="/firewall"> Firewall </a>
 			</li>
 		</ul>
 		<ul class="navbar-nav" style="margin-right: 10px;">
 			<!-- pill icon -->
-			<li class="pill m-0">
-				<a href="#" class="nav-link">
-					<span class="position-relative">
-						<i class="bi bi-bell" style="fill: red; font-size: 1.5em;"></i>
-						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger flex-1 w-100"
-							style="right: -4px; top: -8px; font-size: xx-small;;">
-							+99
-						</span>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<span class="position-relative" id="notifications-count">
+						<i class="bi bi-bell" style="fill: red; font-size: 1.3em;"></i>
 					</span>
-			
 				</a>
-				<div class="dropdown-menu dropdown-menu-left " aria-labelledby="navbarDropdown">
-					<a class="dropdown-item text-light" href="#"> Register </a>
-					<a class="dropdown-item text-light" href="#"> Login </a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item text-light" href="#"> Logout </a>
+
+				<div class="dropdown-menu dropdown-menu-left " aria-labelledby="navbarDropdown"
+					style="position: absolute; left:-100px; z-index: 1000;">
+					<div id="nav-notifications">
+						<h6 class="dropdown-header">No notifications</h6>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item text-light" href="/notifications">See all notifications</a>
+					</div>
 				</div>
 			</li>
 			<!-- personal icon -->
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 					<i class="bi bi-person-circle" style="font-size: 1.3em;"></i>
-
 				</a>
+
 				<div class="dropdown-menu dropdown-menu-left " aria-labelledby="navbarDropdown" style="position: absolute; left:-100px; z-index: 1000;">
 					<a class="dropdown-item text-light" href="#"> Register </a>
 					<a class="dropdown-item text-light" href="#"> Login </a>
@@ -52,7 +53,6 @@
 			</li>
 		</ul>
 	</div>
+
+	<script src="{% static 'js/navbar_notifications.js' %}"></script>
 </nav>
-
-
-

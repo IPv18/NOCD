@@ -29,8 +29,3 @@ urlpatterns = [
          include(('traffic_control.urls', "traffic_control"), namespace='traffic_control')),
 ]
 
-print("Starting network sniffer...")
-from network_sniffer.network_sniffer import main as network_sniffer_main
-ps = multiprocessing.Process(target=network_sniffer_main)
-ps.daemon = True
-ps.start()
