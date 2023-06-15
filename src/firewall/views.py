@@ -63,6 +63,7 @@ def update_ip_tables(ip_family, traffic_direction):
                 subprocess.run(command, check=True)
             else:    
                 subprocess.run(cmd.split(), check=True)
+
   
 def home(request):
     if request.method == 'GET':
@@ -104,7 +105,7 @@ def check_domain_validity(request):
         socket_ip_family = socket.AF_INET if ip_family == 'IPv4' else socket.AF_INET6
         try:
             ip_address = socket.getaddrinfo(domain, None, family=socket_ip_family)[0][4][0]
-        except (socket.gaierror, IndexError):
+        except:
             ip_address = None
         return JsonResponse({'response':ip_address})
 
