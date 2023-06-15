@@ -1,0 +1,22 @@
+{% load static %}
+
+<div class="card-header d-flex justify-content-between">
+	<div class="card-title">Network Traffic Distribution</div>
+
+	
+</div>
+<div class="card-body">
+	<div class="chart-container">
+		<canvas id="pieChart1"></canvas>
+	</div>
+</div>
+
+<script src="{% static 'dashboard/js/pie-chart.js' %}"></script>
+
+<script>
+	// Pie Chart
+    const ctx = document.getElementById('pieChart1');
+    const pieChart1 = new PieChart(ctx, '{% url "dashboard:widgets" %}?widget=pie');
+    // pieChart1.debug();
+
+</script>

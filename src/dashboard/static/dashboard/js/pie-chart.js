@@ -1,10 +1,10 @@
 class PieChart {
-	constructor(ctx){
+	constructor(ctx, url){
 		this.data = {
-			labels: ['TCP', 'UDP', 'ICMP', 'ARP', 'DHCP', 'HTTP', 'SSL/TLS'],
+			labels: [],
 			datasets: [{
-				label: 'Weekly Sales',
-				data: [100, 12, 6, 100, 12, 3, 9],
+				label: '# of pkts',
+				data: [],
 				backgroundColor: [
 				'rgba(255, 26, 104, 1)',
 				'rgba(54, 162, 235, 1)',
@@ -110,10 +110,28 @@ class PieChart {
 		};
 
 		this.ctx = ctx;	
+		this.url = url;
 		this.myChart = new Chart(
 			this.ctx,
 			this.config
 		);
+
+		this.Fetcher(2);
+	}
+
+	Fetcher(repeat=1) {
+		setInterval(() => {
+			fetch(this.url)
+			.then(response => response.json())
+			.then(data => {
+				Object.entries(data).forEach(([key, value]) => {
+					this.updateData(key, value);
+				});
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+		}, repeat * 1000);
 	}
 
 	addData(label, data, color) {
