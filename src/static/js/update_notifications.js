@@ -11,7 +11,7 @@ function getCookie(name) {
         }
     }
     return cookieValue;
-}
+};
 
 function replaceNotifications(response) {
     var newNotificationContainer = $(response).find('#notification-container');
@@ -27,14 +27,13 @@ function ajaxUpdateNotifications(button, type) {
             xhr.setRequestHeader('X-CSRFToken', csrfToken);
         },
         success: (function (response) {
-            replaceNotifications(response);
-            addButtonListeners();
+            // keep this empty
         }),
         error: function (error) {
             console.log(error);
         }
     });
-}
+};
 
 function addButtonListeners() {
     $(".delete-button").on('click', function () {
@@ -47,16 +46,26 @@ function addButtonListeners() {
     });
 }
 
-$(document).ready(function () {
-    setInterval(function () {
-        $.ajax({
-            success: (function (response) {
+function longPollNotifications() {
+    $.ajax({
+        url: '/notifications/get/',
+        type: 'GET',
+        success: (function (response) {
+            if (response) {
                 replaceNotifications(response);
                 addButtonListeners();
-            }),
-        });
-        console.log("Notification reload request sent.");
-    }, 5000);
+            }
+            
+            longPollNotifications();
+        }),
+        error: function (error) {
+            console.log(error);
+            longPollNotifications();
+        }
+    });
+};
 
+$(document).ready(function () {
+    longPollNotifications();
     addButtonListeners();
 });
