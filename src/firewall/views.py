@@ -57,9 +57,13 @@ def update_ip_tables(ip_family, traffic_direction):
                 cmd += f' --dport {rule["destination_port"]}'
             cmd  += f' -j {rule["action"]}'
             if rule['action'] == 'LOG':
-                log_prefix = rule["description"][:29].replace(" ", "_")
-                cmd += f' --log-prefix {log_prefix}'
-            subprocess.run(cmd.split(), check=True)
+                cmd  += f' --log-prefix'
+                command = cmd.split()
+                command.append(f'\"[nocd] {rule["description"]}\"')
+                subprocess.run(command, check=True)
+            else:    
+                subprocess.run(cmd.split(), check=True)
+
   
 def home(request):
     if request.method == 'GET':
