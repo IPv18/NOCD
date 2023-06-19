@@ -19,13 +19,19 @@
 			<li class="m-1">
 				<a class="btn btn-secondary text-primary {% if " /firewall" in request.path %} text-black active{% endif %}" href="/firewall"> Firewall </a>
 			</li>
+			<li class="m-1">
+				<a class="btn btn-secondary text-primary {% if "/traffic_control" in request.path %} text-black  active{% endif %}" href="/traffic_control"> Traffic Control </a>
+			</li>
 		</ul>
 		<ul class="navbar-nav" style="margin-right: 10px;">
 			<!-- pill icon -->
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-					<span class="position-relative" id="notifications-count">
-						<i class="bi bi-bell" style="fill: red; font-size: 1.3em;"></i>
+				<a href="#" class="nav-link">
+					<span class="position-relative">
+						<i class="bi bi-bell" style="fill: red; font-size: 1.5em;"></i>
+						<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger flex-1 w-100"
+							style="right: -4px; top: -8px; font-size: xx-small;;">
+							+99
+						</span>
 					</span>
 				</a>
 
@@ -37,7 +43,7 @@
 						<a class="dropdown-item text-light" href="/notifications">See all notifications</a>
 					</div>
 				</div>
-			</li>
+			</li> -->
 			<!-- personal icon -->
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">

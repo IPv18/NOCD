@@ -17,79 +17,20 @@
   <!-- Card With Icon States Color -->
   {% include 'dashboard/widgets.html' %}
 
-
   <div class="row">
+
     <div class="col-md-4">
       <div class="card bg-secondary shadow">
-        <div class="card-header d-flex justify-content-between">
-          <div class="card-title">Pie Chart1</div>
-          <!-- Modal 1 -->
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm"> <strong> + </strong> </button>
-          <div id="pieChart1Model" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-              <div class="modal-content p-3">
-                
-                <form action="" id="pieChart1From"> 
-                  <div class="form-group">
-                    <label for="exampleSelect1">Example select</label>
-                    <select class="form-control" id="exampleSelect1" name="select" size="5">
-                      <option>Option 1</option>
-                      <option>Option 2</option>
-                      <option>Option 3</option>
-                      <option>Option 4</option>
-                      <option>Option 5</option>
-                      <option>Option 6</option>
-                      <option>Option 7</option>
-                      <option>Option 8</option>
-                    </select>
-                  </div>
-
-                  <label for="color-picker">Choose a color:</label>
-                  <input type="color" name="color-picker">
-
-                  <br>
-                  <input class="btn btn-primary" type="submit" value="Submit" data-bs-dismiss="modal">
-                </form>
-                
-              </div>
-            </div>
-          </div>
-
-          <button id="pieChart1Model2Btn" type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal2-sm" style="display:none;"> </button>
-          <div id="pieChart1Model2" class="modal fade bd-example-modal2-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-              <div class="modal-content p-3">
-                
-                <form action="" id="pieChart1From2"> 
-                  <label for="color-picker">Choose a different color: </label>
-                  <br>
-                  <input type="color" name="color-picker" class="btn btn-outline-info">
-                  <br>
-                  <br>
-                  <div class="dropdown-divider"></div>
-                  <input class="btn btn-outline-info" type="submit" value="Change" data-bs-dismiss="modal">
-                  <input class="btn btn-outline-danger" type="submit" name="remove" value="Remove the label !" data-bs-dismiss="modal">
-                  
-                </form>
-                
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <div class="card-body">
-          <div class="chart-container">
-            <canvas id="pieChart1"></canvas>
-          </div>
-        </div>
+        {% include 'dashboard/piechart.html' %}
       </div>
     </div>
+
     <div class="col-md-8">
       <div class="card h-100 bg-secondary shadow">
         <div class="card-header">
           <div class="d-flex flex-row">
             <div class="col-10">
-              <div class="card-title">Line Chart1</div>
+              <div class="card-title"> # of pkt/process </div>
             </div>
             <div class="col-2 d-flex justify-content-between">
               
@@ -138,7 +79,7 @@
   </div>
 
   <br>
-
+<!-- 
   <div class="row justify-content-center">
     <div class="col-md-12">
       <div class="card card-stats card-round bg-secondary shadow">
@@ -153,7 +94,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <br>
 
@@ -163,70 +104,26 @@
 
 
 {% block javascripts %}
-  <script src="{% static 'dashboard/js/pie-chart.js' %}"></script>
+  
   <script src="{% static 'dashboard/js/line-chart.js' %}"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-geo@4.1.2/build/index.umd.min.js"></script>
-  <script src="{% static 'dashboard/js/gro-chart.js' %}"></script>
+  <!-- <script src="{% static 'dashboard/js/gro-chart.js' %}"></script> -->
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
   <script>
 
-    // Pie Chart
-    const ctx = document.getElementById('pieChart1');
-    const pieChart1 = new PieChart(ctx);
-    pieChart1.debug();
-
-    // ToDO !!!!!!
-    // Get a reference to the form element
-    var form = document.getElementById("pieChart1From");
-    form.addEventListener("submit", function(event) {
-      event.preventDefault();
-      var select = form.elements["select"].value;
-      console.log("Selected Value: " + select);
-
-      var color = form.elements["color-picker"].value;
-      console.log("Selected Color: " + color);
-
-      pieChart1.addData(select, 55, color);
-
-      var myModal = document.getElementById("pieChart1Model");
-      $(myModal).modal("hide");
-    });
-
-
-    // TODO !!!!!!
-    ctx.addEventListener('click', function (event) {
-      const lable = pieChart1.handleLabelClick(event);
-      if(lable){
-        document.getElementById("pieChart1Model2Btn").click();
-
-        const form = document.getElementById("pieChart1From2");
-        form.addEventListener("submit", function(event) {
-          event.preventDefault();
-
-          if (event.submitter.name === 'remove') {
-            pieChart1.removeData(lable);
-          }else{
-            pieChart1.changeColor(lable, form.elements["color-picker"].value)
-          }
-          
-          var myModal = document.getElementById("pieChart1Model2");
-          $(myModal).modal("hide");
-        });
-      }
-    });
-
+    
 
     // Line Chart
     const lineChart1 = new LineChart(document.getElementById('lineChart1').getContext('2d'));
-    lineChart1.debug(1);
+    // lineChart1.debug(3);
 
   </script>
 
-  <script>
+  <!-- <script>
     fetch('https://unpkg.com/world-atlas/countries-50m.json').then((r) => r.json()).then((data) => {
       const countries = ChartGeo.topojson.feature(data, data.objects.countries).features;
 
@@ -256,7 +153,7 @@
         }
       });
     });
-  </script>
+  </script> -->
 
 {% endblock %} 
 
