@@ -16,7 +16,7 @@ function getCookie(name) {
 function replaceNotifications(response) {
     var newNotificationContainer = $(response).find('#notification-container');
     $('#notification-container').replaceWith(newNotificationContainer);
-}
+};
 
 function ajaxUpdateNotifications(button, type) {
     $.ajax({
@@ -27,7 +27,8 @@ function ajaxUpdateNotifications(button, type) {
             xhr.setRequestHeader('X-CSRFToken', csrfToken);
         },
         success: (function (response) {
-            // keep this empty
+            replaceNotifications(response);
+            addButtonListeners();
         }),
         error: function (error) {
             console.log(error);
@@ -44,7 +45,7 @@ function addButtonListeners() {
         ajaxUpdateNotifications($(this), 'POST');
         console.log("Notification read request sent.");
     });
-}
+};
 
 function longPollNotifications() {
     $.ajax({
