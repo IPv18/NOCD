@@ -51,6 +51,9 @@ def get_nav_notifications(request):
 def long_poll(index=0):
     global old_notifications
 
+    if old_notifications[index] is None:
+        return None
+
     def check_notifications():
         global old_notifications
         notifications = NotificationInfo.objects.order_by('-date')
