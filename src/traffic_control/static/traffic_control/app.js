@@ -173,6 +173,21 @@ $(document).ready(function () {
             modalTitle.textContent = `Edit program policy ID:${row['id']}`
             //modalBodyInput.value = recipient
         }
+        else {
+            $("#program-policy-name").val('');
+            $("#program-policy-programs").val('');
+            $("#program-policy-rate").val('');
+            $("#program-policy-burst").val('');
+            $("#program-policy-prio").val('');
+            $("#program-policy-description").val('');
+            $("#program-policy-direction option[value='1']").prop('selected', true)
+            $("#modal-interface-selector option[value='1']").prop('selected', true)
+            $("#program-policy-enabled").prop('checked', true);
+            $("#program-policy-startup").prop('checked', true);
+            $("#program-policy-id").val('');
+            const modalTitle = programModal.querySelector('.modal-title')
+            modalTitle.textContent = `Add program policy`
+        }
     })
 
 
@@ -240,6 +255,22 @@ $(document).ready(function () {
             const modalTitle = ipModal.querySelector('.modal-title')
             console.log(row);
             modalTitle.textContent = `Edit ip policy ID:${row['id']}`
+        }        
+        else {
+            $("#ip-policy-name").val('');
+
+            $("#ip-policy-rate").val('');
+            $("#ip-policy-burst").val('');
+            $("#ip-policy-prio").val('');
+            $("#ip-policy-description").val('');
+
+            $("#ip-policy-direction option[value='0']").prop('selected', true)
+            $("#modal-interface-selector option[value='0']").prop('selected', true)
+            $("#ip-policy-enabled").prop('checked', true);
+            $("#ip-policy-startup").prop('checked', true);
+            $("#ip-policy-id").val('');
+            const modalTitle = ipModal.querySelector('.modal-title')
+            modalTitle.textContent = `Add ip policy`
         }
     })
 
