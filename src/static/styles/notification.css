@@ -6,7 +6,7 @@
 }
 
 .notification.unread {
-  background-color: #ffffcc;
+  background-color: #202940 !important;
 }
 
 .notification h3 {

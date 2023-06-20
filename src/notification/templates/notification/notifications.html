@@ -14,7 +14,7 @@
 {% block content %}
     <div id="notification-container">
         {% for notification in page_obj %}
-            <div class="notification{% if not notification.read %} unread{% endif %} bg-secondary shadow border-0">
+            <div class="notification{% if not notification.read %} unread {% endif %} bg-dark shadow border-0">
                 <span class="date">{{ notification.date }}</span>
                 <br>
                 <span class="message">{{ notification.message }}</span>
