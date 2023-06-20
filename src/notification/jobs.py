@@ -7,15 +7,26 @@ from schedule import Scheduler
 
 from notification.topic import send
 
-logs_path = '/var/log/nocd/firewall.log'
+log_file_path = '/var/log/nocd/firewall.log'
+log_folder_path = '/var/log/nocd'
 log_size = 0
 
 
+def init_log_file():
+    if not os.path.exists(log_folder_path):
+        os.makedirs(log_folder_path)
+        
+    if not os.path.exists(log_file_path):
+        with open(log_file_path, 'w') as f:
+            f.write('')
+
+
 def start_scheduler():
+    init_log_file()
     scheduler = Scheduler()
     scheduler.every(20).seconds.do(add_random_notification)
     global log_size
-    log_size = os.path.getsize(logs_path)
+    log_size = os.path.getsize(log_file_path)
     scheduler.every(5).seconds.do(check_firewall_logs)
     scheduler.run_continuously()
 
@@ -27,10 +38,10 @@ def add_random_notification():
 
 def check_firewall_logs():
     global log_size
-    current_size = os.path.getsize(logs_path)
+    current_size = os.path.getsize(log_file_path)
 
     if current_size > log_size:
-        with open(logs_path, 'r') as f:
+        with open(log_file_path, 'r') as f:
             f.seek(log_size)
             for line in f:
                 send('log', message=line)
