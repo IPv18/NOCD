@@ -14,7 +14,7 @@
 {% block content %}
     <div id="notification-container">
         {% for notification in page_obj %}
-            <div class="notification{% if not notification.read %} unread{% endif %}">
+            <div class="notification{% if not notification.read %} unread{% endif %} bg-secondary shadow border-0">
                 <span class="date">{{ notification.date }}</span>
                 <br>
                 <span class="message">{{ notification.message }}</span>
@@ -22,7 +22,7 @@
                     <div class="type">{{ notification.type }}</div>
                     <div class="buttons">
                         <button type="submit"
-                                class="read-button"
+                                class="read-button btn btn-secondary"
                                 url="{% url 'notification:toggle_read_notification' notification.pk %}">
                             Mark as
                             {% if not notification.read %}
@@ -32,7 +32,7 @@
                             {% endif %}
                         </button>
                         <button type="submit"
-                                class="delete-button"
+                                class="delete-button btn btn-secondary"
                                 url="{% url 'notification:delete_notification' notification.pk %}">Delete</button>
                     </div>
                 </div>
@@ -73,6 +73,7 @@
                 <button id="clear-button"
                         type="submit"
                         name="clear_notifications"
+                        class="btn btn-secondary"
                         onclick="return confirm('Are you sure you want to clear all notifications?')">
                     Clear All Notifications
                 </button>
