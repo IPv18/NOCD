@@ -30,7 +30,7 @@
         <div class="card-header">
           <div class="d-flex flex-row">
             <div class="col-10">
-              <div class="card-title"> Length of Packets </div>
+              <div class="card-title"> Count of Packets </div>
             </div>
             <div class="col-2 d-flex justify-content-between">
               
@@ -59,6 +59,45 @@
           </div>
         </div>
       </div>
+    </div>
+  
+  </div>
+  <div class="row mt-4" style="height: 500px;    margin-bottom: 5.5rem;">
+    <div class="col-12">
+      <div class="card h-100 bg-secondary shadow">
+        <div class="card-header">
+          <div class="d-flex flex-row">
+            <div class="col-10">
+              <div class="card-title"> Length of Packets </div>
+            </div>
+            <div class="col-2 d-flex justify-content-between">
+              
+                  <button id="toStart" class="jump btn btn-primary"> 
+                    <i class="fa fa-step-backward" aria-hidden="true"></i> 
+                  </button>
+                  <button id="jumpBackward" class="jump btn btn-primary"> 
+                    <i class="fa fa-backward" aria-hidden="true"></i>
+                  </button>
+
+                  <button id="jumpForward" class="jump btn btn-primary"> 
+                    <i class="fa fa-forward" aria-hidden="true"></i>
+                  </button>
+                  <button id="toEnd" class="jump btn btn-primary"> 
+                    <i class="fa fa-step-forward" aria-hidden="true"></i>
+                  </button>              
+
+            </div>
+          </div>
+        </div>
+        <div class="card-body ">
+          <div>
+            <div class="h-100">
+                <canvas id="lineChart2" ></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    
     </div>
   </div>
 
@@ -118,7 +157,8 @@
     
 
     // Line Chart
-    const lineChart1 = new LineChart(document.getElementById('lineChart1').getContext('2d'));
+    const lineChart1 = new CountLineChart(document.getElementById('lineChart1').getContext('2d'));
+    const lineChart2 = new LengthLineChart(document.getElementById('lineChart2').getContext('2d'));
     // lineChart1.debug(3);
 
   </script>
