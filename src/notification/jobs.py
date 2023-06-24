@@ -33,7 +33,7 @@ def start_scheduler():
 
 def add_random_notification():
     from random import randint
-    send('info', type='random', message=randint(0, 1000))
+    #send('info', type='random', message=randint(0, 1000))
 
 
 def check_firewall_logs():

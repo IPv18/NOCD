@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from views import update_ip_tables
 
 class FirewallConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
@@ -25,6 +26,10 @@ class FirewallConfig(AppConfig):
                 FirewallRule.objects.create(
                     ip_family='IPv6', traffic_direction='Outbound', rule_priority=1000,
                      description="ALL TRAFFIC", type="", protocol="", action='ACCEPT')
+            update_ip_tables('IPv4', 'Inbound')
+            update_ip_tables('IPv4', 'Outbound')
+            update_ip_tables('IPv6', 'Inbound')
+            update_ip_tables('IPv6', 'Outbound')
         except Exception as e:
             # TODO: log error or handle exception
             pass
