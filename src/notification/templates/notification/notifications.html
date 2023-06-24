@@ -17,7 +17,7 @@
             <div class="notification{% if not notification.read %} unread {% endif %} bg-dark shadow border-0">
                 <span class="date">{{ notification.date }}</span>
                 <br>
-                <span class="message">{{ notification.message }}</span>
+                <span class="message"><pre>{{ notification.message }}</pre></span>
                 <div class="content">
                     <div class="type">{{ notification.type }}</div>
                     <div class="buttons">

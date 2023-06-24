@@ -21,7 +21,7 @@
         <span class="badge bg-primary"><i class="fas fa-circle"></i></span>
         {% endif %}
         <br>
-        <span>{{ notification.message }}</span>
+        <span style="display: inline-block; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ notification.message }}</span>
     </a>
     {% empty %}
     <h6 class="dropdown-header">No notifications</h6>

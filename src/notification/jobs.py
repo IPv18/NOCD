@@ -1,4 +1,5 @@
 import os
+import re
 
 import threading
 import time
@@ -33,7 +34,30 @@ def start_scheduler():
 
 def add_random_notification():
     from random import randint
-    send('info', type='random', message=randint(0, 1000))
+    # send('info', type='random', message=randint(0, 1000))
+
+
+def format_log_string(log_string):
+    log_string = log_string.replace('"', ' ')
+    log_string = log_string.replace('[nocd]', '')
+
+    log_string = re.sub(r'^\w+\s+\d+\s+\d+:\d+:\d+\s+', '', log_string)
+
+    log_string = re.sub(r'\[(.*?)\]', r'\1', log_string)
+
+    log_string = log_string.replace(':', ': ')
+
+    log_string = re.sub(r'(\bIN=|\bOUT=|\bSRC=|\bDST=|\bLEN=|\bPROTO=|\bSPT=|\bDPT=|\bWINDOW=)', r'\n\1', log_string)
+
+    log_string = log_string.replace('IN=', 'In: ')
+    log_string = log_string.replace('OUT=', 'Out: ')
+    log_string = log_string.replace('SRC=', 'Source: ')
+    log_string = log_string.replace('DST=', 'Destination: ')
+    log_string = log_string.replace('PROTO=', 'Protocol: ')
+    log_string = log_string.replace('SPT=', 'Source Port: ')
+    log_string = log_string.replace('DPT=', 'Destination Port: ')
+
+    return log_string
 
 
 def check_firewall_logs():
@@ -44,7 +68,7 @@ def check_firewall_logs():
         with open(log_file_path, 'r') as f:
             f.seek(log_size)
             for line in f:
-                send('log', message=line)
+                send('log', message=format_log_string(line))
         log_size = current_size
 
 

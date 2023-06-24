@@ -11,7 +11,7 @@ from asgiref.sync import sync_to_async
 
 from notification.models import NotificationInfo
 
-old_notifications = [None, None]
+old_notifications = [[], []]
 
 
 @require_GET
@@ -50,6 +50,9 @@ def get_nav_notifications(request):
 
 def long_poll(index=0):
     global old_notifications
+
+    if old_notifications is None:
+        old_notifications = [None, None]
 
     if old_notifications[index] is None:
         return None
