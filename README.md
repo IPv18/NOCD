@@ -287,4 +287,4 @@ Start the server
 <!-- License -->
 ## :page_with_curl: License
 
-Distributed under the no License. See LICENSE.txt for more information.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
