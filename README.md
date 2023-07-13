@@ -71,10 +71,24 @@ NOCD is a micro NOC (Network Operations Center) that aims to help people with li
 <!-- Screenshots -->
 ### :camera: Screenshots
 
-<div align="center"> 
-  <img src="assets/screenshots/homepage.png" alt="homepage" />
-  <img src="assets/screenshots/traffic_control.png" alt="traffic_control" />
+<div> 
+  <ul>
+    <li > Dashboard
+      <img src="assets/screenshots/homepage.png" alt="homepage" />
+    </li>
+    <li> Traffic Control
+      <img src="assets/screenshots/traffic_control.png" alt="traffic_control" />
+    </li>
+    <li> Apply Program-based Traffic Control Policy on  running processes
+ </li>
+      
+https://github.com/IPv18/NOCD/assets/54727130/f2499854-8d03-419f-b81a-d6d85e2cd1ad
+   
+  </ul>
 </div>
+
+
+
 
 
 <!-- TechStack -->
